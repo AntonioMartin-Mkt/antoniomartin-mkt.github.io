@@ -12,7 +12,7 @@ const PERFIL = {
   frase: "Creo contenido, campañas y automatizaciones que hacen crecer marcas y medios digitales.",
   ubicacion: "San Fernando, Cádiz",
   disponible: "Abierto a prácticas y primer empleo", // o "" para ocultarlo
-  email: "tu-email@ejemplo.com",
+  email: "antoniomartin.mkt@gmail.com",
   linkedin: "https://www.linkedin.com/in/tu-perfil",
   cv: "cv.pdf", // sube tu CV al repositorio con este nombre
   // 3 cifras que un reclutador entienda en 2 segundos. Sustitúyelas por datos reales.
