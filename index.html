@@ -107,6 +107,35 @@ dialog::backdrop{background:rgba(0,0,0,.55)}
 .contact .btn{border-color:var(--bg)}
 .contact .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
 footer{text-align:center;font-size:13px;color:var(--muted);padding-bottom:32px}
+
+/* HERO con burbujas */
+.hero{position:relative}
+.hero-grid{display:grid;grid-template-columns:1fr 340px;gap:24px;align-items:center}
+.bubbles{position:relative;height:340px}
+.bubble{position:absolute;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:50%;color:#fff;text-decoration:none;font-family:"Bricolage Grotesque";font-weight:800;box-shadow:0 12px 28px -12px rgba(0,0,0,.45);animation:flotar 6s ease-in-out infinite;transition:transform .2s}
+.bubble small{font:600 11px Inter,sans-serif;opacity:.9;margin-top:2px}
+.bubble:hover{animation-play-state:paused;transform:scale(1.12)}
+@keyframes flotar{0%,100%{translate:0 0}50%{translate:0 -14px}}
+@media(max-width:860px){
+  .hero-grid{grid-template-columns:1fr}
+  .bubbles{height:auto;display:flex;flex-wrap:wrap;gap:12px}
+  .bubble{position:static;width:64px!important;height:64px!important;font-size:18px!important}
+}
+@media(prefers-reduced-motion:reduce){.bubble,.badge::before{animation:none}}
+
+/* HABILIDADES */
+.skills{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.skill{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;transition:border-color .2s,transform .2s}
+.skill:hover{border-color:var(--accent);transform:translateY(-3px)}
+.skill .ic{font-size:28px;line-height:1}
+.skill h3{font-size:19px;margin:12px 0 6px}
+.skill p{font-size:14px;color:var(--muted)}
+
+/* SOBRE MÍ */
+.about{display:grid;grid-template-columns:200px 1fr;gap:32px;align-items:start}
+.about .label{font-family:"Bricolage Grotesque";font-weight:800;font-size:clamp(30px,5vw,48px);line-height:1.05}
+.about p{font-size:clamp(17px,2vw,20px);line-height:1.7}
+@media(max-width:700px){.about{grid-template-columns:1fr;gap:12px}}
 </style>
 </head>
 <body>
@@ -114,25 +143,36 @@ footer{text-align:center;font-size:13px;color:var(--muted);padding-bottom:32px}
 <nav><div class="wrap">
   <a class="logo" href="#" id="logo"></a>
   <div class="navlinks">
+    <a href="#habilidades" class="hide-m">Habilidades</a>
     <a href="#trabajos">Trabajos</a>
-    <a href="#herramientas" class="hide-m">Herramientas</a>
+    <a href="#sobre-mi" class="hide-m">Sobre mí</a>
     <a href="#contacto">Contacto</a>
   </div>
 </div></nav>
 
 <header class="hero wrap">
-  <span class="badge" id="disp"></span>
-  <h1 id="nombre"></h1>
-  <div class="rol" id="rol"></div>
-  <p class="frase" id="frase"></p>
-  <div class="ctas">
-    <a class="btn primary" href="#trabajos">Ver trabajos ↓</a>
-    <a class="btn" id="cvbtn" href="#" download>Descargar CV</a>
-    <a class="btn" id="libtn" href="#" target="_blank" rel="noopener">LinkedIn ↗</a>
+  <div class="hero-grid">
+    <div>
+      <span class="badge" id="disp"></span>
+      <h1 id="nombre"></h1>
+      <div class="rol" id="rol"></div>
+      <p class="frase" id="frase"></p>
+      <div class="ctas">
+        <a class="btn primary" href="#trabajos">Ver trabajos ↓</a>
+        <a class="btn" id="cvbtn" href="#" download>Descargar CV</a>
+        <a class="btn" href="#contacto">Contactar</a>
+      </div>
+      <div class="meta" id="ubi"></div>
+    </div>
+    <div class="bubbles" id="bubbles" aria-label="Mis perfiles"></div>
   </div>
-  <div class="meta" id="ubi"></div>
   <div class="stats" id="stats"></div>
 </header>
+
+<section id="habilidades" style="padding-top:24px"><div class="wrap">
+  <div class="sec-head"><h2>Lo que sé hacer</h2></div>
+  <div class="skills" id="skills"></div>
+</div></section>
 
 <section id="trabajos"><div class="wrap">
   <div class="sec-head">
@@ -140,6 +180,10 @@ footer{text-align:center;font-size:13px;color:var(--muted);padding-bottom:32px}
     <div class="filters" id="filters"></div>
   </div>
   <div class="grid" id="grid"></div>
+</div></section>
+
+<section id="sobre-mi" style="padding-top:0"><div class="wrap">
+  <div class="about"><div class="label">Sobre mí</div><p id="about"></p></div>
 </div></section>
 
 <section id="herramientas" style="padding-top:0"><div class="wrap">
@@ -153,8 +197,8 @@ footer{text-align:center;font-size:13px;color:var(--muted);padding-bottom:32px}
     <p>Busco equipo de marketing, agencia o medio donde aportar desde el primer día. Respondo en menos de 24 h.</p>
     <div class="ctas">
       <a class="btn primary" id="mailbtn" href="#">Escríbeme</a>
-      <a class="btn" id="libtn2" href="#" target="_blank" rel="noopener">LinkedIn ↗</a>
     </div>
+    <div class="ctas" id="redes2" style="margin-top:12px"></div>
   </div>
 </div>
 <footer id="foot"></footer>
@@ -191,7 +235,20 @@ $("frase").textContent = P.frase;
 P.disponible ? $("disp").textContent = P.disponible : $("disp").remove();
 $("ubi").textContent = "📍 " + P.ubicacion;
 $("cvbtn").href = P.cv;
-$("libtn").href = $("libtn2").href = P.linkedin;
+/* Burbujas de perfiles: tamaños y posiciones repartidas */
+const activos = (P.perfiles||[]).filter(r=>r.url);
+const huecos = [[8,6,110],[58,0,92],[0,52,84],[52,40,118],[22,74,76],[70,76,80],[36,26,70]];
+$("bubbles").innerHTML = activos.map((r,i)=>{
+  const [x,y,s] = huecos[i % huecos.length];
+  const ext = r.url.startsWith("mailto:") ? "" : ' target="_blank" rel="noopener"';
+  return `<a class="bubble" href="${esc(r.url)}"${ext} title="${esc(r.nombre)}"
+    style="left:${x}%;top:${y}%;width:${s}px;height:${s}px;font-size:${Math.round(s/3.4)}px;background:${esc(r.color)};animation-delay:-${i*1.3}s">
+    ${esc(r.corto)}<small>${esc(r.nombre)}</small></a>`;
+}).join("");
+$("redes2").innerHTML = activos.filter(r=>!r.url.startsWith("mailto:"))
+  .map(r=>`<a class="btn" href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.nombre)} ↗</a>`).join("");
+$("about").textContent = P.sobreMi || "";
+$("skills").innerHTML = (P.habilidades||[]).map(h=>`<div class="skill"><div class="ic">${esc(h.icono)}</div><h3>${esc(h.titulo)}</h3><p>${esc(h.texto)}</p></div>`).join("");
 $("mailbtn").href = "mailto:" + P.email;
 $("mailbtn").textContent = P.email;
 $("stats").innerHTML = P.cifras.map(c=>`<div class="stat"><b>${esc(c.valor)}</b><span>${esc(c.texto)}</span></div>`).join("");
