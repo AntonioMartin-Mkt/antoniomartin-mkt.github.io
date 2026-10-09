@@ -15,14 +15,18 @@ const PERFIL = {
   email: "antoniomartin.mkt@gmail.com",
   cv: "cv.pdf", // sube tu CV al repositorio con este nombre
 
+  // FOTO DE PERFIL: sube tu foto a la carpeta img con este nombre (vertical, buena luz).
+  foto: "img/foto.jpg",
+
   // BURBUJAS FLOTANTES: pega el enlace de cada perfil. Si "url" está vacío, la burbuja no aparece.
+  // "web" es el dominio de la plataforma: de ahí sale su icono automáticamente.
   perfiles: [
-    { nombre: "LinkedIn",  corto: "in",  color: "#0a66c2", url: "" },
-    { nombre: "InfoJobs",  corto: "IJ",  color: "#167db7", url: "" },
-    { nombre: "GitHub",    corto: "GH",  color: "#24292f", url: "https://github.com/AntonioMartin-Mkt" },
-    { nombre: "Instagram", corto: "IG",  color: "#e1306c", url: "" },
-    { nombre: "TikTok",    corto: "TT",  color: "#111111", url: "" },
-    { nombre: "Email",     corto: "@",   color: "#ff5a36", url: "mailto:antoniomartin.mkt@gmail.com" }
+    { nombre: "LinkedIn",  web: "linkedin.com",    url: "" },
+    { nombre: "InfoJobs",  web: "infojobs.net",    url: "" },
+    { nombre: "GitHub",    web: "github.com",      url: "https://github.com/AntonioMartin-Mkt" },
+    { nombre: "Instagram", web: "instagram.com",   url: "" },
+    { nombre: "TikTok",    web: "tiktok.com",      url: "" },
+    { nombre: "Gmail",     web: "mail.google.com", url: "mailto:antoniomartin.mkt@gmail.com" }
   ],
 
   // SOBRE MÍ: un párrafo que cuenta tu trayectoria (estudios + experiencia).

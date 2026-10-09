@@ -41,11 +41,11 @@ nav .wrap{display:flex;align-items:center;justify-content:space-between;height:6
 @media(max-width:640px){.navlinks .hide-m{display:none}}
 
 /* HERO */
-.hero{padding:72px 0 40px}
+.hero{padding:72px 16px 40px}
 .badge{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;background:var(--soft);color:var(--accent);padding:6px 12px;border-radius:99px}
 .badge::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite}
 @keyframes pulse{50%{opacity:.3}}
-.hero h1{font-size:clamp(40px,8vw,88px);font-weight:800;margin:20px 0 8px}
+.hero h1{font-size:clamp(34px,5vw,58px);font-weight:800;margin:18px 0 8px}
 .hero .rol{font-size:clamp(18px,2.6vw,24px);font-weight:600;color:var(--accent)}
 .hero p.frase{font-size:clamp(17px,2.2vw,21px);color:var(--muted);max-width:640px;margin-top:14px}
 .ctas{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
@@ -109,19 +109,39 @@ dialog::backdrop{background:rgba(0,0,0,.55)}
 footer{text-align:center;font-size:13px;color:var(--muted);padding-bottom:32px}
 
 /* HERO con burbujas */
-.hero{position:relative}
-.hero-grid{display:grid;grid-template-columns:1fr 340px;gap:24px;align-items:center}
-.bubbles{position:relative;height:340px}
-.bubble{position:absolute;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:50%;color:#fff;text-decoration:none;font-family:"Bricolage Grotesque";font-weight:800;box-shadow:0 12px 28px -12px rgba(0,0,0,.45);animation:flotar 6s ease-in-out infinite;transition:transform .2s}
-.bubble small{font:600 11px Inter,sans-serif;opacity:.9;margin-top:2px}
-.bubble:hover{animation-play-state:paused;transform:scale(1.12)}
-@keyframes flotar{0%,100%{translate:0 0}50%{translate:0 -14px}}
+.hero{position:relative;padding-top:48px}
+.hero-grid{display:grid;grid-template-columns:1fr minmax(300px,440px);gap:40px;align-items:center}
+.hero-text{position:relative;z-index:2}
+
+/* Foto */
+.photo-wrap{position:relative;justify-self:end;width:100%;max-width:440px;aspect-ratio:4/5}
+.photo-wrap::before{content:"";position:absolute;inset:6% -4% -4% 6%;border-radius:44% 56% 50% 50%/52% 46% 54% 48%;background:var(--accent);opacity:.9}
+.photo{position:absolute;inset:0;border-radius:46% 54% 52% 48%/50% 44% 56% 50%;overflow:hidden;background:linear-gradient(135deg,#ff9a3c,#ff5a36 55%,#c2410c);display:flex;align-items:center;justify-content:center;flex-direction:column;color:#fff;text-align:center}
+.photo img{width:100%;height:100%;object-fit:cover}
+.photo .ph-ini{font-family:"Bricolage Grotesque";font-weight:800;font-size:96px;line-height:1}
+.photo .ph-txt{font-size:13px;opacity:.85;margin-top:8px}
+
+/* Burbujas */
+.bubble-layer{position:absolute;inset:0;pointer-events:none;z-index:3}
+.bubble{text-decoration:none;position:absolute;left:0;top:0;width:var(--s);height:var(--s);border-radius:50%;pointer-events:auto;cursor:grab;touch-action:none;user-select:none;-webkit-user-drag:none;will-change:transform;
+  background:radial-gradient(circle at 32% 26%,rgba(255,255,255,.95) 0 6%,rgba(255,255,255,.35) 14%,rgba(255,255,255,.08) 38%,rgba(255,255,255,.02) 62%,rgba(255,255,255,.22) 100%);
+  border:1px solid rgba(255,255,255,.65);
+  box-shadow:inset -6px -8px 16px rgba(120,170,255,.22),inset 6px 6px 14px rgba(255,140,200,.18),0 10px 24px -10px rgba(0,0,0,.35);
+  backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center}
+.bubble::after{content:"";position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 200deg,rgba(255,120,200,.18),rgba(120,200,255,.18),rgba(160,255,180,.14),rgba(255,230,120,.16),rgba(255,120,200,.18));mix-blend-mode:screen;pointer-events:none}
+.bubble .ico{width:56%;height:56%;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+.bubble .ico img{width:66%;height:66%;object-fit:contain;pointer-events:none}
+.bubble .ico b{font:800 14px Inter,sans-serif;color:#16161a}
+.bubble.drag{cursor:grabbing}
+.bubble .lbl{position:absolute;top:100%;margin-top:6px;font-size:11px;font-weight:600;white-space:nowrap;background:var(--ink);color:var(--bg);padding:2px 8px;border-radius:99px;opacity:0;transition:opacity .2s;pointer-events:none}
+.bubble:hover .lbl,.bubble.drag .lbl{opacity:1}
+
 @media(max-width:860px){
-  .hero-grid{grid-template-columns:1fr}
-  .bubbles{height:auto;display:flex;flex-wrap:wrap;gap:12px}
-  .bubble{position:static;width:64px!important;height:64px!important;font-size:18px!important}
+  .hero{padding-top:28px}
+  .hero-grid{grid-template-columns:1fr;gap:24px}
+  .photo-wrap{order:-1;justify-self:center;max-width:260px}
+  .photo .ph-ini{font-size:64px}
 }
-@media(prefers-reduced-motion:reduce){.bubble,.badge::before{animation:none}}
 
 /* HABILIDADES */
 .skills{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
@@ -151,8 +171,9 @@ footer{text-align:center;font-size:13px;color:var(--muted);padding-bottom:32px}
 </div></nav>
 
 <header class="hero wrap">
+  <div class="bubble-layer" id="bubbles" aria-label="Mis perfiles"></div>
   <div class="hero-grid">
-    <div>
+    <div class="hero-text">
       <span class="badge" id="disp"></span>
       <h1 id="nombre"></h1>
       <div class="rol" id="rol"></div>
@@ -164,7 +185,7 @@ footer{text-align:center;font-size:13px;color:var(--muted);padding-bottom:32px}
       </div>
       <div class="meta" id="ubi"></div>
     </div>
-    <div class="bubbles" id="bubbles" aria-label="Mis perfiles"></div>
+    <div class="photo-wrap" id="photoWrap"><div class="photo" id="photo"></div></div>
   </div>
   <div class="stats" id="stats"></div>
 </header>
@@ -211,7 +232,7 @@ footer{text-align:center;font-size:13px;color:var(--muted);padding-bottom:32px}
   <div class="m-body" id="m-body"></div>
 </dialog>
 
-<script src="proyectos.js?v=20261009-2"></script>
+<script src="proyectos.js?v=20261009-3"></script>
 <script>
 const COLORES = {
   "Diseño":["#ff5a36","#ff9a3c"],
@@ -235,16 +256,124 @@ $("frase").textContent = P.frase;
 P.disponible ? $("disp").textContent = P.disponible : $("disp").remove();
 $("ubi").textContent = "📍 " + P.ubicacion;
 $("cvbtn").href = P.cv;
-/* Burbujas de perfiles: tamaños y posiciones repartidas */
+/* Foto de perfil (si no existe, se ve un marcador con tus iniciales) */
+const ph = $("photo");
+const marcador = () => { ph.innerHTML = `<div class="ph-ini">${esc(ini)}</div><div class="ph-txt">Sube tu foto a<br>${esc(P.foto||"img/foto.jpg")}</div>`; };
+if (P.foto) {
+  const im = new Image(); im.alt = P.nombre; im.src = P.foto;
+  im.onload = () => { ph.innerHTML = ""; ph.appendChild(im); };
+  im.onerror = marcador; marcador();
+} else marcador();
+
+/* Burbujas de perfiles: flotan, se pueden arrastrar y lanzar */
 const activos = (P.perfiles||[]).filter(r=>r.url);
-const huecos = [[8,6,110],[58,0,92],[0,52,84],[52,40,118],[22,74,76],[70,76,80],[36,26,70]];
-$("bubbles").innerHTML = activos.map((r,i)=>{
-  const [x,y,s] = huecos[i % huecos.length];
-  const ext = r.url.startsWith("mailto:") ? "" : ' target="_blank" rel="noopener"';
-  return `<a class="bubble" href="${esc(r.url)}"${ext} title="${esc(r.nombre)}"
-    style="left:${x}%;top:${y}%;width:${s}px;height:${s}px;font-size:${Math.round(s/3.4)}px;background:${esc(r.color)};animation-delay:-${i*1.3}s">
-    ${esc(r.corto)}<small>${esc(r.nombre)}</small></a>`;
-}).join("");
+(function burbujas(){
+  const capa = $("bubbles"), hero = capa.parentElement, foto = $("photoWrap");
+  const quieto = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const B = activos.map((r,i)=>{
+    const a = document.createElement("a");
+    a.className = "bubble"; a.href = r.url; a.title = r.nombre; a.draggable = false;
+    if (!r.url.startsWith("mailto:")) { a.target = "_blank"; a.rel = "noopener"; }
+    a.innerHTML = `<span class="ico"><img alt="" src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(r.web||"")}&sz=128"></span><span class="lbl">${esc(r.nombre)}</span>`;
+    a.querySelector("img").onerror = e => { e.target.replaceWith(Object.assign(document.createElement("b"),{textContent:r.nombre.slice(0,2)})); };
+    capa.appendChild(a);
+    return {el:a, i, x:0, y:0, vx:0, vy:0, hx:0, hy:0, fase:Math.random()*6.28, drag:false, movido:false};
+  });
+  if (!B.length) return;
+
+  let W=0, H=0, S=60;
+  function medir(primera){
+    const oldW=W||1, oldH=H||1;
+    W = hero.clientWidth; H = hero.clientHeight;
+    S = W < 600 ? 50 : 60;
+    capa.style.setProperty("--s", S+"px");
+    B.forEach(b=>b.el.style.setProperty("--s", S+"px"));
+    const hr = hero.getBoundingClientRect(), fr = foto.getBoundingClientRect();
+    const cx = fr.left - hr.left + fr.width/2, cy = fr.top - hr.top + fr.height/2;
+    const R = Math.max(fr.width, fr.height)/2 + S*0.35;
+    B.forEach((b,k)=>{
+      if (primera) {
+        const ang = -Math.PI*0.95 + (k/(B.length))*Math.PI*1.9;   // repartidas alrededor de la foto
+        b.hx = cx + Math.cos(ang)*R*0.92; b.hy = cy + Math.sin(ang)*R*0.8;
+        b.x = b.hx; b.y = b.hy + 40;
+      } else {
+        b.hx *= W/oldW; b.hy *= H/oldH; b.x *= W/oldW; b.y *= H/oldH;
+      }
+    });
+  }
+  medir(true);
+  addEventListener("resize", ()=>medir(false));
+
+  /* Arrastrar */
+  let act=null, ox=0, oy=0, ult=[];
+  B.forEach(b=>{
+    b.el.addEventListener("pointerdown", e=>{
+      act=b; b.drag=true; b.movido=false; b.el.classList.add("drag");
+      b.el.setPointerCapture(e.pointerId);
+      const hr = hero.getBoundingClientRect();
+      ox = e.clientX - hr.left - b.x; oy = e.clientY - hr.top - b.y;
+      ult=[{x:e.clientX,y:e.clientY,t:performance.now()}];
+    });
+    b.el.addEventListener("pointermove", e=>{
+      if (act!==b) return;
+      const hr = hero.getBoundingClientRect();
+      const nx = e.clientX - hr.left - ox, ny = e.clientY - hr.top - oy;
+      if (Math.hypot(nx-b.x, ny-b.y) > 2) b.movido = true;
+      b.x = nx; b.y = ny;
+      ult.push({x:e.clientX,y:e.clientY,t:performance.now()}); if (ult.length>5) ult.shift();
+    });
+    const soltar = ()=>{
+      if (act!==b) return;
+      act=null; b.drag=false; b.el.classList.remove("drag");
+      const a=ult[0], z=ult[ult.length-1], dt=Math.max(16, z.t-a.t);
+      b.vx = (z.x-a.x)/dt*16; b.vy = (z.y-a.y)/dt*16;           // impulso al lanzarla
+      b.hx = b.x; b.hy = b.y;                                     // se queda flotando donde la sueltas
+    };
+    b.el.addEventListener("pointerup", soltar);
+    b.el.addEventListener("pointercancel", soltar);
+    b.el.addEventListener("click", e=>{ if (b.movido) { e.preventDefault(); b.movido=false; } });
+  });
+
+  /* Física: flotación suave + rebote + choques entre burbujas */
+  let t0 = performance.now();
+  function paso(t){
+    const dt = Math.min(2, (t-t0)/16.67); t0 = t;
+    const tt = t/1000;
+    B.forEach(b=>{
+      if (b.drag) return;
+      // muelle muy suave hacia su sitio + deriva tipo burbuja (sube y baja, se mece)
+      const wx = quieto ? 0 : Math.sin(tt*0.7 + b.fase)*14 + Math.sin(tt*1.9 + b.fase*2)*4;
+      const wy = quieto ? 0 : Math.cos(tt*0.55 + b.fase)*18 + Math.sin(tt*1.3 + b.fase)*5;
+      b.vx += ((b.hx + wx) - b.x) * 0.0035 * dt;
+      b.vy += ((b.hy + wy) - b.y) * 0.0035 * dt;
+      b.vx *= Math.pow(0.965, dt); b.vy *= Math.pow(0.965, dt);
+      b.x += b.vx*dt; b.y += b.vy*dt;
+      // rebote en los bordes de la cabecera
+      const max = W - S, maxY = H - S;
+      if (b.x < 0)   { b.x = 0;   b.vx = Math.abs(b.vx)*0.6; b.hx = Math.max(b.hx, S*0.2); }
+      if (b.x > max) { b.x = max; b.vx = -Math.abs(b.vx)*0.6; b.hx = Math.min(b.hx, max - S*0.2); }
+      if (b.y < 0)   { b.y = 0;   b.vy = Math.abs(b.vy)*0.6; b.hy = Math.max(b.hy, S*0.2); }
+      if (b.y > maxY){ b.y = maxY; b.vy = -Math.abs(b.vy)*0.6; b.hy = Math.min(b.hy, maxY - S*0.2); }
+    });
+    // choques suaves entre burbujas
+    for (let i=0;i<B.length;i++) for (let j=i+1;j<B.length;j++){
+      const a=B[i], c=B[j], dx=c.x-a.x, dy=c.y-a.y, d=Math.hypot(dx,dy)||1, min=S*1.02;
+      if (d < min){
+        const p=(min-d)/2, nx=dx/d, ny=dy/d;
+        if(!a.drag){a.x-=nx*p; a.vx-=nx*p*0.15;} if(!c.drag){c.x+=nx*p; c.vx+=nx*p*0.15;}
+        if(!a.drag){a.y-=ny*p; a.vy-=ny*p*0.15;} if(!c.drag){c.y+=ny*p; c.vy+=ny*p*0.15;}
+      }
+    }
+    B.forEach(b=>{
+      const rot = quieto ? 0 : Math.sin(tt*0.8 + b.fase)*6;
+      const esc2 = b.drag ? 1.12 : 1 + Math.sin(tt*1.6 + b.fase)*0.025;   // "respira" como una burbuja
+      b.el.style.transform = `translate(${b.x}px,${b.y}px) rotate(${rot}deg) scale(${esc2})`;
+    });
+    requestAnimationFrame(paso);
+  }
+  requestAnimationFrame(paso);
+})();
+
 $("redes2").innerHTML = activos.filter(r=>!r.url.startsWith("mailto:"))
   .map(r=>`<a class="btn" href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.nombre)} ↗</a>`).join("");
 $("about").textContent = P.sobreMi || "";
