@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Antonio José Martín · Portfolio</title>
+<meta name="description" content="Portfolio de marketing digital y publicidad: diseño, web, email marketing, automatizaciones y redes sociales.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f3ee; --surface:#ffffff; --ink:#16161a; --muted:#5d5c63; --line:#e4dfd6;
+  --accent:#ff5a36; --accent-ink:#ffffff; --soft:#ffe9e2;
+  --r:18px; --max:1120px;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#121214; --surface:#1c1c20; --ink:#f3f1ec; --muted:#a3a1a8; --line:#2c2c32;
+    --accent:#ff6b4a; --soft:#2f1e19;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121214; --surface:#1c1c20; --ink:#f3f1ec; --muted:#a3a1a8; --line:#2c2c32;
+  --accent:#ff6b4a; --soft:#2f1e19;
+}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.6 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 16px}
+h1,h2,h3{font-family:"Bricolage Grotesque",Inter,sans-serif;line-height:1.05;letter-spacing:-.02em}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:60px;gap:12px}
+.logo{font-family:"Bricolage Grotesque";font-weight:800;font-size:20px;text-decoration:none}
+.logo span{color:var(--accent)}
+.navlinks{display:flex;gap:20px;font-size:14px;font-weight:500}
+.navlinks a{text-decoration:none;color:var(--muted)}
+.navlinks a:hover{color:var(--ink)}
+@media(max-width:640px){.navlinks .hide-m{display:none}}
+
+/* HERO */
+.hero{padding:72px 0 40px}
+.badge{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;background:var(--soft);color:var(--accent);padding:6px 12px;border-radius:99px}
+.badge::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite}
+@keyframes pulse{50%{opacity:.3}}
+.hero h1{font-size:clamp(40px,8vw,88px);font-weight:800;margin:20px 0 8px}
+.hero .rol{font-size:clamp(18px,2.6vw,24px);font-weight:600;color:var(--accent)}
+.hero p.frase{font-size:clamp(17px,2.2vw,21px);color:var(--muted);max-width:640px;margin-top:14px}
+.ctas{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:99px;font-weight:600;font-size:15px;text-decoration:none;border:1.5px solid var(--ink);transition:transform .15s}
+.btn:hover{transform:translateY(-2px)}
+.btn.primary{background:var(--ink);color:var(--bg)}
+.meta{margin-top:18px;font-size:14px;color:var(--muted)}
+
+/* 30 SEGUNDOS */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:32px 0 8px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px}
+.stat b{display:block;font-family:"Bricolage Grotesque";font-size:clamp(28px,5vw,44px);font-weight:800;color:var(--accent);line-height:1}
+.stat span{font-size:14px;color:var(--muted)}
+@media(max-width:560px){.stats{grid-template-columns:1fr}}
+.tools{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.chip{font-size:13px;font-weight:500;padding:6px 12px;border:1px solid var(--line);border-radius:99px;background:var(--surface)}
+
+/* PROYECTOS */
+section{padding:56px 0}
+.sec-head{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:16px;margin-bottom:24px}
+.sec-head h2{font-size:clamp(30px,5vw,48px);font-weight:800}
+.filters{display:flex;flex-wrap:wrap;gap:8px}
+.filters button{font:500 14px Inter,sans-serif;padding:8px 14px;border-radius:99px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.filters button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
+@media(max-width:360px){.grid{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;cursor:pointer;text-align:left;font:inherit;color:inherit;padding:0;display:flex;flex-direction:column;transition:transform .2s,box-shadow .2s}
+.card:hover{transform:translateY(-4px);box-shadow:0 14px 30px -18px rgba(0,0,0,.35)}
+.card.dest{grid-column:span 2}
+@media(max-width:700px){.card.dest{grid-column:auto}}
+.cover{aspect-ratio:16/9;position:relative;overflow:hidden;display:flex;align-items:flex-end;padding:16px}
+.card.dest .cover{aspect-ratio:21/9}
+.cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cover .gen{font-family:"Bricolage Grotesque";font-weight:800;font-size:clamp(26px,4vw,40px);color:#fff;position:relative;line-height:1;opacity:.95}
+.tag{position:absolute;top:12px;left:12px;font-size:12px;font-weight:600;background:rgba(255,255,255,.92);color:#16161a;padding:4px 10px;border-radius:99px}
+.tag.ctx{left:auto;right:12px;background:rgba(22,22,26,.8);color:#fff}
+.body{padding:18px 18px 20px;display:flex;flex-direction:column;gap:8px;flex:1}
+.body h3{font-size:21px;font-weight:800}
+.body p{color:var(--muted);font-size:15px}
+.body .res{margin-top:auto;padding-top:8px;font-size:14px;font-weight:600;color:var(--accent)}
+.empty{color:var(--muted);padding:24px 0}
+
+/* MODAL */
+dialog{border:none;border-radius:var(--r);padding:0;max-width:720px;width:calc(100% - 32px);background:var(--surface);color:var(--ink)}
+dialog::backdrop{background:rgba(0,0,0,.55)}
+.m-cover{aspect-ratio:16/7}
+.m-body{padding:24px}
+.m-body h3{font-size:30px;margin:6px 0 18px}
+.m-body dl{display:grid;gap:16px}
+.m-body dt{font-size:12px;text-transform:uppercase;letter-spacing:.08em;font-weight:600;color:var(--accent)}
+.m-body dd{margin:4px 0 0}
+.m-foot{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-top:24px}
+.close{position:absolute;top:12px;right:12px;width:38px;height:38px;border-radius:50%;border:none;background:rgba(0,0,0,.6);color:#fff;font-size:20px;cursor:pointer}
+
+/* CONTACTO */
+.contact{background:var(--ink);color:var(--bg);border-radius:28px;padding:clamp(32px,6vw,64px);margin:24px 0 56px}
+.contact h2{font-size:clamp(32px,6vw,60px);font-weight:800}
+.contact p{opacity:.75;margin:12px 0 24px;max-width:520px}
+.contact .btn{border-color:var(--bg)}
+.contact .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+footer{text-align:center;font-size:13px;color:var(--muted);padding-bottom:32px}
+</style>
+</head>
+<body>
+
+<nav><div class="wrap">
+  <a class="logo" href="#" id="logo"></a>
+  <div class="navlinks">
+    <a href="#trabajos">Trabajos</a>
+    <a href="#herramientas" class="hide-m">Herramientas</a>
+    <a href="#contacto">Contacto</a>
+  </div>
+</div></nav>
+
+<header class="hero wrap">
+  <span class="badge" id="disp"></span>
+  <h1 id="nombre"></h1>
+  <div class="rol" id="rol"></div>
+  <p class="frase" id="frase"></p>
+  <div class="ctas">
+    <a class="btn primary" href="#trabajos">Ver trabajos ↓</a>
+    <a class="btn" id="cvbtn" href="#" download>Descargar CV</a>
+    <a class="btn" id="libtn" href="#" target="_blank" rel="noopener">LinkedIn ↗</a>
+  </div>
+  <div class="meta" id="ubi"></div>
+  <div class="stats" id="stats"></div>
+</header>
+
+<section id="trabajos"><div class="wrap">
+  <div class="sec-head">
+    <h2>Trabajos</h2>
+    <div class="filters" id="filters"></div>
+  </div>
+  <div class="grid" id="grid"></div>
+</div></section>
+
+<section id="herramientas" style="padding-top:0"><div class="wrap">
+  <div class="sec-head"><h2>Herramientas</h2></div>
+  <div class="tools" id="tools"></div>
+</div></section>
+
+<div class="wrap">
+  <div class="contact" id="contacto">
+    <h2>¿Hablamos?</h2>
+    <p>Busco equipo de marketing, agencia o medio donde aportar desde el primer día. Respondo en menos de 24 h.</p>
+    <div class="ctas">
+      <a class="btn primary" id="mailbtn" href="#">Escríbeme</a>
+      <a class="btn" id="libtn2" href="#" target="_blank" rel="noopener">LinkedIn ↗</a>
+    </div>
+  </div>
+</div>
+<footer id="foot"></footer>
+
+<dialog id="modal">
+  <div style="position:relative">
+    <div class="cover m-cover" id="m-cover"></div>
+    <button class="close" aria-label="Cerrar" onclick="modal.close()">×</button>
+  </div>
+  <div class="m-body" id="m-body"></div>
+</dialog>
+
+<script src="proyectos.js"></script>
+<script>
+const COLORES = {
+  "Diseño":["#ff5a36","#ff9a3c"],
+  "Presentaciones":["#7b5cff","#c25cff"],
+  "Web":["#0f8b8d","#1fc6a8"],
+  "Email marketing":["#ffb400","#ff7a00"],
+  "Automatización":["#2563eb","#38bdf8"],
+  "Redes sociales":["#e1306c","#ff7a59"],
+  "Estrategia":["#16161a","#4b4b57"]
+};
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const P = PERFIL;
+
+/* Cabecera */
+const ini = P.nombre.split(" ").map(w=>w[0]).slice(0,2).join("");
+$("logo").innerHTML = esc(ini) + "<span>.</span>";
+$("nombre").textContent = P.nombre;
+$("rol").textContent = P.rol;
+$("frase").textContent = P.frase;
+P.disponible ? $("disp").textContent = P.disponible : $("disp").remove();
+$("ubi").textContent = "📍 " + P.ubicacion;
+$("cvbtn").href = P.cv;
+$("libtn").href = $("libtn2").href = P.linkedin;
+$("mailbtn").href = "mailto:" + P.email;
+$("mailbtn").textContent = P.email;
+$("stats").innerHTML = P.cifras.map(c=>`<div class="stat"><b>${esc(c.valor)}</b><span>${esc(c.texto)}</span></div>`).join("");
+$("tools").innerHTML = P.herramientas.map(h=>`<span class="chip">${esc(h)}</span>`).join("");
+$("foot").textContent = `© ${new Date().getFullYear()} ${P.nombre} · Actualizado con cada proyecto`;
+
+/* Proyectos: destacados primero, luego más recientes */
+const lista = [...PROYECTOS].sort((a,b)=>(b.destacado?1:0)-(a.destacado?1:0) || (b.fecha||"").localeCompare(a.fecha||""));
+
+function portada(p){
+  const [c1,c2] = COLORES[p.categoria] || ["#16161a","#55555f"];
+  const bg = `background:linear-gradient(135deg,${c1},${c2})`;
+  const inner = p.imagen ? `<img src="${esc(p.imagen)}" alt="" loading="lazy">` : `<span class="gen">${esc(p.categoria)}</span>`;
+  return {bg, inner};
+}
+
+function pintar(filtro){
+  const items = filtro==="Todos" ? lista : lista.filter(p=>p.categoria===filtro);
+  $("grid").innerHTML = items.length ? items.map(p=>{
+    const {bg,inner} = portada(p);
+    return `<button class="card ${p.destacado && filtro==="Todos" ? "dest":""}" data-i="${lista.indexOf(p)}">
+      <div class="cover" style="${bg}">${inner}
+        <span class="tag">${esc(p.categoria)}</span><span class="tag ctx">${esc(p.contexto)}</span></div>
+      <div class="body"><h3>${esc(p.titulo)}</h3><p>${esc(p.resumen)}</p>
+        ${p.resultado ? `<div class="res">→ ${esc(p.resultado)}</div>`:""}</div>
+    </button>`;
+  }).join("") : `<p class="empty">Pronto habrá trabajos aquí.</p>`;
+}
+
+const cats = ["Todos", ...new Set(lista.map(p=>p.categoria))];
+$("filters").innerHTML = cats.map((c,i)=>`<button class="${i?"":"on"}" data-c="${esc(c)}">${esc(c)}</button>`).join("");
+$("filters").onclick = e=>{
+  const b = e.target.closest("button"); if(!b) return;
+  [...$("filters").children].forEach(x=>x.classList.toggle("on",x===b));
+  pintar(b.dataset.c);
+};
+pintar("Todos");
+
+/* Detalle */
+const modal = $("modal");
+$("grid").onclick = e=>{
+  const c = e.target.closest(".card"); if(!c) return;
+  const p = lista[c.dataset.i]; const {bg,inner} = portada(p);
+  $("m-cover").setAttribute("style",bg); $("m-cover").innerHTML = inner;
+  const fila = (t,v)=> v ? `<div><dt>${t}</dt><dd>${esc(v)}</dd></div>` : "";
+  $("m-body").innerHTML = `<span class="badge" style="animation:none">${esc(p.categoria)} · ${esc(p.contexto)}</span>
+    <h3>${esc(p.titulo)}</h3>
+    <dl>${fila("El reto",p.reto)}${fila("Lo que hice",p.solucion)}${fila("Resultado",p.resultado)}</dl>
+    <div class="m-foot"><div class="tools">${(p.herramientas||[]).map(h=>`<span class="chip">${esc(h)}</span>`).join("")}</div>
+    ${p.enlace ? `<a class="btn primary" href="${esc(p.enlace)}" target="_blank" rel="noopener">Ver trabajo ↗</a>`:""}</div>`;
+  modal.showModal();
+};
+modal.addEventListener("click", e=>{ if(e.target===modal) modal.close(); });
+</script>
+</body>
+</html>
