@@ -20,18 +20,26 @@
   --f-display:"Bricolage Grotesque","Arial Black",system-ui,sans-serif;
   --f-body:"DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
   --r:16px; --max:1140px;
+  /* Movimiento: personalidad "playful" con una curva de firma y 3 duraciones */
   --ease-out:cubic-bezier(0.23,1,0.32,1);
+  --ease-back:cubic-bezier(0.175,0.885,0.32,1.275);
+  --t-quick:160ms; --t-std:280ms; --t-slow:520ms;
 }
+::selection{background:var(--m2);color:var(--ink)}
+html{caret-color:var(--m5);scrollbar-color:var(--ink) var(--soft)}
+a{text-underline-offset:.2em}
 *{box-sizing:border-box;margin:0}
 html{scroll-behavior:smooth;scroll-padding-top:70px}
-body{background:var(--bg);color:var(--ink);font:400 17px/1.6 var(--f-body);-webkit-font-smoothing:antialiased;padding-bottom:env(safe-area-inset-bottom,0px)}
+body{overflow-x:clip;background:var(--bg);color:var(--ink);font:400 17px/1.6 var(--f-body);-webkit-font-smoothing:antialiased;padding-bottom:env(safe-area-inset-bottom,0px)}
 img{max-width:100%}
 a{color:inherit}
 [hidden]{display:none!important}
 .wrap{max-width:var(--max);margin:0 auto;padding-inline:20px}
 h1,h2,h3{font-family:var(--f-display);line-height:1.04;letter-spacing:-.025em;text-wrap:balance}
 :focus-visible{outline:3px solid var(--m4);outline-offset:3px;border-radius:6px}
-.eyebrow{font:700 12px/1 var(--f-body);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:10px}
+.sub{font:700 13px/1 var(--f-body);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.ttl{display:flex;align-items:center;gap:14px}
+.ttl .dots i{width:10px;height:10px}
 .dots{display:inline-flex;gap:4px}
 .dots i{width:8px;height:8px;border-radius:50%;display:block}
 .dots i:nth-child(1){background:var(--m1)}.dots i:nth-child(2){background:var(--m2)}.dots i:nth-child(3){background:var(--m3)}.dots i:nth-child(4){background:var(--m4)}.dots i:nth-child(5){background:var(--m5)}
@@ -49,10 +57,11 @@ nav .wrap{display:flex;align-items:center;justify-content:space-between;height:6
 .hero-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,400px);gap:48px;align-items:center}
 .hero-text{position:relative;z-index:2;min-width:0;display:flex;flex-direction:column;gap:16px}
 .badge{align-self:flex-start;display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:700;background:#E6FBF8;color:#0E7A70;padding:7px 14px;border-radius:99px}
-.badge::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--m3);animation:pulse 2s infinite}
+.badge::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--m3)}
 @keyframes pulse{50%{opacity:.3}}
 .hero h1{font-size:clamp(42px,6.6vw,82px);font-weight:800}
-.hero h1 .ul{background:linear-gradient(90deg,var(--m1),var(--m2),var(--m3),var(--m4),var(--m5)) left bottom/100% .14em no-repeat;padding-bottom:.06em}
+.hero h1 .ul{background:linear-gradient(90deg,var(--m1),var(--m2),var(--m3),var(--m4),var(--m5)) left bottom/100% .14em no-repeat;padding-bottom:.06em;animation:subraya 700ms var(--ease-out) 420ms backwards}
+@keyframes subraya{from{background-size:0% .14em}}
 .rol{font-size:clamp(17px,2.2vw,21px);font-weight:700;display:flex;flex-wrap:wrap;gap:6px 8px}
 .rol span{padding:3px 12px;border-radius:99px;color:#fff}
 .rol span:nth-child(5n+1){background:var(--m1)}.rol span:nth-child(5n+2){background:var(--m4)}.rol span:nth-child(5n+3){background:var(--m5)}.rol span:nth-child(5n+4){background:var(--m3)}.rol span:nth-child(5n){background:var(--m2);color:var(--ink)}
@@ -61,11 +70,17 @@ nav .wrap{display:flex;align-items:center;justify-content:space-between;height:6
 .btn{display:inline-flex;align-items:center;gap:8px;padding:13px 22px;border-radius:99px;font:700 15px var(--f-body);text-decoration:none;border:2px solid var(--ink);background:#fff;color:var(--ink);cursor:pointer;transition:transform 160ms var(--ease-out),box-shadow 200ms ease,background-color 200ms ease;-webkit-tap-highlight-color:transparent}
 .btn:active{transform:scale(.97)}
 .btn.primary{background:var(--ink);color:#fff}
-.meta{font-size:15px;color:var(--muted)}
+.btn.ok{background:var(--m3);border-color:var(--m3);color:var(--ink);animation:pop var(--t-std) var(--ease-back)}
+@keyframes pop{40%{transform:scale(1.06)}}
+.meta{font-size:15px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.meta svg{width:16px;height:16px;flex:none;color:var(--m1)}
 
 /* Foto */
 .photo-wrap{position:relative;justify-self:end;width:100%;max-width:400px;aspect-ratio:4/5}
-.photo-wrap .blob{position:absolute;border-radius:50%}
+.photo-wrap .blob{position:absolute;border-radius:50%;animation:salta var(--t-slow) var(--ease-back) backwards,flota 7s ease-in-out 1.2s infinite alternate}
+.photo-wrap .b1{animation-delay:380ms,1.2s}.photo-wrap .b2{animation-delay:460ms,1.6s}.photo-wrap .b3{animation-delay:540ms,2s}
+@keyframes salta{from{transform:scale(0)}}
+@keyframes flota{to{translate:0 -10px}}
 .photo-wrap .b1{width:46%;aspect-ratio:1;background:var(--m2);top:-5%;right:-6%}
 .photo-wrap .b2{width:34%;aspect-ratio:1;background:var(--m3);bottom:-4%;left:-7%}
 .photo-wrap .b3{width:18%;aspect-ratio:1;background:var(--m1);bottom:12%;right:-5%}
@@ -114,18 +129,18 @@ section{padding-block:72px}
 .filters button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
 
 /* Tarjetas de proyecto: cada una con su paleta (--c1, --c2, --c3) */
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));gap:22px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));grid-auto-flow:dense;gap:22px}
 .card{background:#fff;border:2px solid var(--ink);border-radius:var(--r);overflow:hidden;cursor:pointer;text-align:left;font:inherit;color:inherit;padding:0;display:flex;flex-direction:column;box-shadow:6px 6px 0 var(--c1);transition:transform 250ms var(--ease-out),box-shadow 250ms var(--ease-out);animation:entra 400ms var(--ease-out) backwards;animation-delay:calc(var(--i,0)*60ms)}
 .card:active{transform:scale(.985)}
 .card.dest{grid-column:span 2}
 @media(max-width:760px){.card.dest{grid-column:auto}}
 .cover{aspect-ratio:16/9;max-width:100%;position:relative;overflow:hidden;background:var(--c1);color:var(--t1);display:flex;align-items:flex-end;padding:20px;border-bottom:2px solid var(--ink)}
 .card.dest .cover{aspect-ratio:21/9}
-.cover::before{content:"";position:absolute;width:62%;aspect-ratio:1;border-radius:50%;background:var(--c2);right:-14%;top:-30%}
+.cover::before{content:"";position:absolute;width:62%;aspect-ratio:1;border-radius:50%;background:var(--c2);right:-14%;top:-30%;transition:transform var(--t-slow) var(--ease-out)}
 .cover::after{content:"";position:absolute;left:0;right:0;bottom:0;height:18%;background:var(--c3)}
 .cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
 .cover .gen{position:relative;z-index:1;font:800 clamp(26px,3.8vw,42px)/.95 var(--f-display);letter-spacing:-.03em;max-width:70%;margin-bottom:12%}
-.tags{position:absolute;top:14px;left:14px;right:14px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;z-index:2}
+.tags{position:absolute;top:14px;right:14px;display:flex;gap:8px;z-index:2}
 .tag{font-size:12px;font-weight:700;background:#fff;color:var(--ink);padding:5px 11px;border-radius:99px;border:1.5px solid var(--ink)}
 .tag.ctx{background:var(--ink);color:#fff}
 .card .body{padding:20px 20px 22px;display:flex;flex-direction:column;gap:8px;flex:1;min-width:0}
@@ -198,13 +213,15 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;b
   .btn:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--m2)}
   .btn.primary:hover{box-shadow:4px 4px 0 var(--m1)}
   .card:hover{transform:translate(-3px,-3px);box-shadow:10px 10px 0 var(--c1)}
+  .card:hover .cover::before{transform:translate(-6%,8%) scale(1.06)}
   .skill:hover{border-color:var(--k);transform:translateY(-3px)}
   .filters button:hover{border-color:var(--ink)}
 }
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   .hero-text>*,.photo-wrap,.card{animation-name:funde}
-  .badge::before{animation:none}
+  .badge::before,.photo-wrap .blob,.hero h1 .ul{animation:none}
+  .cover::before{transition:none}
   .btn,.card,.skill,dialog{transform:none!important}
 }
 </style>
@@ -231,7 +248,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;b
       <p class="frase" id="frase"></p>
       <div class="ctas">
         <a class="btn primary" href="#trabajos">Ver trabajos ↓</a>
-        <a class="btn" id="cvbtn" href="#" download>Descargar CV</a>
+        <a class="btn" id="cvbtn" href="#" download hidden>Descargar CV</a>
         <a class="btn" href="#contacto">Contactar</a>
       </div>
       <div class="meta" id="ubi"></div>
@@ -245,13 +262,13 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;b
 </header>
 
 <section id="habilidades"><div class="wrap">
-  <div class="sec-head"><div><span class="eyebrow"><span class="dots"><i></i><i></i><i></i><i></i><i></i></span>Habilidades</span><h2>Lo que sé hacer</h2></div></div>
+  <div class="sec-head"><div><h2 class="ttl">Lo que sé hacer <span class="dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span></h2></div></div>
   <div class="skills" id="skills"></div>
 </div></section>
 
 <section id="trabajos" style="padding-top:0"><div class="wrap">
   <div class="sec-head">
-    <div><span class="eyebrow"><span class="dots"><i></i><i></i><i></i><i></i><i></i></span>Reto · solución · resultado</span><h2>Trabajos</h2></div>
+    <div><h2>Trabajos</h2><p class="frase" style="font-size:17px">Cada caso: el reto, lo que hice y el resultado. Pulsa una tarjeta para verlo entero.</p></div>
     <div class="filters" id="filters"></div>
   </div>
   <div class="grid" id="grid"></div>
@@ -259,10 +276,10 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;b
 
 <section id="sobre-mi" style="padding-top:0"><div class="wrap">
   <div class="about">
-    <div class="col"><span class="eyebrow"><span class="dots"><i></i><i></i><i></i><i></i><i></i></span>Trayectoria</span><h2>Sobre mí</h2></div>
+    <div class="col"><h2>Sobre mí</h2></div>
     <div class="col">
       <p id="about"></p>
-      <span class="eyebrow" style="margin-top:16px">Herramientas</span>
+      <h3 class="sub" style="margin-top:18px">Herramientas</h3>
       <div class="chips" id="tools"></div>
     </div>
   </div>
@@ -275,6 +292,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;b
     <div class="mail" id="mailtxt"></div>
     <div class="ctas">
       <a class="btn primary" id="mailbtn" href="#">Escríbeme</a>
+      <button class="btn" id="copybtn" type="button">Copiar email</button>
       <span class="ctas" id="redes2" style="margin:0"></span>
     </div>
   </div>
@@ -289,155 +307,8 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;b
   <div class="m-body" id="m-body"></div>
 </dialog>
 
-<script>
-/* =========================================================
-   ESTE ES EL ÚNICO BLOQUE QUE TIENES QUE TOCAR.
-   - PERFIL: tus datos (se edita una vez).
-   - PROYECTOS: añade un bloque { ... } por cada trabajo nuevo.
-   Copia un proyecto, pégalo arriba del todo y cambia los textos.
-   ========================================================= */
-
-const PERFIL = {
-  nombre: "Antonio José Martín",
-  rol: "Marketing digital · Contenido · IA", // separa con " · " y cada parte sale en un color
-  // Tu propuesta de valor en UNA frase: qué haces + para quién + qué consigues.
-  frase: "Creo contenido, webs y automatizaciones con IA que hacen crecer marcas y medios digitales.",
-  ubicacion: "San Fernando, Cádiz",
-  disponible: "Abierto a prácticas y primer empleo", // o "" para ocultarlo
-  email: "antoniomartin.mkt@gmail.com",
-  cv: "cv.pdf", // sube tu CV al repositorio con este nombre
-
-  // FOTO DE PERFIL: sube tu foto a la carpeta img con este nombre (vertical, buena luz).
-  foto: "img/foto.jpg",
-
-  // BURBUJAS FLOTANTES: pega el enlace de cada perfil. Si "url" está vacío, la burbuja no aparece.
-  // "web" es el dominio de la plataforma: de ahí sale su icono automáticamente.
-  perfiles: [
-    { nombre: "LinkedIn",  web: "linkedin.com",    url: "" },
-    { nombre: "InfoJobs",  web: "infojobs.net",    url: "" },
-    { nombre: "GitHub",    web: "github.com",      url: "https://github.com/AntonioMartin-Mkt" },
-    { nombre: "Instagram", web: "instagram.com",   url: "" },
-    { nombre: "TikTok",    web: "tiktok.com",      url: "" },
-    { nombre: "Gmail",     web: "mail.google.com", url: "mailto:antoniomartin.mkt@gmail.com" }
-  ],
-
-  // SOBRE MÍ: un párrafo que cuenta tu trayectoria (estudios + experiencia).
-  sobreMi: "Soy Antonio, estudiante de Marketing y Publicidad (Grado Superior) en San Fernando, Cádiz. Vengo del mundo comercial: tengo el Grado Medio en Actividades Comerciales y he trabajado de camarero en tres bares, donde aprendí lo que ninguna asignatura enseña: entender al cliente, trabajar bajo presión y en equipo. Durante tres meses de Erasmus en Italia creé publicaciones para redes sociales y trabajé como modelo, así que conozco la marca desde los dos lados de la cámara. Hoy gestiono el marketing digital de un medio de noticias en prácticas y estoy centrado en lo que viene: integrar la IA y las automatizaciones en el día a día del marketing.",
-
-  // LO QUE SÉ HACER: lo primero que verá el reclutador después de tu nombre.
-  habilidades: [
-    { icono: "📱", titulo: "Gestión de redes sociales", texto: "Planificación, calendario editorial, publicación y análisis de métricas." },
-    { icono: "✍️", titulo: "Creación de contenido", texto: "Copys, piezas gráficas y vídeo corto adaptados a cada red." },
-    { icono: "🤖", titulo: "Automatizaciones con IA", texto: "Procesos que ahorran tiempo: flujos, integraciones y IA generativa." },
-    { icono: "🔎", titulo: "SEO", texto: "Posicionamiento web: palabras clave, contenido optimizado y SEO técnico básico." },
-    { icono: "🎯", titulo: "Google Ads", texto: "Campañas de búsqueda: estructura, anuncios y optimización." },
-    { icono: "💻", titulo: "HTML y web", texto: "Maquetación de páginas y landing pages; esta web la he hecho yo." },
-    { icono: "📧", titulo: "Email marketing", texto: "Newsletters y secuencias automáticas con Acumbamail." },
-    { icono: "🎨", titulo: "Diseño y presentaciones", texto: "Piezas en Canva y presentaciones que se entienden de un vistazo." }
-  ],
-
-  // 3 cifras que un reclutador entienda en 2 segundos. Sustitúyelas por datos reales (las "XX" salen en gris).
-  cifras: [
-    { valor: "+XX%", texto: "alcance en redes (prácticas en medio digital)" },
-    { valor: "3 meses", texto: "Erasmus en Italia creando contenido" },
-    { valor: "XX", texto: "proyectos de marketing" }
-  ],
-  herramientas: ["Canva", "HTML/CSS", "Acumbamail", "Google Ads", "Google Analytics", "Make / Zapier", "ChatGPT / Claude", "Meta Business Suite", "GitHub"]
-};
-
-/* ---------------------------------------------------------
-   CATEGORÍAS DISPONIBLES (usa exactamente estos nombres):
-   "Diseño", "Presentaciones", "Web", "Email marketing",
-   "Automatización", "Redes sociales", "Estrategia"
-   CONTEXTO: "Clase", "Prácticas" o "Personal"
-             ("Clase" se muestra como "Trabajo de clase")
-   FECHA: "AAAA-MM" (sirve para ordenarlos)
-   COLORES: la paleta del proyecto, de 1 a 3 colores en formato "#RRGGBB".
-            El 1º es el fondo de la portada, el 2º el círculo y el 3º la franja inferior.
-            Déjalo vacío [] y se usa el color de su categoría.
-            Busca paletas en coolors.co o con el cuentagotas de Canva.
-   IMAGEN: ruta a una captura, p. ej. "img/halloween.png" (o "" y se genera portada de color)
-   ENLACE: link al trabajo (Canva, web, PDF...) o ""
-   --------------------------------------------------------- */
-
-const PROYECTOS = [
-  {
-    titulo: "Gestión de marketing digital de un medio de noticias",
-    categoria: "Redes sociales",
-    contexto: "Prácticas",
-    fecha: "2026-10",
-    destacado: true,
-    colores: [],
-    resumen: "Planificación y publicación de contenido para un periódico digital.",
-    reto: "Aumentar el alcance de las noticias en redes y llevar tráfico a la web.",
-    solucion: "Calendario editorial, piezas en Canva adaptadas a cada red y seguimiento semanal de métricas.",
-    resultado: "EJEMPLO → sustituye por un dato real: +XX% alcance en X semanas.",
-    herramientas: ["Canva", "Meta Business Suite", "Google Analytics"],
-    imagen: "",
-    enlace: ""
-  },
-  {
-    titulo: "Campaña email marketing Halloween",
-    categoria: "Email marketing",
-    contexto: "Clase",
-    fecha: "2026-10",
-    destacado: false,
-    colores: ["#FF7518", "#5B2A86", "#141414"],
-    resumen: "EJEMPLO: newsletter temática de Halloween para impulsar ventas en la semana del 31 de octubre.",
-    reto: "EJEMPLO: qué tenía que conseguir la campaña (ventas, clics, registros...).",
-    solucion: "EJEMPLO: asunto, diseño de la plantilla, segmentación y envío con Acumbamail.",
-    resultado: "EJEMPLO: tasa de apertura, clics o nota obtenida.",
-    herramientas: ["Acumbamail", "Canva"],
-    imagen: "",
-    enlace: ""
-  },
-  {
-    titulo: "Landing page IKEA",
-    categoria: "Web",
-    contexto: "Clase",
-    fecha: "2026-10",
-    destacado: false,
-    colores: ["#0058A3", "#FFDA1A", "#FFDA1A"],
-    resumen: "EJEMPLO: landing page de campaña para IKEA, maquetada en HTML y CSS.",
-    reto: "EJEMPLO: qué producto o campaña promocionaba y a quién iba dirigida.",
-    solucion: "EJEMPLO: estructura de la página, llamada a la acción y adaptación a móvil.",
-    resultado: "EJEMPLO: qué aprendiste o qué nota sacaste.",
-    herramientas: ["HTML", "CSS"],
-    imagen: "",
-    enlace: ""
-  },
-  {
-    titulo: "Newsletter de bienvenida con Acumbamail",
-    categoria: "Email marketing",
-    contexto: "Clase",
-    fecha: "2026-10",
-    destacado: false,
-    colores: [],
-    resumen: "EJEMPLO: secuencia de bienvenida para nuevos suscriptores.",
-    reto: "Qué problema o encargo había.",
-    solucion: "Qué hiciste tú, con decisiones concretas.",
-    resultado: "Qué se consiguió o qué aprendiste (aperturas, clics, nota...).",
-    herramientas: ["Acumbamail", "Canva"],
-    imagen: "",
-    enlace: ""
-  },
-  {
-    titulo: "Landing page en HTML para campaña",
-    categoria: "Web",
-    contexto: "Clase",
-    fecha: "2026-09",
-    destacado: false,
-    colores: [],
-    resumen: "EJEMPLO: página de captación programada desde cero.",
-    reto: "",
-    solucion: "",
-    resultado: "",
-    herramientas: ["HTML", "CSS"],
-    imagen: "",
-    enlace: ""
-  }
-];
-</script>
+<!-- Tus datos y trabajos están en proyectos.js (es el único archivo que editas) -->
+<script src="proyectos.js"></script>
 
 <script>
 /* ---------- A partir de aquí no hace falta tocar nada ---------- */
@@ -471,6 +342,8 @@ function paleta(p){
     css:`--c1:${c1};--c2:${c2};--c3:${c3};--c3x:${c[2]||c2};--t1:${textoSobre(c1)};--c1s:${mezcla(c1,.85)};--c1d:${oscuro(c1)}`};
 }
 const ctxTexto = c => c === "Clase" ? "Trabajo de clase" : c;
+const MESES = ["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+const fechaTexto = f => { const [a,m] = String(f||"").split("-"); return m ? `${MESES[+m-1]||m} ${a}` : (a||""); };
 
 /* Cabecera */
 const ini = P.nombre.split(" ").map(w=>w[0]).slice(0,2).join("");
@@ -480,8 +353,10 @@ $("nombre").innerHTML = partes.length > 1 ? esc(partes.slice(0,-1).join(" ")) + 
 $("rol").innerHTML = P.rol.split("·").map(t=>`<span>${esc(t.trim())}</span>`).join("");
 $("frase").textContent = P.frase;
 P.disponible ? $("disp").textContent = P.disponible : $("disp").remove();
-$("ubi").textContent = "📍 " + P.ubicacion;
+$("ubi").innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>${esc(P.ubicacion)}`;
 $("cvbtn").href = P.cv;
+/* El botón del CV solo aparece cuando el archivo existe en el repositorio */
+if (P.cv) fetch(P.cv,{method:"HEAD"}).then(r=>{ if(r.ok) $("cvbtn").hidden=false; }).catch(()=>{});
 
 /* Foto de perfil (si no existe, se ve un marcador con tus iniciales) */
 const ph = $("photo");
@@ -501,6 +376,12 @@ $("tools").innerHTML = (P.herramientas||[]).map(h=>`<span class="chip">${esc(h)}
 const activos = (P.perfiles||[]).filter(r=>r.url);
 $("mailtxt").textContent = P.email;
 $("mailbtn").href = "mailto:" + P.email;
+$("copybtn").addEventListener("click", () => {
+  const b = $("copybtn");
+  const hecho = () => { b.textContent = "Copiado ✓"; b.classList.add("ok"); setTimeout(()=>{ b.textContent = "Copiar email"; b.classList.remove("ok"); }, 1800); };
+  const seleccionar = () => { const r = document.createRange(); r.selectNodeContents($("mailtxt")); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); };
+  if (navigator.clipboard) navigator.clipboard.writeText(P.email).then(hecho, seleccionar); else seleccionar();
+});
 $("redes2").innerHTML = activos.filter(r=>!r.url.startsWith("mailto:"))
   .map(r=>`<a class="btn" href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.nombre)} ↗</a>`).join("");
 $("foot").innerHTML = `<span>© ${new Date().getFullYear()} ${esc(P.nombre)}</span><span>Actualizado con cada proyecto</span>`;
@@ -621,8 +502,8 @@ function pintar(filtro){
     const pal = paleta(p);
     return `<button type="button" class="card ${p.destacado && filtro==="Todos" ? "dest":""}" data-i="${lista.indexOf(p)}" style="--i:${k};${pal.css}">
       <div class="cover">${portada(p)}
-        <div class="tags"><span class="tag">${esc(p.categoria)}</span><span class="tag ctx">${esc(ctxTexto(p.contexto))}</span></div></div>
-      <div class="body"><span class="cat">${esc(p.fecha||"")}</span><h3>${esc(p.titulo)}</h3><p>${esc(p.resumen)}</p>
+        <div class="tags"><span class="tag ctx">${esc(ctxTexto(p.contexto))}</span></div></div>
+      <div class="body"><span class="cat">${esc(p.categoria)}${p.fecha?" · "+esc(fechaTexto(p.fecha)):""}</span><h3>${esc(p.titulo)}</h3><p>${esc(p.resumen)}</p>
         ${p.resultado ? `<div class="res">→ ${esc(p.resultado)}</div>`:""}</div>
     </button>`;
   }).join("") : `<p class="empty">Pronto habrá trabajos aquí.</p>`;
@@ -649,7 +530,7 @@ $("grid").onclick = e=>{
   modal.setAttribute("style", pal.css);
   $("m-cover").innerHTML = portada(p);
   const fila = (t,v)=> v ? `<div><dt>${t}</dt><dd>${esc(v)}</dd></div>` : "";
-  $("m-body").innerHTML = `<div class="m-tags"><span>${esc(p.categoria)}</span><span>${esc(ctxTexto(p.contexto))}</span>${p.fecha?`<span>${esc(p.fecha)}</span>`:""}</div>
+  $("m-body").innerHTML = `<div class="m-tags"><span>${esc(p.categoria)}</span><span>${esc(ctxTexto(p.contexto))}</span>${p.fecha?`<span>${esc(fechaTexto(p.fecha))}</span>`:""}</div>
     <h3>${esc(p.titulo)}</h3>
     <dl>${fila("El reto",p.reto)}${fila("Lo que hice",p.solucion)}${fila("Resultado",p.resultado)}</dl>
     <div class="m-foot"><div class="chips">${(p.herramientas||[]).map(h=>`<span class="chip">${esc(h)}</span>`).join("")}</div>

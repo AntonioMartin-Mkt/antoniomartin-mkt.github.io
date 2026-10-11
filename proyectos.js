@@ -59,6 +59,10 @@ const PERFIL = {
    "Automatización", "Redes sociales", "Estrategia"
    CONTEXTO: "Clase", "Prácticas" o "Personal"
    FECHA: "AAAA-MM" (sirve para ordenarlos)
+   COLORES: la paleta del proyecto, de 1 a 3 colores en formato "#RRGGBB".
+            El 1º es el fondo de la portada, el 2º el círculo y el 3º la franja inferior.
+            Déjalo vacío [] y se usa el color de su categoría.
+            Busca paletas en coolors.co o con el cuentagotas de Canva.
    IMAGEN: ruta a una captura, p. ej. "img/newsletter.png" (o "" y se genera portada automática)
    ENLACE: link al trabajo (Canva, web, PDF...) o ""
    --------------------------------------------------------- */
@@ -70,6 +74,7 @@ const PROYECTOS = [
     contexto: "Prácticas",
     fecha: "2026-10",
     destacado: true,
+    colores: [],
     resumen: "Planificación y publicación de contenido para un periódico digital.",
     reto: "Aumentar el alcance de las noticias en redes y llevar tráfico a la web.",
     solucion: "Calendario editorial, piezas en Canva adaptadas a cada red y seguimiento semanal de métricas.",
@@ -79,11 +84,27 @@ const PROYECTOS = [
     enlace: ""
   },
   {
+    titulo: "Campaña email marketing Halloween",
+    categoria: "Email marketing",
+    contexto: "Clase",
+    fecha: "2026-10",
+    destacado: false,
+    colores: ["#FF7518", "#5B2A86", "#141414"],
+    resumen: "EJEMPLO: newsletter temática de Halloween para impulsar ventas en la semana del 31 de octubre.",
+    reto: "EJEMPLO: qué tenía que conseguir la campaña (ventas, clics, registros...).",
+    solucion: "EJEMPLO: asunto, diseño de la plantilla, segmentación y envío con Acumbamail.",
+    resultado: "EJEMPLO: tasa de apertura, clics o nota obtenida.",
+    herramientas: ["Acumbamail", "Canva"],
+    imagen: "",
+    enlace: ""
+  },
+  {
     titulo: "Newsletter de bienvenida con Acumbamail",
     categoria: "Email marketing",
     contexto: "Clase",
     fecha: "2026-10",
     destacado: false,
+    colores: [],
     resumen: "EJEMPLO: secuencia de bienvenida para nuevos suscriptores.",
     reto: "Qué problema o encargo había.",
     solucion: "Qué hiciste tú, con decisiones concretas.",
@@ -98,6 +119,7 @@ const PROYECTOS = [
     contexto: "Clase",
     fecha: "2026-10",
     destacado: true,
+    colores: ["#0058A3", "#FFDA1A", "#111418"],
     resumen: "Landing page para el club de fidelización de HEMKÄNSLA, una marca ficticia de hogar de estilo nórdico. Programada desde cero y conectada a una automatización real.",
     reto: "Conseguir altas en el club de socios y suscriptores a ofertas, con consentimiento claro y cumpliendo el RGPD.",
     solucion: "Diseñé la página con un formulario en la cabecera y otro al final, tarjetas de beneficios con ventanas emergentes, un carrusel de reseñas y textos legales. Con Apps Script, cada alta se guarda en Google Sheets y recibe un email de bienvenida distinto según la opción que marque.",

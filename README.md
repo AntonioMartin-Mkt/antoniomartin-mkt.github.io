@@ -27,6 +27,7 @@ img/           → capturas de cada trabajo
 - **Reto:** qué encargo o problema había (1 frase).
 - **Lo que hice:** decisiones concretas tuyas, no la lista de tareas.
 - **Resultado:** un número siempre que se pueda (aperturas, clics, alcance, nota, tiempo ahorrado). Si no hay dato, qué aprendiste.
+- `colores`: 1 a 3 colores "#RRGGBB" para la portada del trabajo; vacío `[]` usa el color de su categoría.
 - Marca `destacado: true` solo en tus 1–2 mejores trabajos: salen arriba y más grandes.
 
 ## Trabajos de Canva
