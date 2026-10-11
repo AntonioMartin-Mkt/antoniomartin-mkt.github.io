@@ -93,17 +93,17 @@ const PROYECTOS = [
     enlace: ""
   },
   {
-    titulo: "Landing page en HTML para campaña",
+    titulo: "Landing de captación «Family Club» con altas automáticas",
     categoria: "Web",
     contexto: "Clase",
-    fecha: "2026-09",
-    destacado: false,
-    resumen: "EJEMPLO: página de captación programada desde cero.",
-    reto: "",
-    solucion: "",
-    resultado: "",
-    herramientas: ["HTML", "CSS"],
+    fecha: "2026-10",
+    destacado: true,
+    resumen: "Landing page para el club de fidelización de HEMKÄNSLA, una marca ficticia de hogar de estilo nórdico. Programada desde cero y conectada a una automatización real.",
+    reto: "Conseguir altas en el club de socios y suscriptores a ofertas, con consentimiento claro y cumpliendo el RGPD.",
+    solucion: "Diseñé la página con un formulario en la cabecera y otro al final, tarjetas de beneficios con ventanas emergentes, un carrusel de reseñas y textos legales. Con Apps Script, cada alta se guarda en Google Sheets y recibe un email de bienvenida distinto según la opción que marque.",
+    resultado: "Un embudo de captación completo, de la visita al email de bienvenida, sin herramientas de pago. Aprendí a separar los consentimientos y a automatizar el seguimiento de leads.",
+    herramientas: ["HTML", "CSS", "JavaScript", "Google Apps Script", "Google Sheets"],
     imagen: "",
-    enlace: ""
+    enlace: "hemkansla/"
   }
 ];
