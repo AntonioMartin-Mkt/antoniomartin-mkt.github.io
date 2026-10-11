@@ -12,6 +12,8 @@
   --bg:#f6f3ee; --surface:#ffffff; --ink:#16161a; --muted:#5d5c63; --line:#e4dfd6;
   --accent:#ff5a36; --accent-ink:#ffffff; --soft:#ffe9e2;
   --r:18px; --max:1120px;
+  /* Curvas de animación (Emil Kowalski): salida rápida y respuesta inmediata */
+  --ease-out:cubic-bezier(0.23,1,0.32,1); --ease-in-out:cubic-bezier(0.77,0,0.175,1);
 }
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
@@ -36,7 +38,7 @@ nav .wrap{display:flex;align-items:center;justify-content:space-between;height:6
 .logo{font-family:"Bricolage Grotesque";font-weight:800;font-size:20px;text-decoration:none}
 .logo span{color:var(--accent)}
 .navlinks{display:flex;gap:20px;font-size:14px;font-weight:500}
-.navlinks a{text-decoration:none;color:var(--muted)}
+.navlinks a{text-decoration:none;color:var(--muted);transition:color 150ms ease}
 .navlinks a:hover{color:var(--ink)}
 @media(max-width:640px){.navlinks .hide-m{display:none}}
 
@@ -49,8 +51,8 @@ nav .wrap{display:flex;align-items:center;justify-content:space-between;height:6
 .hero .rol{font-size:clamp(18px,2.6vw,24px);font-weight:600;color:var(--accent)}
 .hero p.frase{font-size:clamp(17px,2.2vw,21px);color:var(--muted);max-width:640px;margin-top:14px}
 .ctas{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
-.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:99px;font-weight:600;font-size:15px;text-decoration:none;border:1.5px solid var(--ink);transition:transform .15s}
-.btn:hover{transform:translateY(-2px)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:99px;font-weight:600;font-size:15px;text-decoration:none;border:1.5px solid var(--ink);transition:transform 160ms var(--ease-out),background-color 200ms ease,color 200ms ease;-webkit-tap-highlight-color:transparent}
+.btn:active{transform:scale(.97)}
 .btn.primary{background:var(--ink);color:var(--bg)}
 .meta{margin-top:18px;font-size:14px;color:var(--muted)}
 
@@ -68,12 +70,15 @@ section{padding:56px 0}
 .sec-head{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:16px;margin-bottom:24px}
 .sec-head h2{font-size:clamp(30px,5vw,48px);font-weight:800}
 .filters{display:flex;flex-wrap:wrap;gap:8px}
-.filters button{font:500 14px Inter,sans-serif;padding:8px 14px;border-radius:99px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.filters button{font:500 14px Inter,sans-serif;padding:8px 14px;border-radius:99px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;transition:background-color 200ms ease,color 200ms ease,border-color 200ms ease,transform 160ms var(--ease-out);-webkit-tap-highlight-color:transparent}
+.filters button:active{transform:scale(.96)}
 .filters button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
 @media(max-width:360px){.grid{grid-template-columns:1fr}}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;cursor:pointer;text-align:left;font:inherit;color:inherit;padding:0;display:flex;flex-direction:column;transition:transform .2s,box-shadow .2s}
-.card:hover{transform:translateY(-4px);box-shadow:0 14px 30px -18px rgba(0,0,0,.35)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;cursor:pointer;text-align:left;font:inherit;color:inherit;padding:0;display:flex;flex-direction:column;transition:transform 250ms var(--ease-out),box-shadow 250ms ease;-webkit-tap-highlight-color:transparent;
+  animation:entra 400ms var(--ease-out) backwards;animation-delay:calc(var(--i,0)*50ms)}
+.card:active{transform:scale(.985)}
+.card:focus-visible,.btn:focus-visible,.filters button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 .card.dest{grid-column:span 2}
 @media(max-width:700px){.card.dest{grid-column:auto}}
 .cover{aspect-ratio:16/9;position:relative;overflow:hidden;display:flex;align-items:flex-end;padding:16px}
@@ -89,8 +94,13 @@ section{padding:56px 0}
 .empty{color:var(--muted);padding:24px 0}
 
 /* MODAL */
-dialog{border:none;border-radius:var(--r);padding:0;max-width:720px;width:calc(100% - 32px);background:var(--surface);color:var(--ink)}
-dialog::backdrop{background:rgba(0,0,0,.55)}
+dialog{border:none;border-radius:var(--r);padding:0;max-width:720px;width:calc(100% - 32px);background:var(--surface);color:var(--ink);
+  opacity:0;transform:scale(.96);transition:opacity 150ms ease,transform 150ms var(--ease-out),overlay 150ms allow-discrete,display 150ms allow-discrete}
+dialog[open]{opacity:1;transform:none;transition-duration:250ms}
+@starting-style{dialog[open]{opacity:0;transform:scale(.96)}}
+dialog::backdrop{background:rgba(0,0,0,0);transition:background-color 150ms ease,overlay 150ms allow-discrete,display 150ms allow-discrete}
+dialog[open]::backdrop{background:rgba(0,0,0,.55);transition-duration:250ms}
+@starting-style{dialog[open]::backdrop{background:rgba(0,0,0,0)}}
 .m-cover{aspect-ratio:16/7}
 .m-body{padding:24px}
 .m-body h3{font-size:30px;margin:6px 0 18px}
@@ -98,7 +108,8 @@ dialog::backdrop{background:rgba(0,0,0,.55)}
 .m-body dt{font-size:12px;text-transform:uppercase;letter-spacing:.08em;font-weight:600;color:var(--accent)}
 .m-body dd{margin:4px 0 0}
 .m-foot{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-top:24px}
-.close{position:absolute;top:12px;right:12px;width:38px;height:38px;border-radius:50%;border:none;background:rgba(0,0,0,.6);color:#fff;font-size:20px;cursor:pointer}
+.close{position:absolute;top:12px;right:12px;width:38px;height:38px;border-radius:50%;border:none;background:rgba(0,0,0,.6);color:#fff;font-size:20px;cursor:pointer;transition:transform 160ms var(--ease-out),background-color 150ms ease}
+.close:active{transform:scale(.92)}
 
 /* CONTACTO */
 .contact{background:var(--ink);color:var(--bg);border-radius:28px;padding:clamp(32px,6vw,64px);margin:24px 0 56px}
@@ -145,8 +156,7 @@ footer{text-align:center;font-size:13px;color:var(--muted);padding-bottom:32px}
 
 /* HABILIDADES */
 .skills{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
-.skill{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;transition:border-color .2s,transform .2s}
-.skill:hover{border-color:var(--accent);transform:translateY(-3px)}
+.skill{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;transition:border-color 200ms ease,transform 250ms var(--ease-out)}
 .skill .ic{font-size:28px;line-height:1}
 .skill h3{font-size:19px;margin:12px 0 6px}
 .skill p{font-size:14px;color:var(--muted)}
@@ -156,6 +166,39 @@ footer{text-align:center;font-size:13px;color:var(--muted);padding-bottom:32px}
 .about .label{font-family:"Bricolage Grotesque";font-weight:800;font-size:clamp(30px,5vw,48px);line-height:1.05}
 .about p{font-size:clamp(17px,2vw,20px);line-height:1.7}
 @media(max-width:700px){.about{grid-template-columns:1fr;gap:12px}}
+
+/* MOVIMIENTO (filosofía Emil Kowalski) */
+@keyframes entra{from{opacity:0;transform:translateY(8px)}}
+@keyframes aparece{from{opacity:0;transform:translateY(12px);filter:blur(4px)}}
+@keyframes foto{from{opacity:0;transform:scale(.96)}}
+@keyframes funde{from{opacity:0}}
+/* Entrada de la cabecera: una sola vez, en cascada */
+.hero-text>*{animation:aparece 600ms var(--ease-out) backwards}
+.hero-text>:nth-child(2){animation-delay:60ms}
+.hero-text>:nth-child(3){animation-delay:120ms}
+.hero-text>:nth-child(4){animation-delay:180ms}
+.hero-text>:nth-child(5){animation-delay:240ms}
+.hero-text>:nth-child(6){animation-delay:300ms}
+.photo-wrap{animation:foto 700ms var(--ease-out) 100ms backwards}
+.stat{animation:entra 500ms var(--ease-out) backwards}
+.stat:nth-child(1){animation-delay:320ms}.stat:nth-child(2){animation-delay:370ms}.stat:nth-child(3){animation-delay:420ms}
+/* Hover solo con ratón: en móvil el toque no deja estados "pegados" */
+@media (hover:hover) and (pointer:fine){
+  .btn:hover{transform:translateY(-2px)}
+  .btn:active{transform:translateY(-2px) scale(.97)}
+  .navlinks a:hover{color:var(--ink)}
+  .card:hover{transform:translateY(-4px);box-shadow:0 14px 30px -18px rgba(0,0,0,.35)}
+  .card:hover:active{transform:translateY(-4px) scale(.985)}
+  .skill:hover{border-color:var(--accent);transform:translateY(-3px)}
+  .close:hover{background:rgba(0,0,0,.8)}
+}
+/* Menos movimiento: se quitan desplazamientos, se mantienen los fundidos */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .hero-text>*,.photo-wrap,.stat,.card{animation-name:funde}
+  .btn,.card,.skill,.filters button,dialog{transform:none!important}
+  .badge::before{animation:none}
+}
 </style>
 </head>
 <body>
@@ -277,7 +320,7 @@ const activos = (P.perfiles||[]).filter(r=>r.url);
     a.innerHTML = `<span class="ico"><img alt="" src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(r.web||"")}&sz=128"></span><span class="lbl">${esc(r.nombre)}</span>`;
     a.querySelector("img").onerror = e => { e.target.replaceWith(Object.assign(document.createElement("b"),{textContent:r.nombre.slice(0,2)})); };
     capa.appendChild(a);
-    return {el:a, i, x:0, y:0, vx:0, vy:0, hx:0, hy:0, fase:Math.random()*6.28, drag:false, movido:false};
+    return {el:a, i, s:1, x:0, y:0, vx:0, vy:0, hx:0, hy:0, fase:Math.random()*6.28, drag:false, movido:false};
   });
   if (!B.length) return;
 
@@ -366,8 +409,9 @@ const activos = (P.perfiles||[]).filter(r=>r.url);
     }
     B.forEach(b=>{
       const rot = quieto ? 0 : Math.sin(tt*0.8 + b.fase)*6;
-      const esc2 = b.drag ? 1.12 : 1 + Math.sin(tt*1.6 + b.fase)*0.025;   // "respira" como una burbuja
-      b.el.style.transform = `translate(${b.x}px,${b.y}px) rotate(${rot}deg) scale(${esc2})`;
+      const meta = b.drag ? 1.12 : 1 + (quieto ? 0 : Math.sin(tt*1.6 + b.fase)*0.025);   // "respira" como una burbuja
+      b.s += (meta - b.s) * Math.min(1, 0.25*dt);                                         // crece/encoge con suavidad al agarrarla
+      b.el.style.transform = `translate(${b.x}px,${b.y}px) rotate(${rot}deg) scale(${b.s})`;
     });
     requestAnimationFrame(paso);
   }
@@ -396,9 +440,9 @@ function portada(p){
 
 function pintar(filtro){
   const items = filtro==="Todos" ? lista : lista.filter(p=>p.categoria===filtro);
-  $("grid").innerHTML = items.length ? items.map(p=>{
+  $("grid").innerHTML = items.length ? items.map((p,k)=>{
     const {bg,inner} = portada(p);
-    return `<button class="card ${p.destacado && filtro==="Todos" ? "dest":""}" data-i="${lista.indexOf(p)}">
+    return `<button class="card ${p.destacado && filtro==="Todos" ? "dest":""}" data-i="${lista.indexOf(p)}" style="--i:${k}">
       <div class="cover" style="${bg}">${inner}
         <span class="tag">${esc(p.categoria)}</span><span class="tag ctx">${esc(p.contexto)}</span></div>
       <div class="body"><h3>${esc(p.titulo)}</h3><p>${esc(p.resumen)}</p>
