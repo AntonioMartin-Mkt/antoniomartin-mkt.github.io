@@ -38,6 +38,7 @@ Antonio describe lo que quiere; tú decides qué skill(s) usar, lo dices en una 
 | Lo que pide | Principal | Apoyo |
 |---|---|---|
 | Crear una animación concreta | animate | emil-design-eng |
+| Animación con intención emocional, coreografía de varios elementos, principios Disney | motion-design | animate |
 | ¿Qué se podría animar aquí? | find-animation-opportunities | — |
 | Revisar animaciones existentes | review-animations | — |
 | Plan de mejora de todas las animaciones | improve-animations | — |
@@ -59,6 +60,13 @@ Antonio describe lo que quiere; tú decides qué skill(s) usar, lo dices en una 
 | Gráfico, dashboard o visualización de datos | dataviz |
 | Investigar un tema con varias fuentes e informe | deep-research |
 | Crear o mejorar una skill | skill-creator |
+| Que un texto (post, copy, CV, email) no suene a IA | humanizer (+ marca-personal si es para Antonio) |
+
+### Forma de trabajar
+| Lo que pide | Principal |
+|---|---|
+| Respuestas ultracortas, "modo cavernícola", ahorrar tokens | caveman (solo si lo pide; se quita con "stop caveman" o "normal mode") |
+| Que Claude recuerde errores y aprendizajes de este repo entre sesiones | napkin |
 
 ### Código y repositorio
 | Lo que pide | Principal |
