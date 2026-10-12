@@ -84,19 +84,19 @@ const PROYECTOS = [
     enlace: ""
   },
   {
-    titulo: "Campaña email marketing Halloween",
+    titulo: "Newsletter de Halloween para El Corte Inglés",
     categoria: "Email marketing",
     contexto: "Clase",
     fecha: "2026-10",
-    destacado: false,
-    colores: ["#FF7518", "#5B2A86", "#141414"],
-    resumen: "EJEMPLO: newsletter temática de Halloween para impulsar ventas en la semana del 31 de octubre.",
-    reto: "EJEMPLO: qué tenía que conseguir la campaña (ventas, clics, registros...).",
-    solucion: "EJEMPLO: asunto, diseño de la plantilla, segmentación y envío con Acumbamail.",
-    resultado: "EJEMPLO: tasa de apertura, clics o nota obtenida.",
-    herramientas: ["Acumbamail", "Canva"],
-    imagen: "",
-    enlace: ""
+    destacado: true,
+    colores: ["#F08A3C", "#3A2850", "#16141A"],
+    resumen: "Newsletter de temporada programada en HTML y cargada en MailerLite: cabecera animada, pegatinas que llevan a cada producto y un código de descuento. Concepto académico, no es una comunicación oficial.",
+    reto: "Anunciar la llegada de Halloween con un email que destaque en la bandeja de entrada, lleve a comprar disfraces y decoración y se vea bien en Gmail, Outlook y el móvil.",
+    solucion: "Programé la plantilla en HTML para email (tablas, estilos en línea y botones compatibles con Outlook). Diseñé una cabecera animada con un castillo y el logo iluminado, titulares con tipografía de Halloween, murciélagos animados, pegatinas que enlazan a cada producto y un bloque «¿Truco o trato?» con código de descuento. Alojé las imágenes en GitHub Pages y monté la campaña en MailerLite.",
+    resultado: "Campaña lista en MailerLite, adaptada al móvil y con 8 productos enlazados. Al ser un concepto de clase, todavía no tiene datos de envío.",
+    herramientas: ["HTML", "CSS", "MailerLite", "GitHub Pages"],
+    imagen: "img/halloween.jpg",
+    enlace: "assets/halloween/email.html"
   },
   {
     titulo: "Newsletter de bienvenida con Acumbamail",
@@ -125,7 +125,7 @@ const PROYECTOS = [
     solucion: "Diseñé la página con un formulario en la cabecera y otro al final, tarjetas de beneficios con ventanas emergentes, un carrusel de reseñas y textos legales. Con Apps Script, cada alta se guarda en Google Sheets y recibe un email de bienvenida distinto según la opción que marque.",
     resultado: "Un embudo de captación completo, de la visita al email de bienvenida, sin herramientas de pago. Aprendí a separar los consentimientos y a automatizar el seguimiento de leads.",
     herramientas: ["HTML", "CSS", "JavaScript", "Google Apps Script", "Google Sheets"],
-    imagen: "",
+    imagen: "img/hemkansla.jpg",
     enlace: "hemkansla/"
   }
 ];
