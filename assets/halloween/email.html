@@ -90,12 +90,22 @@ u + #body a { color:inherit; text-decoration:none; }
 .kin:checked ~ .shell .a2 { animation: rise 900ms cubic-bezier(.22,1,.36,1) 150ms both; }
 .kin:checked ~ .shell .a3 { animation: rise 900ms cubic-bezier(.22,1,.36,1) 300ms both; }
 }
+/* Productos con efecto 3D: flotan y se inclinan al pasar el ratón */
+@media (prefers-reduced-motion: no-preference) {
+@keyframes flota { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+.kin:checked ~ .shell .p3d img { animation: flota 4s ease-in-out infinite; }
+}
+@media (hover: hover) and (pointer: fine) {
+.p3d { perspective: 700px; }
+.p3d img { transition: transform 450ms cubic-bezier(.22,1,.36,1), filter 450ms ease; transform-origin: 50% 90%; }
+.card:hover .p3d img { animation: none !important; transform: rotateX(8deg) rotateY(-12deg) translateY(-10px) scale(1.06); filter: drop-shadow(0 18px 18px rgba(8,4,16,.55)); }
+}
 </style>
 </head>
-<body id="body" class="bg-night" style="margin:0; padding:0; background-color:#4B2382; background-image:url('fondo-halloween.png'); background-repeat:repeat; background-size:600px 600px; word-spacing:normal;">
+<body id="body" class="bg-night" style="margin:0; padding:0; background-color:#4B2382; background-image:url('fondo-halloween.png?v=5'); background-repeat:repeat; background-position:top center; background-size:600px 600px; word-spacing:normal;">
 <div style="display:none; font-size:1px; line-height:1px; max-height:0; max-width:0; opacity:0; overflow:hidden; mso-hide:all;">Ha llegado la noche más larga del año. Decoración, disfraces y dulces de Halloween, ya en tienda y en la web.&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;</div>
 <!--[if !mso]><!--><input type="checkbox" class="kin" checked style="display:none !important; max-height:0; visibility:hidden;" aria-hidden="true"><!--<![endif]-->
-<div class="shell" role="article" aria-roledescription="email" aria-label="Halloween ha llegado a El Corte Inglés" lang="es" style="background-color:#4B2382; background-image:url('fondo-halloween.png'); background-repeat:repeat; background-size:600px 600px; position:relative; overflow:hidden;">
+<div class="shell" role="article" aria-roledescription="email" aria-label="Halloween ha llegado a El Corte Inglés" lang="es" style="background-color:#4B2382; background-image:url('fondo-halloween.png?v=5'); background-repeat:repeat; background-position:top center; background-size:600px 600px; position:relative; overflow:hidden;">
 <!--[if !mso]><!-->
 <div class="fx" aria-hidden="true" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:5;">
 <div class="spider-line"></div><div class="spider"></div>
@@ -106,10 +116,10 @@ u + #body a { color:inherit; text-decoration:none; }
 <div class="flyer" style="top:3100px; animation-duration:11s; animation-delay:-9s;"><div class="bat" style="width:42px;height:20px;"></div></div>
 </div>
 <!--<![endif]-->
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="bg-night" bgcolor="#4B2382" background="fondo-halloween.png" style="background-color:#4B2382; background-image:url('telaranas.png'), url('fondo-halloween.png'); background-repeat:no-repeat, repeat; background-position:top center, top left; background-size:1400px auto, 600px 600px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="bg-night" bgcolor="#4B2382" background="fondo-halloween.png?v=5" style="background-color:#4B2382; background-image:url('telaranas.png'), url('fondo-halloween.png?v=5'); background-repeat:no-repeat, repeat; background-position:top center, top center; background-size:1400px auto, 600px 600px;">
 <tr><td align="center" style="padding:0;">
 <!--[if mso]><table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" align="center"><tr><td><![endif]-->
-<table role="presentation" class="container" width="600" cellpadding="0" cellspacing="0" border="0" bgcolor="#4B2382" background="fondo-halloween-suave.png" style="width:600px; max-width:600px; margin:0 auto; background-color:#4B2382; background-image:url('fondo-halloween-suave.png'); background-repeat:repeat; background-size:600px 600px;">
+<table role="presentation" class="container" width="600" cellpadding="0" cellspacing="0" border="0" bgcolor="#4B2382" background="fondo-halloween-suave.png?v=5" style="width:600px; max-width:600px; margin:0 auto; background-color:#4B2382; background-image:url('fondo-halloween-suave.png?v=5'); background-repeat:repeat; background-position:top left; background-size:600px 600px;">
 <tr><td class="px" style="padding:16px 24px 0 24px;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
 <td valign="middle" class="t-mist" style="font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:12px; line-height:18px; color:#B8AEC6;">Halloween 2026</td>
@@ -129,6 +139,21 @@ u + #body a { color:inherit; text-decoration:none; }
 <!--[if !mso]><!--><a href="https://www.elcorteingles.es" class="cta-a cta-main" style="display:inline-block; background-color:#F08A3C; color:#16141A; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:16px; line-height:52px; font-weight:700; text-align:center; padding:0 32px; border-radius:999px; white-space:nowrap;">Descubre la colección</a><!--<![endif]--></td></tr>
 <tr><td style="padding:40px 24px 0 24px; line-height:0; font-size:0;"><img src="murcielagos.gif?v=4" width="552" height="90" class="fluid" alt="" role="presentation" style="width:100%; max-width:552px; height:auto; display:block;"></td></tr>
 <tr><td class="px" style="padding:24px 24px 18px 24px;"><img class="fluid" src="t-novedades.png?v=4" width="552" height="59" alt="Recién llegados" style="width:100%; max-width:552px; height:auto; display:block; font-family:Georgia,serif; font-size:28px; font-weight:bold; color:#F08A3C;"></td></tr>
+<tr><td class="px" style="padding:0 24px 16px 24px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="card bg-coal" style="background-color:#211E27; border:1px solid #2F2A38; border-radius:20px;">
+<tr>
+<td class="stack" width="250" valign="middle" style="width:250px; padding:12px 0 6px 12px;">
+<a class="p3d" href="https://www.elcorteingles.es/hogar/A201385088-2102687446992-pr-bote-de-vidrio-bruja-halloween-multicolor/" style="display:block; text-decoration:none;"><img src="p3d-bote-bruja.png?v=1" width="238" height="238" alt="Bote de cristal con estrellas y tapa en forma de sombrero de bruja" style="width:100%; max-width:238px; height:auto; display:block; margin:0 auto; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:13px; color:#B8AEC6;"></a>
+</td>
+<td class="stack stack-pad" valign="middle" style="padding:20px 24px 20px 12px; text-align:left;">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td style="background-color:#3A2850; border-radius:999px; padding:4px 10px; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:11px; line-height:14px; font-weight:700; color:#F3EBDD;">Novedad</td></tr></table>
+<p class="t-cream" style="margin:12px 0 6px 0; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:22px; line-height:28px; font-weight:800; letter-spacing:-.4px; color:#F3EBDD;">Bote de vidrio bruja</p>
+<p class="t-mist" style="margin:0 0 12px 0; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:14px; line-height:21px; color:#B8AEC6;">Cristal estampado y tapa con forma de sombrero de bruja.</p>
+<p style="margin:0 0 16px 0; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:18px; line-height:24px; font-weight:700; color:#F08A3C;">00,00 €</p>
+<a href="https://www.elcorteingles.es/hogar/A201385088-2102687446992-pr-bote-de-vidrio-bruja-halloween-multicolor/" class="btn-a t-cream" style="display:inline-block; border:1px solid #F08A3C; border-radius:999px; padding:9px 20px; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:14px; line-height:18px; font-weight:700; color:#F3EBDD;">Comprar</a>
+</td>
+</tr></table>
+</td></tr>
 <tr><td class="px" style="padding:0 16px; font-size:0; text-align:center;" align="center">
 <!-- Para añadir productos duplica una fila (2 tarjetas) -->
 <!--[if mso]><table role="presentation" width="568" cellpadding="0" cellspacing="0" border="0"><tr><td width="284" valign="top"><![endif]-->
@@ -136,13 +161,13 @@ u + #body a { color:inherit; text-decoration:none; }
 <div class="col-pad" style="padding:0 8px 16px 8px;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="card bg-coal" style="background-color:#211E27; border:1px solid #2F2A38; border-radius:20px;">
 <tr><td style="padding:10px 10px 0 10px;">
-<a class="stk" href="https://www.elcorteingles.es/juguetes/A52095480-disfraz-infantil-fantasma-encadenado-rubies/" style="display:block; padding:14px 20px 0 20px; text-decoration:none;"><img src="pegatina-fantasma.png?v=3" width="200" height="227" alt="Pegatina de un fantasma sonriente sacando la lengua" style="width:100%; max-width:200px; height:auto; display:block; margin:0 auto; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:13px; color:#B8AEC6;"></a>
+<a class="p3d" href="https://www.elcorteingles.es/juguetes/" style="display:block; padding:6px 10px 0 10px; text-decoration:none;"><img src="p3d-lego.png?v=1" width="220" height="220" alt="Set de LEGO de una camioneta con una calabaza gigante de Halloween" style="width:100%; max-width:220px; height:auto; display:block; margin:0 auto; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:13px; color:#B8AEC6;"></a>
 </td></tr>
-<tr><td style="padding:16px 18px 20px 18px; text-align:left;">
+<tr><td style="padding:8px 18px 20px 18px; text-align:left;">
 <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td style="background-color:#3A2850; border-radius:999px; padding:4px 10px; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:11px; line-height:14px; font-weight:700; color:#F3EBDD;">Novedad</td></tr></table>
-<p class="t-cream" style="margin:12px 0 4px 0; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:16px; line-height:22px; font-weight:600; color:#F3EBDD;">Disfraz infantil fantasma encadenado</p>
+<p class="t-cream" style="margin:12px 0 4px 0; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:16px; line-height:22px; font-weight:600; color:#F3EBDD;">LEGO Camioneta calabaza de Halloween</p>
 <p style="margin:0 0 16px 0; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:18px; line-height:24px; font-weight:700; color:#F08A3C;">00,00 €</p>
-<a href="https://www.elcorteingles.es/juguetes/A52095480-disfraz-infantil-fantasma-encadenado-rubies/" class="btn-a t-cream" style="display:inline-block; border:1px solid #F08A3C; border-radius:999px; padding:9px 20px; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:14px; line-height:18px; font-weight:700; color:#F3EBDD;">Comprar</a>
+<a href="https://www.elcorteingles.es/juguetes/" class="btn-a t-cream" style="display:inline-block; border:1px solid #F08A3C; border-radius:999px; padding:9px 20px; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:14px; line-height:18px; font-weight:700; color:#F3EBDD;">Comprar</a>
 </td></tr></table>
 </div></div>
 <!--[if mso]></td><td width="284" valign="top"><![endif]-->
@@ -150,13 +175,13 @@ u + #body a { color:inherit; text-decoration:none; }
 <div class="col-pad" style="padding:0 8px 16px 8px;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="card bg-coal" style="background-color:#211E27; border:1px solid #2F2A38; border-radius:20px;">
 <tr><td style="padding:10px 10px 0 10px;">
-<a class="stk" href="https://www.elcorteingles.es/hogar/A201385087-2102687446985-pr-bote-de-vidrio-calabaza-halloween-naranja/" style="display:block; padding:14px 20px 0 20px; text-decoration:none;"><img src="pegatina-calabaza.png?v=3" width="200" height="227" alt="Pegatina de una calabaza de Halloween" style="width:100%; max-width:200px; height:auto; display:block; margin:0 auto; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:13px; color:#B8AEC6;"></a>
+<a class="p3d" href="https://www.elcorteingles.es/perfumeria/" style="display:block; padding:6px 10px 0 10px; text-decoration:none;"><img src="p3d-perfume.png?v=1" width="220" height="220" alt="Frasco de perfume Halloween de cristal violeta con tapón plateado" style="width:100%; max-width:220px; height:auto; display:block; margin:0 auto; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:13px; color:#B8AEC6;"></a>
 </td></tr>
-<tr><td style="padding:16px 18px 20px 18px; text-align:left;">
+<tr><td style="padding:8px 18px 20px 18px; text-align:left;">
 <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td style="background-color:#3A2850; border-radius:999px; padding:4px 10px; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:11px; line-height:14px; font-weight:700; color:#F3EBDD;">Novedad</td></tr></table>
-<p class="t-cream" style="margin:12px 0 4px 0; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:16px; line-height:22px; font-weight:600; color:#F3EBDD;">Bote de vidrio calabaza</p>
+<p class="t-cream" style="margin:12px 0 4px 0; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:16px; line-height:22px; font-weight:600; color:#F3EBDD;">Halloween Eau de Toilette</p>
 <p style="margin:0 0 16px 0; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:18px; line-height:24px; font-weight:700; color:#F08A3C;">00,00 €</p>
-<a href="https://www.elcorteingles.es/hogar/A201385087-2102687446985-pr-bote-de-vidrio-calabaza-halloween-naranja/" class="btn-a t-cream" style="display:inline-block; border:1px solid #F08A3C; border-radius:999px; padding:9px 20px; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:14px; line-height:18px; font-weight:700; color:#F3EBDD;">Comprar</a>
+<a href="https://www.elcorteingles.es/perfumeria/" class="btn-a t-cream" style="display:inline-block; border:1px solid #F08A3C; border-radius:999px; padding:9px 20px; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:14px; line-height:18px; font-weight:700; color:#F3EBDD;">Comprar</a>
 </td></tr></table>
 </div></div>
 <!--[if mso]></td></tr></table><![endif]-->
@@ -165,13 +190,13 @@ u + #body a { color:inherit; text-decoration:none; }
 <div class="col-pad" style="padding:0 8px 16px 8px;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="card bg-coal" style="background-color:#211E27; border:1px solid #2F2A38; border-radius:20px;">
 <tr><td style="padding:10px 10px 0 10px;">
-<a class="stk" href="https://www.elcorteingles.es/juguetes/A36397631-disfraz-infantil-bruja-brillante-rubies/" style="display:block; padding:14px 20px 0 20px; text-decoration:none;"><img src="pegatina-bruja.png?v=3" width="200" height="227" alt="Pegatina de una brujita pelirroja con escoba" style="width:100%; max-width:200px; height:auto; display:block; margin:0 auto; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:13px; color:#B8AEC6;"></a>
+<a class="p3d" href="https://www.elcorteingles.es/juguetes/" style="display:block; padding:6px 10px 0 10px; text-decoration:none;"><img src="p3d-playmobil-vampiros.png?v=1" width="220" height="220" alt="Caja de Playmobil con una pareja de vampiros" style="width:100%; max-width:220px; height:auto; display:block; margin:0 auto; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:13px; color:#B8AEC6;"></a>
 </td></tr>
-<tr><td style="padding:16px 18px 20px 18px; text-align:left;">
+<tr><td style="padding:8px 18px 20px 18px; text-align:left;">
 <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td style="background-color:#F08A3C; border-radius:999px; padding:4px 10px; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:11px; line-height:14px; font-weight:700; color:#16141A;">-20%</td></tr></table>
-<p class="t-cream" style="margin:12px 0 4px 0; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:16px; line-height:22px; font-weight:600; color:#F3EBDD;">Disfraz infantil bruja brillante</p>
+<p class="t-cream" style="margin:12px 0 4px 0; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:16px; line-height:22px; font-weight:600; color:#F3EBDD;">Playmobil Pareja de vampiros</p>
 <p style="margin:0 0 16px 0; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:18px; line-height:24px; font-weight:700; color:#F08A3C;">00,00 € <span style="font-size:14px; font-weight:500; color:#8F86A0; text-decoration:line-through;">00,00 €</span></p>
-<a href="https://www.elcorteingles.es/juguetes/A36397631-disfraz-infantil-bruja-brillante-rubies/" class="btn-a t-cream" style="display:inline-block; border:1px solid #F08A3C; border-radius:999px; padding:9px 20px; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:14px; line-height:18px; font-weight:700; color:#F3EBDD;">Comprar</a>
+<a href="https://www.elcorteingles.es/juguetes/" class="btn-a t-cream" style="display:inline-block; border:1px solid #F08A3C; border-radius:999px; padding:9px 20px; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:14px; line-height:18px; font-weight:700; color:#F3EBDD;">Comprar</a>
 </td></tr></table>
 </div></div>
 <!--[if mso]></td><td width="284" valign="top"><![endif]-->
@@ -179,13 +204,42 @@ u + #body a { color:inherit; text-decoration:none; }
 <div class="col-pad" style="padding:0 8px 16px 8px;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="card bg-coal" style="background-color:#211E27; border:1px solid #2F2A38; border-radius:20px;">
 <tr><td style="padding:10px 10px 0 10px;">
-<a class="stk" href="https://www.elcorteingles.es/juguetes/A31420699-disfraz-infantil-vampirito-rubies/" style="display:block; padding:14px 20px 0 20px; text-decoration:none;"><img src="pegatina-vampiro.png?v=3" width="200" height="227" alt="Pegatina de un vampiro sonriente con capa roja" style="width:100%; max-width:200px; height:auto; display:block; margin:0 auto; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:13px; color:#B8AEC6;"></a>
+<a class="p3d" href="https://www.elcorteingles.es/juguetes/" style="display:block; padding:6px 10px 0 10px; text-decoration:none;"><img src="p3d-playmobil-fantasma.png?v=1" width="220" height="220" alt="Caja de Playmobil con un fantasma que brilla en la oscuridad" style="width:100%; max-width:220px; height:auto; display:block; margin:0 auto; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:13px; color:#B8AEC6;"></a>
 </td></tr>
-<tr><td style="padding:16px 18px 20px 18px; text-align:left;">
+<tr><td style="padding:8px 18px 20px 18px; text-align:left;">
 <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td style="background-color:#F08A3C; border-radius:999px; padding:4px 10px; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:11px; line-height:14px; font-weight:700; color:#16141A;">-20%</td></tr></table>
-<p class="t-cream" style="margin:12px 0 4px 0; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:16px; line-height:22px; font-weight:600; color:#F3EBDD;">Disfraz infantil vampirito</p>
+<p class="t-cream" style="margin:12px 0 4px 0; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:16px; line-height:22px; font-weight:600; color:#F3EBDD;">Playmobil Fantasma luminoso</p>
 <p style="margin:0 0 16px 0; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:18px; line-height:24px; font-weight:700; color:#F08A3C;">00,00 € <span style="font-size:14px; font-weight:500; color:#8F86A0; text-decoration:line-through;">00,00 €</span></p>
-<a href="https://www.elcorteingles.es/juguetes/A31420699-disfraz-infantil-vampirito-rubies/" class="btn-a t-cream" style="display:inline-block; border:1px solid #F08A3C; border-radius:999px; padding:9px 20px; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:14px; line-height:18px; font-weight:700; color:#F3EBDD;">Comprar</a>
+<a href="https://www.elcorteingles.es/juguetes/" class="btn-a t-cream" style="display:inline-block; border:1px solid #F08A3C; border-radius:999px; padding:9px 20px; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:14px; line-height:18px; font-weight:700; color:#F3EBDD;">Comprar</a>
+</td></tr></table>
+</div></div>
+<!--[if mso]></td></tr></table><![endif]-->
+<!--[if mso]><table role="presentation" width="568" cellpadding="0" cellspacing="0" border="0"><tr><td width="284" valign="top"><![endif]-->
+<div class="col" style="display:inline-block; width:100%; max-width:284px; vertical-align:top;">
+<div class="col-pad" style="padding:0 8px 16px 8px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="card bg-coal" style="background-color:#211E27; border:1px solid #2F2A38; border-radius:20px;">
+<tr><td style="padding:10px 10px 0 10px;">
+<a class="p3d" href="https://www.elcorteingles.es/hogar/" style="display:block; padding:6px 10px 0 10px; text-decoration:none;"><img src="p3d-tarro-calabaza-cristal.png?v=1" width="220" height="220" alt="Tarro de cristal ámbar con forma de calabaza" style="width:100%; max-width:220px; height:auto; display:block; margin:0 auto; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:13px; color:#B8AEC6;"></a>
+</td></tr>
+<tr><td style="padding:8px 18px 20px 18px; text-align:left;">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td style="background-color:#3A2850; border-radius:999px; padding:4px 10px; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:11px; line-height:14px; font-weight:700; color:#F3EBDD;">Novedad</td></tr></table>
+<p class="t-cream" style="margin:12px 0 4px 0; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:16px; line-height:22px; font-weight:600; color:#F3EBDD;">Tarro de cristal calabaza</p>
+<p style="margin:0 0 16px 0; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:18px; line-height:24px; font-weight:700; color:#F08A3C;">00,00 €</p>
+<a href="https://www.elcorteingles.es/hogar/" class="btn-a t-cream" style="display:inline-block; border:1px solid #F08A3C; border-radius:999px; padding:9px 20px; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:14px; line-height:18px; font-weight:700; color:#F3EBDD;">Comprar</a>
+</td></tr></table>
+</div></div>
+<!--[if mso]></td><td width="284" valign="top"><![endif]-->
+<div class="col" style="display:inline-block; width:100%; max-width:284px; vertical-align:top;">
+<div class="col-pad" style="padding:0 8px 16px 8px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="card bg-coal" style="background-color:#211E27; border:1px solid #2F2A38; border-radius:20px;">
+<tr><td style="padding:10px 10px 0 10px;">
+<a class="p3d" href="https://www.elcorteingles.es/hogar/" style="display:block; padding:6px 10px 0 10px; text-decoration:none;"><img src="p3d-tarro-calabaza-ceramica.png?v=1" width="220" height="220" alt="Tarro de cerámica color crema con forma de calabaza" style="width:100%; max-width:220px; height:auto; display:block; margin:0 auto; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:13px; color:#B8AEC6;"></a>
+</td></tr>
+<tr><td style="padding:8px 18px 20px 18px; text-align:left;">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td style="background-color:#3A2850; border-radius:999px; padding:4px 10px; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:11px; line-height:14px; font-weight:700; color:#F3EBDD;">Novedad</td></tr></table>
+<p class="t-cream" style="margin:12px 0 4px 0; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:16px; line-height:22px; font-weight:600; color:#F3EBDD;">Tarro de cerámica calabaza</p>
+<p style="margin:0 0 16px 0; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:18px; line-height:24px; font-weight:700; color:#F08A3C;">00,00 €</p>
+<a href="https://www.elcorteingles.es/hogar/" class="btn-a t-cream" style="display:inline-block; border:1px solid #F08A3C; border-radius:999px; padding:9px 20px; font-family:'Manrope',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif; font-size:14px; line-height:18px; font-weight:700; color:#F3EBDD;">Comprar</a>
 </td></tr></table>
 </div></div>
 <!--[if mso]></td></tr></table><![endif]-->
