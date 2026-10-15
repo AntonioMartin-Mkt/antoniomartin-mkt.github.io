@@ -63,8 +63,9 @@ const PERFIL = {
             El 1º es el fondo de la portada, el 2º el círculo y el 3º la franja inferior.
             Déjalo vacío [] y se usa el color de su categoría.
             Busca paletas en coolors.co o con el cuentagotas de Canva.
-   IMAGEN: ruta a una captura, p. ej. "img/newsletter.png" (o "" y se genera portada automática)
-   ENLACE: link al trabajo (Canva, web, PDF...) o ""
+   CARPETA: cada trabajo vive en trabajos/<nombre-corto>/ con sus archivos dentro.
+   IMAGEN: "trabajos/<nombre>/portada.jpg" (o "" y se genera portada automática)
+   ENLACE: "trabajos/<nombre>/" o un link externo (Canva, PDF...) o ""
    --------------------------------------------------------- */
 
 const PROYECTOS = [
@@ -125,7 +126,7 @@ const PROYECTOS = [
     solucion: "Diseñé la página con un formulario en la cabecera y otro al final, tarjetas de beneficios con ventanas emergentes, un carrusel de reseñas y textos legales. Con Apps Script, cada alta se guarda en Google Sheets y recibe un email de bienvenida distinto según la opción que marque.",
     resultado: "Un embudo de captación completo, de la visita al email de bienvenida, sin herramientas de pago. Aprendí a separar los consentimientos y a automatizar el seguimiento de leads.",
     herramientas: ["HTML", "CSS", "JavaScript", "Google Apps Script", "Google Sheets"],
-    imagen: "img/hemkansla.jpg",
-    enlace: "hemkansla/"
+    imagen: "trabajos/hemkansla/portada.jpg",
+    enlace: "trabajos/hemkansla/"
   }
 ];
