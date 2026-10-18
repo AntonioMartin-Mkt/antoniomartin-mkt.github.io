@@ -15,16 +15,12 @@ img/                → foto de perfil e imágenes generales de la web
 ── 2. TRABAJOS ───────────────────────────────────────────────
 trabajos/
   hemkansla/        → landing Family Club (portada.jpg + archivos)
-  cruzcampo/        → dossier de marca (en curso, aún no publicado en la web)
+  halloween/        → newsletter de Halloween (email.html + imágenes y GIFs)
+  cruzcampo/        → dossier de marca (aún no publicado en la web)
   <nuevo-trabajo>/  → una carpeta por trabajo, con todo lo que necesita dentro
 
 ── 3. INFORMACIÓN (no se publica en la web) ──────────────────
 _info/              → textos, datos del CV, cifras, notas y pendientes
-
-── Provisional ───────────────────────────────────────────────
-assets/halloween/   → newsletter de Halloween (se mueve a trabajos/halloween/
-                      cuando termine la campaña, para no romper las imágenes del email)
-hemkansla/          → redirección de la dirección antigua a trabajos/hemkansla/
 ```
 
 ### Reglas de orden

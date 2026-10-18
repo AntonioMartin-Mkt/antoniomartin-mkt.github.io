@@ -96,8 +96,8 @@ const PROYECTOS = [
     solucion: "Programé la plantilla en HTML para email (tablas, estilos en línea y botones compatibles con Outlook). Diseñé una cabecera animada con un castillo y el logo iluminado, titulares con tipografía de Halloween, murciélagos animados, pegatinas que enlazan a cada producto y un bloque «¿Truco o trato?» con código de descuento. Alojé las imágenes en GitHub Pages y monté la campaña en MailerLite.",
     resultado: "Campaña lista en MailerLite, adaptada al móvil y con 8 productos enlazados. Al ser un concepto de clase, todavía no tiene datos de envío.",
     herramientas: ["HTML", "CSS", "MailerLite", "GitHub Pages"],
-    imagen: "img/halloween.jpg",
-    enlace: "assets/halloween/email.html"
+    imagen: "trabajos/halloween/portada.jpg",
+    enlace: "trabajos/halloween/email.html"
   },
   {
     titulo: "Newsletter de bienvenida con Acumbamail",

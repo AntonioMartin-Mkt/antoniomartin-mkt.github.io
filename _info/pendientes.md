@@ -16,8 +16,7 @@
 - [ ] TikTok
 
 ## Trabajos
-- [ ] Cruzcampo: añadir `trabajos/cruzcampo/portada.jpg` y su bloque en `proyectos.js` cuando esté terminado.
-- [ ] Halloween: mover `assets/halloween/` a `trabajos/halloween/` (y la portada `img/halloween.jpg` como `portada.jpg`) cuando termine la campaña, para no romper las imágenes del email enviado.
+- [ ] Cruzcampo: añadir `trabajos/cruzcampo/portada.jpg` y su bloque en `proyectos.js`.
 
 ## Repositorio
 - [ ] Revisar y fusionar o borrar las ramas sueltas `claude/…`.
