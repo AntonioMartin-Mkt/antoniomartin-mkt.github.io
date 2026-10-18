@@ -178,6 +178,19 @@ footer{padding:28px clamp(16px,2.4vw,32px) 80px;display:flex;justify-content:spa
 .case .more .win{width:min(100%,760px)}
 .case .more .win.tall{width:min(100%,380px)}
 .case .more .win.tall .vp{aspect-ratio:auto;max-height:78vh;overflow:auto}
+/* Ventana con el trabajo real: se puede hacer scroll dentro */
+.live{border-radius:var(--r);overflow:hidden;background:#fff;color:#141414;box-shadow:0 50px 100px -40px rgba(0,0,0,.5),0 0 0 1px rgba(0,0,0,.08);display:flex;flex-direction:column;height:min(80dvh,860px);margin-inline:auto}
+.live.email{max-width:720px}
+.live .bar{flex:none;height:38px;display:flex;align-items:center;gap:6px;padding:0 14px;background:#f2f2f0;border-bottom:1px solid rgba(0,0,0,.07);font-size:12px;color:#6d6d6a}
+.live .bar i{width:10px;height:10px;border-radius:50%;background:#dcdcd8;flex:none}
+.live .bar span{flex:1;min-width:0;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 8px}
+.live .bar a{flex:none;color:#141414;padding:4px 8px;border-radius:6px}
+.live .bar a:hover{background:rgba(0,0,0,.06)}
+.live iframe{flex:1;width:100%;border:0;background:#fff}
+.live .pages{flex:1;overflow-y:auto;overscroll-behavior:contain;background:#e9e8e4;padding:clamp(10px,2vw,24px);display:flex;flex-direction:column;gap:clamp(10px,2vw,20px);align-items:center}
+.live .pages canvas{width:100%;max-width:1100px;height:auto;border-radius:6px;box-shadow:0 8px 24px rgba(0,0,0,.12);background:#fff}
+.live .wait{margin:auto;font-size:13px;color:#6d6d6a}
+.case .hint{text-align:center;font-size:13px;opacity:.65;margin-top:14px}
 .case .txt{max-width:560px;margin:clamp(60px,8vw,96px) auto 0}
 .case h2{font-weight:400;font-size:clamp(26px,3.2vw,38px);line-height:1.12;letter-spacing:-.035em;text-wrap:balance}
 .case .meta{margin-top:10px;font-size:13px;opacity:.6}
@@ -210,6 +223,7 @@ footer{padding:28px clamp(16px,2.4vw,32px) 80px;display:flex;justify-content:spa
   .dock{top:auto;bottom:14px}
   .dock .it .tip{top:auto;bottom:calc(100% + 8px)}
   .case .hero-w{aspect-ratio:4/5}
+  .live{height:72dvh}
   .case .shut{display:none}
   .mail{font-size:5.6vw}
   .case .in{padding-bottom:110px}
@@ -539,6 +553,51 @@ if (!TACTIL && !QUIETO) {
 const caseEl = $("case");
 let caseOpen = false, origen = null, actual = -1;
 function fila(t,v){ return v && !pendiente(v) ? `<div><dt>${t}</dt><dd>${esc(v)}</dd></div>` : ""; }
+/* Qué se ve dentro de la ventana de la ficha */
+function vistaDe(p){
+  const e = String(p.enlace || "");
+  if (!e) return "";
+  if (p.vista) return p.vista;
+  if (/\.pdf($|[?#])/i.test(e)) return "documento";
+  if (!/^https?:/i.test(e)) return "web";
+  return "";
+}
+function ventanaViva(p){
+  const v = vistaDe(p), nombre = esc(p.enlace.split("/").filter(Boolean).pop());
+  const barra = `<div class="bar"><i></i><i></i><i></i><span>${nombre}</span><a href="${esc(p.enlace)}" target="_blank" rel="noopener" aria-label="Abrir en una pestaña nueva">↗</a></div>`;
+  const dentro = v === "documento"
+    ? `<div class="pages" id="c-pages" tabindex="0" aria-label="Páginas del documento"><p class="wait">Cargando el documento…</p></div>`
+    : `<iframe src="${esc(p.enlace)}" title="${esc(p.titulo)}" loading="lazy"></iframe>`;
+  return `<div class="live ${v === "email" ? "email" : ""}">${barra}${dentro}</div><p class="hint">${v === "documento" ? "Desliza dentro de la ventana para pasar las páginas" : "Desliza dentro de la ventana para ver el trabajo completo"}</p>`;
+}
+/* PDF página a página dentro de la ventana (pdf.js se carga solo cuando hace falta) */
+const PDFJS = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/";
+let pdfjsListo = null;
+function cargarPDFJS(){
+  if (window.pdfjsLib) return Promise.resolve();
+  return pdfjsListo ||= new Promise((ok, mal) => { const sc = document.createElement("script"); sc.src = PDFJS + "pdf.min.js"; sc.onload = ok; sc.onerror = mal; document.head.appendChild(sc); });
+}
+async function verPDF(cont, url){
+  try {
+    await cargarPDFJS();
+    pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS + "pdf.worker.min.js";
+    const pdf = await pdfjsLib.getDocument(url).promise;
+    cont.innerHTML = "";
+    const ancho = Math.min(cont.clientWidth - 20, 1100), dpr = Math.min(devicePixelRatio || 1, 2);
+    for (let n = 1; n <= pdf.numPages; n++) {
+      if (!cont.isConnected) return;
+      const pg = await pdf.getPage(n), base = pg.getViewport({ scale: 1 });
+      const vp = pg.getViewport({ scale: ancho / base.width * dpr });
+      const cv = document.createElement("canvas"); cv.width = vp.width; cv.height = vp.height;
+      cv.setAttribute("aria-label", `Página ${n} de ${pdf.numPages}`);
+      cont.appendChild(cv);
+      await pg.render({ canvasContext: cv.getContext("2d"), viewport: vp }).promise;
+    }
+  } catch (e) {
+    /* Si no se puede dibujar, el navegador muestra el PDF a su manera */
+    cont.outerHTML = `<iframe src="${esc(url)}" title="Documento"></iframe>`;
+  }
+}
 function pintarCaso(i){
   const p = lista[i], [c1] = cols(p);
   const bg = p.fondo || c1, ink = sobre(bg);
@@ -546,24 +605,24 @@ function pintarCaso(i){
   document.body.style.setProperty("--case-bg", bg); document.body.style.setProperty("--case-ink", ink);
   const sig = lista[(i+1) % lista.length];
   $("case-in").innerHTML = `
-    <div class="hero-w" id="c-hero">${visual(p, true)}</div>
+    ${vistaDe(p) ? ventanaViva(p) : `<div class="hero-w" id="c-hero">${visual(p, true)}</div>`}
     <div class="txt">
       <h2 id="c-title">${esc(p.titulo)}</h2>
       <p class="meta">${esc([p.categoria, ctxTexto(p.contexto), fechaTexto(p.fecha)].filter(Boolean).join(", "))}</p>
       ${pendiente(p.resumen) ? "" : `<p class="res">${esc(p.resumen)}</p>`}
       <dl>${fila("El reto",p.reto)}${fila("Lo que hice",p.solucion)}${fila("Resultado",p.resultado)}</dl>
       ${(p.herramientas||[]).length ? `<div class="tl">${p.herramientas.map(h=>`<span>${esc(h)}</span>`).join("")}</div>` : ""}
-      ${p.enlace ? `<a class="go" href="${esc(p.enlace)}" target="_blank" rel="noopener">Ver el trabajo <span aria-hidden="true">↗</span></a>` : ""}
+      ${p.enlace ? `<a class="go" href="${esc(p.enlace)}" target="_blank" rel="noopener">${vistaDe(p) ? "Abrir en una pestaña nueva" : "Ver el trabajo"} <span aria-hidden="true">↗</span></a>` : ""}
     </div>
-    ${p.objeto && p.imagen ? `<div class="more"><div class="win" data-shot><div class="bar"><i></i><i></i><i></i></div><div class="vp"><img src="${esc(p.imagen)}" alt="Vista del trabajo: ${esc(corto(p))}"></div></div></div>` : ""}
     <div class="txt">
       ${lista.length > 1 ? `<a class="next" href="#trabajo/${sig._id}" data-next="${(i+1)%lista.length}"><small>Siguiente trabajo</small><span>${esc(corto(sig))}</span></a>` : ""}
     </div>`;
   ventanas($("case-in"));
   marcar(p._id);
   /* La ventana principal también se inclina con el ratón */
+  const doc = $("c-pages"); if (doc) verPDF(doc, p.enlace);
   const hw = $("c-hero");
-  if (!TACTIL && !QUIETO) {
+  if (hw && !TACTIL && !QUIETO) {
     hw.addEventListener("pointermove", e=>{ const r = hw.getBoundingClientRect(); const x=(e.clientX-r.left)/r.width-.5, y=(e.clientY-r.top)/r.height-.5; hw.style.transform = `perspective(1400px) rotateY(${x*6}deg) rotateX(${-y*5}deg)`; });
     hw.addEventListener("pointerleave", ()=> hw.style.transform = "");
   }

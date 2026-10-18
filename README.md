@@ -50,6 +50,9 @@ _info/              → textos, datos del CV, cifras, notas y pendientes
 - **Resultado:** un número siempre que se pueda (aperturas, clics, alcance, nota, tiempo ahorrado). Si no hay dato, qué aprendiste.
 - `colores`: 1 a 3 colores "#RRGGBB" para la portada del trabajo; vacío `[]` usa el color de su categoría.
 - Marca `destacado: true` solo en tus 1–2 mejores trabajos: salen arriba y más grandes.
+- `corto`: nombre corto que sale en la barra de proyectos y en la portada.
+- `objeto` (opcional): un PNG sin fondo del trabajo; flota en 3D en la portada. `extras`: hasta 4 PNG más que flotan desenfocados detrás.
+- `vista`: cómo se ve el trabajo dentro de su ventana, con scroll, sin salir del portfolio: `"web"`, `"email"` (ventana estrecha) o `"documento"` (PDF). Si no lo pones, se deduce del `enlace`.
 
 ## Trabajos de Canva
 En Canva: **Compartir → Más → Insertar / Enlace público de solo lectura**. Pega ese enlace en `enlace` y exporta una portada PNG para `imagen`.

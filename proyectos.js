@@ -70,9 +70,30 @@ const PERFIL = {
    OBJETO: un PNG recortado (sin fondo) del trabajo; sale flotando en 3D
            en la portada. Si no hay, se usa la imagen en una ventana.
    EXTRAS: hasta 4 PNG recortados más; flotan desenfocados al fondo.
+   VISTA: cómo se ve el trabajo dentro de su ventana (opcional):
+          "web" (una página), "email" (ventana estrecha) o "documento" (PDF).
+          Si no lo pones, se deduce del enlace: un .pdf es "documento" y
+          una carpeta o un .html de trabajos/ es "web".
    --------------------------------------------------------- */
 
 const PROYECTOS = [
+  {
+    titulo: "Dossier de marca de Cruzcampo",
+    corto: "Dossier Cruzcampo",
+    categoria: "Estrategia",
+    contexto: "Clase",
+    fecha: "2026-10",
+    destacado: true,
+    colores: ["#C80F2E", "#F3E9D8", "#7A0C1E"],
+    resumen: "Investigación de la identidad, los medios y las campañas de Cruzcampo para el Día de la Empresa Andaluza, con el análisis de dos anuncios reales y una recomendación de medio.",
+    reto: "Descubrir cómo se comunica realmente Cruzcampo, en qué medios aparece y qué formas publicitarias usa, para analizar dos anuncios y recomendar a la marca qué medio priorizar.",
+    solucion: "Analizamos la marca y su plataforma «Con mucho acento», hicimos un mapa de medios con evidencias reales y comparamos el spot «Lola» (televisión) con las lonas «Tú tan de Berlín» (exterior y guerrilla) por eficacia, coste, alcance, interactividad, público y rapidez.",
+    resultado: "Recomendación: la televisión como eje de cada gran campaña, amplificada en vídeo online y redes, y apoyada con acciones de exterior y guerrilla en Andalucía. El spot «Lola» suma 614 millones de visualizaciones y el Gran Premio a la Eficacia 2021.",
+    herramientas: ["Investigación de medios", "PowerPoint"],
+    imagen: "trabajos/cruzcampo/portada.jpg",
+    vista: "documento",
+    enlace: "trabajos/cruzcampo/Dossier_Cruzcampo.pdf"
+  },
   {
     titulo: "Gestión de marketing digital de un medio de noticias",
     corto: "Medio de noticias",
@@ -105,6 +126,7 @@ const PROYECTOS = [
     imagen: "trabajos/halloween/portada.jpg",
     objeto: "trabajos/halloween/p3d-bote-bruja.png",
     extras: ["trabajos/halloween/p3d-tarro-calabaza-cristal.png", "trabajos/halloween/p3d-perfume.png", "trabajos/halloween/p3d-playmobil-fantasma.png", "trabajos/halloween/p3d-tarro-calabaza-ceramica.png"],
+    vista: "email",
     enlace: "trabajos/halloween/email.html"
   },
   {
