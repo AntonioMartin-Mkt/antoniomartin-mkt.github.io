@@ -66,11 +66,16 @@ const PERFIL = {
    CARPETA: cada trabajo vive en trabajos/<nombre-corto>/ con sus archivos dentro.
    IMAGEN: "trabajos/<nombre>/portada.jpg" (o "" y se genera portada automática)
    ENLACE: "trabajos/<nombre>/" o un link externo (Canva, PDF...) o ""
+   CORTO: nombre corto para la barra de proyectos y la portada (opcional).
+   OBJETO: un PNG recortado (sin fondo) del trabajo; sale flotando en 3D
+           en la portada. Si no hay, se usa la imagen en una ventana.
+   EXTRAS: hasta 4 PNG recortados más; flotan desenfocados al fondo.
    --------------------------------------------------------- */
 
 const PROYECTOS = [
   {
     titulo: "Gestión de marketing digital de un medio de noticias",
+    corto: "Medio de noticias",
     categoria: "Redes sociales",
     contexto: "Prácticas",
     fecha: "2026-10",
@@ -86,6 +91,7 @@ const PROYECTOS = [
   },
   {
     titulo: "Newsletter de Halloween para El Corte Inglés",
+    corto: "Halloween El Corte Inglés",
     categoria: "Email marketing",
     contexto: "Clase",
     fecha: "2026-10",
@@ -97,10 +103,13 @@ const PROYECTOS = [
     resultado: "Campaña lista en MailerLite, adaptada al móvil y con 8 productos enlazados. Al ser un concepto de clase, todavía no tiene datos de envío.",
     herramientas: ["HTML", "CSS", "MailerLite", "GitHub Pages"],
     imagen: "trabajos/halloween/portada.jpg",
+    objeto: "trabajos/halloween/p3d-bote-bruja.png",
+    extras: ["trabajos/halloween/p3d-tarro-calabaza-cristal.png", "trabajos/halloween/p3d-perfume.png", "trabajos/halloween/p3d-playmobil-fantasma.png", "trabajos/halloween/p3d-tarro-calabaza-ceramica.png"],
     enlace: "trabajos/halloween/email.html"
   },
   {
     titulo: "Newsletter de bienvenida con Acumbamail",
+    corto: "Bienvenida Acumbamail",
     categoria: "Email marketing",
     contexto: "Clase",
     fecha: "2026-10",
@@ -116,6 +125,7 @@ const PROYECTOS = [
   },
   {
     titulo: "Landing de captación «Family Club» con altas automáticas",
+    corto: "Family Club",
     categoria: "Web",
     contexto: "Clase",
     fecha: "2026-10",
