@@ -3,22 +3,35 @@
 Portfolio de marketing digital y publicidad. Web estática publicada con GitHub Pages.
 
 ## Estructura
+El repositorio tiene tres partes, todas desde la raíz:
+
 ```
+── 1. DISEÑO DEL PORTFOLIO (la web) ──────────────────────────
 index.html          → diseño de la web (no hace falta tocarlo)
 proyectos.js        → TUS DATOS Y TRABAJOS (lo único que editas)
 cv.pdf              → tu CV
 img/                → foto de perfil e imágenes generales de la web
+
+── 2. TRABAJOS ───────────────────────────────────────────────
 trabajos/
   hemkansla/        → landing Family Club (portada.jpg + archivos)
   cruzcampo/        → dossier de marca (en curso, aún no publicado en la web)
-  <nuevo-trabajo>/  → una carpeta por trabajo, con portada.jpg dentro
-assets/halloween/   → newsletter de Halloween (se mueve a trabajos/ cuando
-                      termine la campaña, para no romper las imágenes del email)
+  <nuevo-trabajo>/  → una carpeta por trabajo, con todo lo que necesita dentro
+
+── 3. INFORMACIÓN (no se publica en la web) ──────────────────
+_info/              → textos, datos del CV, cifras, notas y pendientes
+
+── Provisional ───────────────────────────────────────────────
+assets/halloween/   → newsletter de Halloween (se mueve a trabajos/halloween/
+                      cuando termine la campaña, para no romper las imágenes del email)
+hemkansla/          → redirección de la dirección antigua a trabajos/hemkansla/
 ```
 
 ### Reglas de orden
+- **En la raíz solo va el diseño de la web**: `index.html`, `proyectos.js`, `cv.pdf`, `img/` y este README. Todo lo demás, en su carpeta.
 - **Un trabajo = una carpeta** en `trabajos/`, nombre corto en minúsculas y sin espacios.
-- Dentro siempre: `portada.jpg` (la imagen de la tarjeta) y los archivos del trabajo.
+- Dentro siempre: `portada.jpg` (la imagen de la tarjeta) y **todo lo que el trabajo necesita para funcionar** (HTML, imágenes, GIFs, PDF, código). Los enlaces dentro del trabajo, relativos a su propia carpeta (`src="imagen.png"`, no rutas a otras carpetas).
+- **`_info/` no aparece en la web** (GitHub Pages ignora las carpetas que empiezan por `_`), pero el repositorio es público: nada privado ahí.
 - Nada de ramas sueltas: cuando un trabajo esté listo, se fusiona en `main` y se borra la rama.
 - Las skills y herramientas de Claude no van en este repositorio.
 
