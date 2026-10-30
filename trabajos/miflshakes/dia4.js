@@ -13,7 +13,7 @@
 
   const G = 318;                       // altura del suelo
   const HONDA = { x: 104, y: 246 };    // punto de la honda
-  const RMAX = 72, VMAX = 13.2;        // estiramiento máximo y velocidad máxima de lanzamiento
+  const RMAX = 72, VMAX = 14;        // estiramiento máximo y velocidad máxima de lanzamiento
 
   /* ---------------- Batidos: cada color tiene un poder ---------------- */
   const BATIDOS = {
@@ -86,7 +86,7 @@
   function montarNivel(i) {
     nivelIdx = i;
     engine = Engine.create({ enableSleeping: true });
-    engine.gravity.y = 1;
+    engine.gravity.y = 1.15;
     cuerpos = []; clones = []; proyectiles = []; parts = []; textos = []; puntosNivel = 0; tiempoNivel = 0; quieto = 0;
     const suelo = Bodies.rectangle(W / 2, G + 40, 3000, 80, { isStatic: true, friction: 1, label: "suelo" });
     Composite.add(engine.world, suelo);
@@ -132,7 +132,7 @@
   }
   function dañar(cu, otro, rel) {
     const p = cu.plugin; if (!p || p.hp === undefined || p.muerto) return;
-    const mOtro = otro.isStatic ? cu.mass * 2 : otro.mass;
+    const mOtro = otro.isStatic ? cu.mass : otro.mass; // caer al suelo daña, pero no lo pulveriza todo
     const factor = Math.min(2.2, Math.max(0.35, Math.sqrt(mOtro / cu.mass)));
     let d = (rel - 1.6) * factor * D().dano;
     if (p.congelado) d *= 2;
@@ -142,6 +142,7 @@
   function destruir(cu) {
     const p = cu.plugin; if (p.muerto) return; p.muerto = true;
     Composite.remove(engine.world, cu);
+    despertarTodo(); // lo que estaba apoyado encima vuelve a sentir la gravedad y se cae
     const x = cu.position.x, y = cu.position.y;
     if (p.tipo === "clon") {
       clones = clones.filter(k => k !== cu);
@@ -155,6 +156,9 @@
       if (p.mat === "tnt") explotar(x, y, 92, 16);
     }
   }
+  // Matter.js «duerme» los cuerpos quietos para que la torre no tiemble; al romper una pieza
+  // hay que despertarlos a todos o se quedarían flotando sin apoyo
+  function despertarTodo() { for (const cu of [...cuerpos, ...clones]) Sleeping.set(cu, false); }
   function explotar(x, y, r, dano) {
     sfx.explosion(); temblor = 9; flash = 0.08;
     particulas(x, y, [PAL.oro, PAL.rojo, PAL.blanco, PAL.negro], 40, 6);
@@ -348,26 +352,8 @@
   }
 
   /* ---------------- Dibujo ---------------- */
-  function dibujarFondo() {
-    const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, "#140b24"); g.addColorStop(1, "#4a1220");
-    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
-    ctx.fillStyle = PAL.crema; ctx.beginPath(); ctx.arc(560, 60, 24, 0, Math.PI * 2); ctx.fill();
-    // ciudad lejana
-    for (let i = 0; i < 12; i++) {
-      const x = i * 58 - 10, h = 60 + (i * 37) % 90;
-      ctx.fillStyle = "#24102a"; ctx.fillRect(x, G - h, 50, h);
-      ctx.fillStyle = (Math.floor(reloj * 1.5 + i) % 4) ? "#ffcf3a33" : "#ffcf3a11";
-      for (let k = 0; k < 3; k++) ctx.fillRect(x + 8 + k * 14, G - h + 12, 6, 6);
-    }
-    // cartel de neón
-    ctx.fillStyle = "#1a0710"; ctx.fillRect(200, 52, 200, 40);
-    ctx.strokeStyle = (Math.floor(reloj * 3) % 9) ? PAL.rojo : "#5a0f1c"; ctx.lineWidth = 3; ctx.strokeRect(202, 54, 196, 36);
-    texto(ctx, "MIFLSHAKES", 300, 72, 12, (Math.floor(reloj * 3) % 9) ? PAL.rojo : "#5a0f1c", "center", "#1a0710");
-    // suelo de ajedrez
-    ctx.fillStyle = PAL.negro; ctx.fillRect(0, G, W, H - G);
-    for (let x = 0; x < W; x += 20) for (let y = G + 8; y < H; y += 20) if (((x / 20) + (y - G - 8) / 20) % 2 === 0) { ctx.fillStyle = "#5a0f1c"; ctx.fillRect(x, y, 20, 20); }
-    ctx.fillStyle = PAL.rojo; ctx.fillRect(0, G, W, 6); ctx.fillStyle = PAL.crema; ctx.fillRect(0, G + 6, W, 2);
-  }
+  // Cada torre tiene su escenario (ver fondos4.js)
+  function dibujarFondo() { window.FONDOS4.dibujar(ctx, nivelIdx, reloj); }
 
   function dibujarBatido(x, y, tipo, ang = 0, esc = 1) {
     const def = BATIDOS[tipo], r = def.radio * esc;
@@ -438,7 +424,7 @@
     if (arrastre) { const v = velocidadDesde(arrastre.x, arrastre.y); if (v.d < 8) return; vx = v.vx; vy = v.vy; }
     else if (apuntadoTeclado.usado && actual && !proyectiles.length) { const v = VMAX * apuntadoTeclado.fuerza; vx = Math.cos(apuntadoTeclado.ang) * v; vy = Math.sin(apuntadoTeclado.ang) * v; }
     else return;
-    let x = HONDA.x, y = HONDA.y; const g = 1 * 0.001 * (1000 / 60) * (1000 / 60);
+    let x = HONDA.x, y = HONDA.y; const g = engine.gravity.y * 0.001 * (1000 / 60) * (1000 / 60);
     const n = D().puntosGuia;
     for (let i = 0; i < n * 3; i++) {
       vy += g; vx *= 0.996; vy *= 0.996; x += vx; y += vy;
@@ -570,5 +556,5 @@
     estado = "titulo"; mostrarMenu("titulo");
     requestAnimationFrame(bucle);
   });
-  window.__dia4 = { get estado() { return estado; }, get clones() { return clones; }, get municion() { return municion; }, lanzar, usarPoder, montarNivel, terminarNivel, get proyectiles() { return proyectiles; }, get cuerpos() { return cuerpos; } };
+  window.__dia4 = { destruir, get estado() { return estado; }, get clones() { return clones; }, get municion() { return municion; }, lanzar, usarPoder, montarNivel, terminarNivel, get proyectiles() { return proyectiles; }, get cuerpos() { return cuerpos; } };
 })();
