@@ -25,9 +25,10 @@
   };
   // Materiales de la torre
   const MATS = {
-    galleta: { hp: 9, densidad: 0.0016, color: "#c98a4b", oscuro: "#8a5a2b", pts: 500 },
-    hielo:   { hp: 5,  densidad: 0.0012, color: "#bff3ff", oscuro: "#6fc8e0", pts: 300 },
-    lata:    { hp: 26, densidad: 0.005,  color: "#a9a6b8", oscuro: "#5b5068", pts: 800 },
+    galleta: { hp: 15, densidad: 0.0016, color: "#c98a4b", oscuro: "#8a5a2b", pts: 500 },
+    hielo:   { hp: 7,  densidad: 0.0012, color: "#bff3ff", oscuro: "#6fc8e0", pts: 300 },
+    lata:    { hp: 36, densidad: 0.005,  color: "#a9a6b8", oscuro: "#5b5068", pts: 800 },
+    hormigon:{ hp: 60, densidad: 0.0065, color: "#8f8b84", oscuro: "#5e5a54", pts: 1000 },
     tnt:     { hp: 3,  densidad: 0.002,  color: "#e3222e", oscuro: "#2fe6ff", pts: 300 }
   };
 
@@ -37,7 +38,7 @@
     {
       nombre: "LA CASETA", municion: ["fresa", "fresa", "platano"],
       montar: (b, c) => {
-        b(420, G - 30, 14, 60, "galleta"); b(500, G - 30, 14, 60, "galleta"); b(460, G - 67, 112, 14, "galleta");
+        b(420, G - 30, 16, 60, "hormigon"); b(500, G - 30, 16, 60, "hormigon"); b(460, G - 67, 112, 14, "galleta");
         c(460, G - 15);
         b(432, G - 94, 12, 40, "hielo"); b(488, G - 94, 12, 40, "hielo"); b(460, G - 121, 92, 14, "hielo");
         c(460, G - 89);
@@ -47,9 +48,9 @@
     {
       nombre: "HIELO Y GALLETA", municion: ["fresa", "arandano", "platano", "chocolate"],
       montar: (b, c) => {
-        b(368, G - 40, 12, 80, "hielo"); b(396, G - 40, 12, 80, "hielo"); b(382, G - 87, 52, 14, "hielo"); c(382, G - 109);
+        b(382, G - 8, 52, 16, "hormigon"); b(368, G - 52, 12, 72, "hielo"); b(396, G - 52, 12, 72, "hielo"); b(382, G - 95, 52, 14, "hielo"); c(382, G - 117);
         b(446, G - 13, 26, 26, "tnt");
-        b(476, G - 35, 14, 70, "galleta"); b(576, G - 35, 14, 70, "galleta"); b(526, G - 77, 122, 14, "galleta"); c(526, G - 15);
+        b(476, G - 35, 16, 70, "hormigon"); b(576, G - 35, 16, 70, "hormigon"); b(526, G - 77, 122, 14, "galleta"); c(526, G - 15);
         b(496, G - 109, 12, 50, "hielo"); b(556, G - 109, 12, 50, "hielo"); b(526, G - 141, 82, 14, "hielo"); c(526, G - 99);
         c(526, G - 163);
       }
@@ -58,7 +59,7 @@
       nombre: "EL EDIFICIO GLITCH", municion: ["fresa", "menta", "arandano", "chocolate", "platano"],
       montar: (b, c) => {
         b(374, G - 13, 26, 26, "tnt");
-        b(430, G - 30, 16, 60, "lata"); b(520, G - 30, 14, 60, "galleta"); b(610, G - 30, 16, 60, "lata"); b(520, G - 67, 200, 14, "lata");
+        b(430, G - 30, 18, 60, "hormigon"); b(520, G - 30, 16, 60, "hormigon"); b(610, G - 30, 18, 60, "hormigon"); b(520, G - 67, 200, 14, "lata");
         c(475, G - 15); c(565, G - 15);
         b(446, G - 99, 12, 50, "hielo"); b(520, G - 99, 14, 50, "galleta"); b(594, G - 99, 12, 50, "hielo"); b(520, G - 131, 172, 14, "galleta");
         c(483, G - 89); c(557, G - 89);
@@ -69,7 +70,7 @@
   ];
 
   const DIFS = {
-    facil: { nombre: "FÁCIL", dano: 1.6, puntosGuia: 46, extra: true },
+    facil: { nombre: "FÁCIL", dano: 1.25, puntosGuia: 46, extra: true },
     normal: { nombre: "NORMAL", dano: 1.0, puntosGuia: 14, extra: false }
   };
   let dif = leerPref("shakeweek-dia4", "facil"); if (!DIFS[dif]) dif = "facil";
@@ -99,7 +100,7 @@
     const c = (x, y, rey = false) => {
       const r = rey ? 19 : 14;
       const cu = Bodies.circle(x, y, r, { density: 0.0016, friction: 0.8, restitution: 0.1, label: "clon", sleepThreshold: 40 });
-      cu.plugin = { tipo: "clon", rey, r, hp: rey ? 11 : 4.5, max: rey ? 11 : 4.5, flash: 0 };
+      cu.plugin = { tipo: "clon", rey, r, hp: rey ? 16 : 6.5, max: rey ? 16 : 6.5, flash: 0 };
       clones.push(cu); Composite.add(engine.world, cu);
     };
     NIVELES[i].montar(b, c);
@@ -378,6 +379,10 @@
     if (p.mat === "galleta") { ctx.fillStyle = m.oscuro; for (let i = -w / 2 + 3; i < w / 2 - 2; i += 7) for (let j = -h / 2 + 3; j < h / 2 - 2; j += 8) ctx.fillRect(Math.round(i + ((j / 8) % 2) * 3), Math.round(j), 2, 2); }
     if (p.mat === "hielo") { ctx.fillStyle = PAL.blanco; ctx.fillRect(-w / 2 + 2, -h / 2 + 2, 2, Math.max(2, h - 6)); ctx.globalAlpha = 0.5; ctx.fillRect(-w / 2 + 5, -h / 2 + 2, 1, h / 2); ctx.globalAlpha = 1; }
     if (p.mat === "lata") { ctx.fillStyle = m.oscuro; ctx.fillRect(-w / 2, -h / 2, w, 2); ctx.fillRect(-w / 2, h / 2 - 2, w, 2); ctx.fillStyle = PAL.blanco; ctx.fillRect(-w / 2 + 3, -h / 2 + 3, 2, 2); ctx.fillRect(w / 2 - 5, h / 2 - 5, 2, 2); }
+    if (p.mat === "hormigon") {
+      ctx.fillStyle = m.oscuro; for (let i = -w / 2 + 2; i < w / 2 - 2; i += 5) for (let j = -h / 2 + 2; j < h / 2 - 2; j += 6) ctx.fillRect(Math.round(i + (j * 7) % 3), Math.round(j), 2, 1);
+      ctx.fillStyle = "#b3afa7"; ctx.fillRect(-w / 2, -h / 2, w, 2); ctx.fillStyle = "#4a4741"; ctx.fillRect(-w / 2, h / 2 - 2, w, 2);
+    }
     if (p.mat === "tnt") {
       ctx.fillStyle = Math.floor(reloj * 6) % 2 ? PAL.cian : PAL.magenta; ctx.fillRect(-w / 2 + 3, -3, w - 6, 6);
       ctx.font = `6px ${FUENTE}`; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillStyle = PAL.blanco; ctx.fillText("ERR", 0, 0);
