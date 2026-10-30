@@ -1,5 +1,5 @@
 /**
- * SHAKE WEEK · Milfshakes | Backend (Google Apps Script)
+ * SHAKE WEEK · Miflshakes | Backend (Google Apps Script)
  * Proyecto académico — CFGS Marketing y Publicidad
  *
  * Recibe dos tipos de evento desde la landing (index.html):
@@ -16,7 +16,7 @@
  */
 const CONFIG = {
   SHEET_ID: 'PEGA_AQUI_EL_ID_DE_TU_HOJA',
-  MARCA: 'Milfshakes',
+  MARCA: 'Miflshakes',
 };
 
 function hoja_(nombre, cabecera) {
@@ -61,7 +61,7 @@ function enviarCodigo_(email) {
   MailApp.sendEmail({
     to: email,
     subject: '🥤 ¡Has completado la Shake Week! Aquí tienes tu 2x1',
-    htmlBody: '<p>¡Lo has conseguido! Has vencido a Contrashake los 5 días seguidos.</p>' +
+    htmlBody: '<p>¡Lo has conseguido! Has vencido al Alter Ego los 5 días seguidos.</p>' +
               '<p>Tu código 2x1 en batidos: <b style="font-size:20px">' + codigo + '</b></p>' +
               '<p>Enséñalo en caja en cualquier tienda ' + CONFIG.MARCA + '. Válido 15 días.</p>'
   });

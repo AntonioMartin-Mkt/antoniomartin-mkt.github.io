@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Shake Week · Milfshakes</title>
+<title>Shake Week · Miflshakes</title>
 <meta name="description" content="Campaña de gamificación: 5 días, 5 minijuegos. Supera los 5 seguidos y llévate un 2x1 en batidos.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -55,11 +55,10 @@
   .boton.rojo{background:var(--rojo);color:var(--blanco)}
   .boton:disabled{opacity:.5;cursor:not-allowed;transform:none}
   .duelo{position:relative;height:420px}
-  .duelo img{position:absolute;bottom:0;height:380px;filter:drop-shadow(6px 8px 0 rgba(27,23,18,.45))}
-  .duelo .h{left:2%;animation:botar 1.6s ease-in-out infinite}
-  .duelo .v{right:2%;transform:scaleX(-1);animation:botarV 1.6s ease-in-out .8s infinite}
+  .duelo img{position:absolute;bottom:24px;height:300px;image-rendering:pixelated;filter:drop-shadow(6px 8px 0 rgba(27,23,18,.45))}
+  .duelo .h{left:-2%;animation:botar 1.6s ease-in-out infinite}
+  .duelo .v{right:-2%;animation:botar 1.6s ease-in-out .8s infinite}
   @keyframes botar{50%{transform:translateY(-12px) rotate(-2deg)}}
-  @keyframes botarV{0%,100%{transform:scaleX(-1)}50%{transform:scaleX(-1) translateY(-12px) rotate(-2deg)}}
   .vs{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%) rotate(-8deg);font-size:84px;color:var(--rojo);
     -webkit-text-stroke:3px var(--tinta);paint-order:stroke fill;text-shadow:5px 5px 0 var(--tinta);z-index:2}
   .nombres{position:absolute;bottom:-6px;left:0;right:0;display:flex;justify-content:space-between;z-index:3}
@@ -166,7 +165,7 @@
 
 <div class="barra">
   <div class="envolver">
-    <a class="marca display" href="#">MILF<span>SHAKES</span><em class="extra"> · SHAKE WEEK</em></a>
+    <a class="marca display" href="#">MIFL<span>SHAKES</span><em class="extra"> · SHAKE WEEK</em></a>
     <div class="modo" role="group" aria-label="Modo de visualización">
       <button type="button" data-modo="demo" aria-pressed="true">Demo</button>
       <button type="button" data-modo="campana" aria-pressed="false">Campaña</button>
@@ -179,7 +178,7 @@
     <div>
       <span class="etiqueta">Del lunes al viernes</span>
       <h1 class="display">SHAKE<br>WEEK</h1>
-      <p class="lead">Contrashake ha robado las recetas. <b>5 días, 5 juegos.</b> Gánalos seguidos y llévate un 2x1 en batidos.</p>
+      <p class="lead">El Alter Ego ha robado las recetas. <b>5 días, 5 juegos.</b> Gánalos seguidos y llévate un 2x1 en batidos.</p>
       <div class="ctas">
         <button class="boton rojo" id="ctaJugar" type="button">🥤 Jugar el reto de hoy</button>
         <a class="boton" href="#como">Cómo funciona</a>
@@ -189,7 +188,7 @@
       <img class="h" src="heroe.png" alt="">
       <span class="vs display">VS</span>
       <img class="v" src="villano.png" alt="">
-      <div class="nombres display"><span>El Clásico</span><span>Contrashake</span></div>
+      <div class="nombres display"><span>El Héroe</span><span>Alter Ego</span></div>
     </div>
   </div>
 </header>
@@ -226,7 +225,7 @@
           <label class="campo">Nombre<input type="text" name="nombre" autocomplete="given-name" required></label>
           <label class="campo">Email<input type="email" name="email" autocomplete="email" required></label>
           <label class="check"><input type="checkbox" name="privacidad" required><span>He leído y acepto la política de privacidad y las bases de la promoción. <em>(obligatorio)</em></span></label>
-          <label class="check"><input type="checkbox" name="ofertas"><span>Quiero recibir novedades y ofertas de Milfshakes por email. <em>(opcional)</em></span></label>
+          <label class="check"><input type="checkbox" name="ofertas"><span>Quiero recibir novedades y ofertas de Miflshakes por email. <em>(opcional)</em></span></label>
           <button class="boton rojo" type="submit">Empezar la Shake Week</button>
           <p class="ok" id="ok" role="status"></p>
         </form>
@@ -247,7 +246,7 @@
 
 <footer>
   <div class="envolver">
-    <p><strong>Concepto académico.</strong> Campaña de gamificación creada por Antonio José Martín (CFGS Marketing y Publicidad). No es una comunicación oficial de Milfshakes; las marcas pertenecen a sus propietarios.</p>
+    <p><strong>Concepto académico.</strong> Campaña de gamificación creada por Antonio José Martín (CFGS Marketing y Publicidad). No es una campaña real.</p>
   </div>
 </footer>
 
@@ -360,6 +359,7 @@ function abrir(id) {
     $("#registro").scrollIntoView({ behavior: "smooth" }); $("#form input[name=nombre]").focus({ preventScroll: true });
     return;
   }
+  if (id === 1) { location.href = "dia1.html"; return; }
   actual = JUEGOS.find(j => j.id === id);
   $("#tituloJuego").textContent = `Día ${actual.id} · ${actual.dia}`;
   intro();

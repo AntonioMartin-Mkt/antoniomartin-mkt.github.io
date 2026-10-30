@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Día 1 · La Fábrica Glitch — Shake Week</title>
+<meta name="description" content="Shake Week de Miflshakes · Día 1: run 'n gun arcade contra el Alter Ego.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+  :root{--negro:#0b0a0f;--rojo:#e3222e;--crema:#f3e6cf;--rosa:#ff5fa8;--cian:#2fe6ff;--magenta:#ff2fd0;--oro:#ffcf3a}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:var(--negro);color:var(--crema);font-family:"Press Start 2P",ui-monospace,monospace;overflow:hidden;
+    -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+  .marco{position:fixed;inset:0;display:flex;flex-direction:column}
+  .barra{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;font-size:10px;flex:none}
+  .barra a,.barra button{color:var(--crema);background:none;border:2px solid #3a3446;padding:7px 10px;font:inherit;text-decoration:none;cursor:pointer}
+  .barra a:hover,.barra button:hover{border-color:var(--rojo)}
+  .barra .der{display:flex;gap:6px}
+  .escena{flex:1;display:flex;align-items:center;justify-content:center;min-height:0;position:relative}
+  .pantalla{position:relative;aspect-ratio:16/9;width:min(100vw,calc((100vh - 52px) * 16 / 9));max-height:100%;
+    box-shadow:0 0 0 3px #1c1824,0 0 60px rgba(227,34,46,.25)}
+  canvas{width:100%;height:100%;display:block;image-rendering:pixelated;image-rendering:crisp-edges;background:#000}
+
+  /* Menús sobre el juego */
+  .menu{position:absolute;inset:0;display:none;align-items:center;justify-content:center;padding:3%}
+  .menu.ver{display:flex}
+  .menu.muerto,.menu.pausa,.menu.resultados{background:rgba(11,10,15,.72)}
+  .caja{background:var(--negro);border:4px solid var(--crema);box-shadow:0 0 0 4px var(--negro),8px 8px 0 4px var(--rojo);
+    padding:clamp(12px,3vw,26px);max-width:560px;width:100%;text-align:center;max-height:100%;overflow:auto}
+  .menu.titulo .caja{background:rgba(11,10,15,.82)}
+  .pre{font-size:clamp(8px,1.4vw,11px);color:var(--rosa);letter-spacing:.1em}
+  h1{font-size:clamp(18px,4.2vw,34px);line-height:1.25;margin:12px 0;color:var(--crema);text-shadow:4px 4px 0 var(--rojo)}
+  h1 span{color:var(--cian);text-shadow:-3px 0 var(--magenta),3px 0 var(--verde,#3dff7a)}
+  h2{font-size:clamp(16px,3.4vw,26px);margin-bottom:14px;text-shadow:3px 3px 0 var(--rojo)}
+  h2.rojo{color:var(--rojo);text-shadow:3px 3px 0 #000}
+  .hist{font-size:clamp(8px,1.4vw,10px);line-height:1.8;color:#cfc3b0;margin:10px auto 14px;max-width:44ch}
+  .b{display:inline-block;font:inherit;font-size:clamp(9px,1.5vw,12px);padding:12px 16px;margin:4px;border:3px solid var(--crema);
+    background:var(--negro);color:var(--crema);cursor:pointer;text-decoration:none}
+  .b.principal{background:var(--rojo);border-color:var(--crema)}
+  .b:hover,.b:focus-visible{outline:none;transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--rosa)}
+  .ctrls{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 12px;margin-top:14px;font-size:clamp(7px,1.15vw,9px);color:#a99e8d;line-height:1.7}
+  .ctrls b{color:var(--crema)} .ctrls .rosa,.ctrls .rosa b{color:var(--rosa)}
+  .fila{display:flex;flex-wrap:wrap;justify-content:center;margin-top:10px}
+  .fila.col{flex-direction:column;align-items:center}
+  .progreso{position:relative;height:14px;border:3px solid var(--crema);margin:26px 8px 8px;background:#1c1824}
+  .progreso i{position:absolute;inset:0 auto 0 0;background:var(--rojo)}
+  .progreso span{position:absolute;top:-22px;transform:translateX(-50%);font-size:16px;font-family:system-ui}
+  .tarjeta .filas{list-style:none;text-align:left;font-size:clamp(9px,1.5vw,12px);margin:8px auto;max-width:360px}
+  .tarjeta li{display:flex;justify-content:space-between;padding:7px 0;border-bottom:2px dashed #3a3446}
+  .tarjeta li b{color:var(--oro)}
+  .nota{margin:12px auto 4px;display:inline-flex;align-items:center;gap:14px}
+  .nota small{font-size:10px;color:#a99e8d}
+  .nota b{font-size:clamp(34px,7vw,56px);color:var(--crema);text-shadow:4px 4px 0 var(--rojo);animation:sello .5s cubic-bezier(.3,1.6,.5,1)}
+  @keyframes sello{from{transform:scale(2.4) rotate(-12deg);opacity:0}}
+  .sello{font-size:9px;color:var(--rosa);margin-top:6px}
+
+  /* Controles táctiles */
+  .tactil{display:none;flex:none;justify-content:space-between;align-items:flex-end;padding:8px 14px calc(10px + env(safe-area-inset-bottom));gap:10px;touch-action:none}
+  .tactil .grupo{display:grid;gap:8px}
+  .cruz{grid-template-columns:repeat(3,58px);grid-template-rows:repeat(2,52px)}
+  .cruz [data-k=arr]{grid-column:2;grid-row:1} .cruz [data-k=izq]{grid-column:1;grid-row:2} .cruz [data-k=der]{grid-column:3;grid-row:2}
+  .acciones{grid-template-columns:repeat(3,64px);grid-template-rows:repeat(2,58px)}
+  .tactil button{font:inherit;font-size:9px;border:3px solid var(--crema);background:#1c1824;color:var(--crema);border-radius:12px;touch-action:none}
+  .tactil button.on{background:var(--rojo)}
+  .tactil [data-k=salto]{grid-column:3;grid-row:2;background:#2a2433}
+  .tactil [data-k=disparo]{grid-column:2;grid-row:2}
+  .tactil [data-k=dash]{grid-column:3;grid-row:1}
+  .tactil [data-k=ex]{grid-column:1;grid-row:2;border-color:var(--rosa);color:var(--rosa)}
+  @media (pointer:coarse){
+    .tactil{display:flex}
+    .pantalla{width:min(100vw,calc((100vh - 52px - 140px) * 16 / 9))}
+    .ctrls{display:none}
+  }
+  @media (pointer:coarse) and (orientation:portrait){
+    .tactil{padding-left:8px;padding-right:8px}
+    .cruz{grid-template-columns:repeat(3,48px);grid-template-rows:repeat(2,50px);gap:6px}
+    .acciones{grid-template-columns:repeat(3,52px);grid-template-rows:repeat(2,54px);gap:6px}
+    .escena::after{content:"📱↻  GIRA EL MÓVIL PARA JUGAR MEJOR";position:absolute;bottom:8px;left:0;right:0;text-align:center;font-size:8px;color:#a99e8d}
+  }
+  @media (pointer:coarse) and (orientation:landscape){
+    .barra{position:absolute;top:0;left:0;right:0;z-index:3;background:transparent}
+    .tactil{position:absolute;left:0;right:0;bottom:0;z-index:3;pointer-events:none;background:transparent}
+    .tactil .grupo{pointer-events:auto}
+    .tactil button{background:rgba(28,24,36,.6)}
+    .pantalla{width:min(100vw,calc(100vh * 16 / 9))}
+  }
+</style>
+</head>
+<body>
+<div class="marco">
+  <div class="barra">
+    <a href="index.html">← SHAKE WEEK</a>
+    <div class="der">
+      <button type="button" id="btnSonido" aria-label="Sonido">🔊</button>
+      <button type="button" id="btnPausa" aria-label="Pausa">II</button>
+    </div>
+  </div>
+  <div class="escena">
+    <div class="pantalla">
+      <canvas id="juego" width="640" height="360" aria-label="Juego: La Fábrica Glitch"></canvas>
+      <div class="menu" id="menu" aria-live="polite"></div>
+    </div>
+  </div>
+  <div class="tactil" aria-hidden="true">
+    <div class="grupo cruz">
+      <button data-k="arr">▲</button><button data-k="izq">◀</button><button data-k="der">▶</button>
+    </div>
+    <div class="grupo acciones">
+      <button data-k="ex">SÚPER</button><button data-k="disparo" data-alterna>DISP.</button>
+      <button data-k="dash">DASH</button><button data-k="salto">SALTO</button>
+    </div>
+  </div>
+</div>
+<script src="dia1.js"></script>
+</body>
+</html>

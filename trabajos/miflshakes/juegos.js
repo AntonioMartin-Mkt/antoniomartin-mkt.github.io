@@ -49,7 +49,7 @@
     ctx.globalAlpha = alfa;
     ctx.translate(x, y);
     ctx.rotate(rot);
-    ctx.scale((girar ? -1 : 1) / Math.sqrt(estirar), estirar);
+    ctx.scale(1 / Math.sqrt(estirar), estirar);
     if (img.complete && img.naturalWidth) ctx.drawImage(img, -an / 2, -alto, an, alto);
     else { ctx.fillStyle = C.azul; ctx.fillRect(-an / 2, -alto, an, alto); }
     ctx.restore();
@@ -138,7 +138,7 @@
      ========================================================= */
   const plataformas = {
     id: 1, dia: "Lunes", titulo: "Huida de la cocina",
-    historia: "Contrashake ha invadido la cocina. Cruza la encimera, salta sobre sus secuaces y llega al mostrador.",
+    historia: "El Alter Ego ha invadido la cocina. Cruza la encimera, salta sobre sus secuaces y llega al mostrador.",
     controles: "← → para moverte · Espacio / ↑ para saltar · Pisa a los secuaces para eliminarlos",
     objetivo: "Llega al mostrador",
     iniciar(g) {
@@ -254,7 +254,7 @@
 
       // Toppings
       g.items.forEach(it => { if (!it.ok) emoji(ctx, it.e, it.x - cam, it.y + Math.sin(t * 3 + it.x) * 5, 30); });
-      // Enemigos (mini Contrashake)
+      // Enemigos (mini Alter Ego)
       g.enem.forEach(e => {
         if (!e.vivo) { if (e.muerto < 0.4) personaje(ctx, IMG.villano, e.x - cam, e.y, 50, e.dir < 0, 0.3, 0, 1 - e.muerto * 2.5); return; }
         sombra(ctx, e.x - cam, e.y, 18);
@@ -283,7 +283,7 @@
      ========================================================= */
   const lluvia = {
     id: 2, dia: "Martes", titulo: "Lluvia de toppings",
-    historia: "Contrashake lanza ingredientes desde el techo, pero mezcla guindillas, sal y cebolla. Atrapa solo lo dulce.",
+    historia: "El Alter Ego lanza ingredientes desde el techo, pero mezcla guindillas, sal y cebolla. Atrapa solo lo dulce.",
     controles: "← → para moverte · Atrapa 25 toppings dulces en 40 segundos · Esquiva 🌶️ 🧂 🧅",
     objetivo: "Atrapa 25 toppings",
     iniciar(g) {
@@ -358,7 +358,7 @@
      ========================================================= */
   const vuelo = {
     id: 3, dia: "Miércoles", titulo: "Vuelo de pajita",
-    historia: "Contrashake ha levantado un muro de pajitas gigantes. Sopla por la tuya para volar y cruza 12 huecos.",
+    historia: "El Alter Ego ha levantado un muro de pajitas gigantes. Sopla por la tuya para volar y cruza 12 huecos.",
     controles: "Espacio / ↑ / toca el botón para impulsarte · No toques las pajitas ni el suelo",
     objetivo: "Cruza 12 pajitas",
     iniciar(g) {
@@ -430,7 +430,7 @@
      ========================================================= */
   const carrera = {
     id: 4, dia: "Jueves", titulo: "Carrera al mostrador",
-    historia: "Contrashake te persigue por la calle lanzando cubitos y vasos. Corre 1.000 metros sin que te alcance.",
+    historia: "El Alter Ego te persigue por la calle lanzando cubitos y vasos. Corre 1.000 metros sin que te alcance.",
     controles: "Espacio / ↑ para saltar · Pulsa otra vez en el aire para doble salto",
     objetivo: "Corre 1.000 m",
     iniciar(g) {
@@ -515,9 +515,9 @@
      ========================================================= */
   const duelo = {
     id: 5, dia: "Viernes", titulo: "El gran duelo",
-    historia: "Cara a cara con Contrashake. Dispárale nata montada hasta vaciarle el vaso y recupera las recetas.",
+    historia: "Cara a cara con el Alter Ego. Dispárale nata montada hasta vaciarle el vaso y recupera las recetas.",
     controles: "← → para moverte · Disparas solo · Espacio / ↑ para un salto rápido que esquiva",
-    objetivo: "Derrota a Contrashake",
+    objetivo: "Derrota al Alter Ego",
     iniciar(g) {
       g.p = { x: W / 2, y: 470, vy: 0, mira: 1, est: 1 };
       g.b = { x: W / 2, y: 210, vida: 70, max: 70, t: 0, ataque: 1.6, golpe: 0 };
@@ -561,7 +561,7 @@
         e.x += e.vx * dt; e.y += e.vy * dt;
         if (!e.ok && g.inv <= 0 && choca(caja, { x: e.x - 10, y: e.y - 10, w: 20, h: 20 })) {
           e.ok = true; g.vidas--; g.inv = 1.5; particulas(g, p.x, p.y - 30, [C.azul, C.rojo, C.blanco]);
-          if (g.vidas <= 0) g.fin(false, g.puntos, `A Contrashake le quedaba un ${Math.round(b.vida / b.max * 100)} %`);
+          if (g.vidas <= 0) g.fin(false, g.puntos, `Al Alter Ego le quedaba un ${Math.round(b.vida / b.max * 100)} %`);
         }
       });
       g.enemigas = g.enemigas.filter(e => !e.ok && e.y < H + 20 && e.x > -20 && e.x < W + 20);
@@ -599,7 +599,7 @@
       // Barra de vida del jefe
       ctx.fillStyle = C.tinta; ctx.fillRect(W / 2 - 204, 22, 408, 26);
       ctx.fillStyle = C.cian; ctx.fillRect(W / 2 - 200, 26, 400 * Math.max(0, b.vida / b.max), 18);
-      texto(ctx, "CONTRASHAKE", W / 2, 66, 22, C.crema);
+      texto(ctx, "ALTER EGO", W / 2, 66, 22, C.crema);
       vidas(ctx, g.vidas);
     }
   };
