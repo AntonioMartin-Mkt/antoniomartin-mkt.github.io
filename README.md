@@ -17,7 +17,8 @@ trabajos/
   hemkansla/        → landing Family Club (portada.jpg + archivos)
   halloween/        → newsletter de Halloween (email.html + imágenes y GIFs)
   cruzcampo/        → dossier de marca (aún no publicado en la web)
-  miflshakes/       → campaña «Shake Week»: landing (index.html), día 1 arcade (dia1.html), día 3 comecocos (dia3.html), resto de días (juegos.js) + Codigo.gs
+  miflshakes/       → campaña «Shake Week»: landing (index.html), días 1, 3, 4 y 5 (diaN.html + diaN.js),
+                      día 2 en juegos.js, comun.js (sonido y efectos), lib/ (física), _archivo/ (versiones antiguas, oculto)
   <nuevo-trabajo>/  → una carpeta por trabajo, con todo lo que necesita dentro
 
 ── 3. INFORMACIÓN (no se publica en la web) ──────────────────

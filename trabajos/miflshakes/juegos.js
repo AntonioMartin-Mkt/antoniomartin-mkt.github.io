@@ -137,7 +137,7 @@
      DÍA 1 · LUNES — «Huida de la cocina» (plataformas)
      ========================================================= */
   const plataformas = {
-    id: 1, dia: "Lunes", titulo: "La fábrica glitch",
+    id: 1, dia: "Lunes", titulo: "La fábrica glitch", enlace: "dia1.html",
     historia: "El Alter Ego ha invadido la cocina. Cruza la encimera, salta sobre sus secuaces y llega al mostrador.",
     controles: "← → para moverte · Espacio / ↑ para saltar · Pisa a los secuaces para eliminarlos",
     objetivo: "Derrota al Alter Ego",
@@ -357,7 +357,7 @@
      DÍA 3 · MIÉRCOLES — «Vuelo de pajita» (tipo Flappy)
      ========================================================= */
   const vuelo = {
-    id: 3, dia: "Miércoles", titulo: "Laberinto glitch",
+    id: 3, dia: "Miércoles", titulo: "Laberinto glitch", enlace: "dia3.html",
     historia: "El Alter Ego ha levantado un muro de pajitas gigantes. Sopla por la tuya para volar y cruza 12 huecos.",
     controles: "Espacio / ↑ / toca el botón para impulsarte · No toques las pajitas ni el suelo",
     objetivo: "Cómete todos los toppings",
@@ -429,10 +429,10 @@
      DÍA 4 · JUEVES — «Carrera al mostrador» (runner)
      ========================================================= */
   const carrera = {
-    id: 4, dia: "Jueves", titulo: "Carrera al mostrador",
+    id: 4, dia: "Jueves", titulo: "Torre glitch", enlace: "dia4.html",
     historia: "El Alter Ego te persigue por la calle lanzando cubitos y vasos. Corre 1.000 metros sin que te alcance.",
     controles: "Espacio / ↑ para saltar · Pulsa otra vez en el aire para doble salto",
-    objetivo: "Corre 1.000 m",
+    objetivo: "Derriba las 3 torres",
     iniciar(g) {
       g.p = { y: 460, vy: 0, saltos: 0, est: 1 }; g.obs = []; g.items = []; g.prox = 1.4; g.dist = 0; g.meta = 1000;
       g.vel = 360; g.vidas = 3; g.inv = 0; g.desp = 0;
@@ -514,10 +514,10 @@
      DÍA 5 · VIERNES — «El gran duelo» (jefe final)
      ========================================================= */
   const duelo = {
-    id: 5, dia: "Viernes", titulo: "El gran duelo",
+    id: 5, dia: "Viernes", titulo: "Duelo final", enlace: "dia5.html",
     historia: "Cara a cara con el Alter Ego. Dispárale nata montada hasta vaciarle el vaso y recupera las recetas.",
     controles: "← → para moverte · Disparas solo · Espacio / ↑ para un salto rápido que esquiva",
-    objetivo: "Derrota al Alter Ego",
+    objetivo: "Gana al Alter Ego 1 vs 1",
     iniciar(g) {
       g.p = { x: W / 2, y: 470, vy: 0, mira: 1, est: 1 };
       g.b = { x: W / 2, y: 210, vida: 70, max: 70, t: 0, ataque: 1.6, golpe: 0 };

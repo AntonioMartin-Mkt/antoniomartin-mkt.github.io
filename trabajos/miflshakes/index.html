@@ -265,7 +265,7 @@
   </div>
 </div>
 
-<script src="juegos.js?v=202610301621"></script>
+<script src="juegos.js?v=202610301643"></script>
 <script>
 /* ---------------------------------------------------------
    Si conectas Google Sheets, pega aquí la URL de la
@@ -360,7 +360,8 @@ function abrir(id) {
     $("#registro").scrollIntoView({ behavior: "smooth" }); $("#form input[name=nombre]").focus({ preventScroll: true });
     return;
   }
-  if (id === 1 || id === 3) { location.href = `dia${id}.html?v=202610301621`; return; }
+  const juego = JUEGOS.find(j => j.id === id);
+  if (juego.enlace) { location.href = `${juego.enlace}?v=202610301643`; return; }
   actual = JUEGOS.find(j => j.id === id);
   $("#tituloJuego").textContent = `Día ${actual.id} · ${actual.dia}`;
   intro();
