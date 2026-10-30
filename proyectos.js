@@ -78,6 +78,25 @@ const PERFIL = {
 
 const PROYECTOS = [
   {
+    titulo: "«Shake Week»: campaña de gamificación con 5 minijuegos para Milfshakes",
+    corto: "Shake Week",
+    categoria: "Web",
+    contexto: "Clase",
+    fecha: "2026-10",
+    destacado: true,
+    colores: ["#3E78C9", "#F6EBD9", "#C4403D"],
+    resumen: "Campaña para atraer y fidelizar clientes con un videojuego: 5 minijuegos distintos, uno por día, y un 2x1 para quien los supere seguidos. Programada desde cero y jugable en móvil y ordenador. Concepto académico.",
+    reto: "Conseguir registros y que el cliente vuelva cinco días seguidos a la marca, creando el hábito de visita antes de la compra.",
+    solucion: "Diseñé una landing con tarjeta de sellos y cinco juegos programados en JavaScript (plataformas, atrapar toppings, vuelo, carrera y jefe final), con la taza clásica de la marca como héroe y su versión invertida, «Contrashake», como villano. El registro separa el consentimiento obligatorio del comercial y, con Apps Script, guarda cada alta y cada victoria en Google Sheets y envía el código 2x1 al completar la semana.",
+    resultado: "Campaña jugable de principio a fin, con modo demo para probar los 5 días sin esperar. Al ser un concepto de clase aún no tiene datos; los KPI previstos son registros, tasa de opt-in comercial y porcentaje que completa la racha.",
+    herramientas: ["HTML", "CSS", "JavaScript (canvas)", "Google Apps Script", "Google Sheets"],
+    imagen: "trabajos/milfshakes/portada.jpg",
+    objeto: "trabajos/milfshakes/heroe.png",
+    extras: ["trabajos/milfshakes/villano.png"],
+    vista: "web",
+    enlace: "trabajos/milfshakes/"
+  },
+  {
     titulo: "Dossier de marca de Cruzcampo",
     corto: "Dossier Cruzcampo",
     categoria: "Estrategia",
