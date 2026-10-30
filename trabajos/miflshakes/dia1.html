@@ -42,6 +42,12 @@
   .b:hover,.b:focus-visible{outline:none;transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--rosa)}
   .ctrls{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 12px;margin-top:14px;font-size:clamp(7px,1.15vw,9px);color:#a99e8d;line-height:1.7}
   .ctrls b{color:var(--crema)} .ctrls .rosa,.ctrls .rosa b{color:var(--rosa)}
+  .eleccion{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;margin:8px 0}
+  .eleccion .et{font-size:clamp(7px,1.1vw,9px);color:#a99e8d;width:100%}
+  .op{font:inherit;font-size:clamp(7px,1.15vw,9px);padding:8px 10px;border:2px solid #3a3446;background:#151219;color:#cfc3b0;cursor:pointer}
+  .op.sel{border-color:var(--rosa);color:var(--crema);background:#2a1424;box-shadow:3px 3px 0 var(--rojo)}
+  .op:hover{border-color:var(--crema)}
+  .desc{font-size:clamp(7px,1.1vw,9px);color:var(--rosa);margin:2px 0 10px}
   .fila{display:flex;flex-wrap:wrap;justify-content:center;margin-top:10px}
   .fila.col{flex-direction:column;align-items:center}
   .progreso{position:relative;height:14px;border:3px solid var(--crema);margin:26px 8px 8px;background:#1c1824}

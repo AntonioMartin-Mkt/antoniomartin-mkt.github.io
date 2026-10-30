@@ -42,7 +42,7 @@
     if (e.code === "Enter") { e.preventDefault(); accionPrincipal(); }
     if (e.code === "Escape" || e.code === "KeyP") pausar();
     if (e.code === "KeyM") Sonido.alternar();
-    if (e.code === "KeyR" && (estado === "muerto" || estado === "resultados" || estado === "pausa")) reiniciar(estado === "muerto" && enJefe);
+    if (e.code === "KeyR" && (estado === "muerto" || estado === "resultados" || estado === "pausa")) reiniciar(estado === "muerto" ? (enJefe ? "jefe" : puntoControl ? "control" : "inicio") : "inicio");
   });
   addEventListener("keyup", e => { const k = MAPA[e.code]; if (k) K[k] = 0; });
   addEventListener("blur", () => { for (const k in K) K[k] = 0; if (estado === "juego") pausar(); });
@@ -147,6 +147,8 @@
   const PLATS = [[430, 236, 90], [600, 196, 80], [1000, 228, 110], [1180, 180, 90], [1650, 230, 100], [1820, 172, 100], [1990, 230, 90], [2420, 220, 120]]
     .map(([x, y, w]) => ({ x, y, w }));
   const sueloEn = x => SUELOS.some(s => x > s.x - 4 && x < s.x + s.w + 4);
+  // Carteles de ayuda (tutorial dentro del propio nivel)
+  const CARTELES = [[170, "X  =  DISPARAR", "↑ = APUNTAR ARRIBA"], [560, "SALTA OTRA VEZ", "SOBRE LO ROSA = PARRY"], [1380, "PARRY + SÚPER", "V = DISPARO SÚPER"]];
 
   // Elementos de fondo (decorado)
   const DECO = [];
@@ -157,16 +159,58 @@
   let camX = 0, p, balas, enemigos, proys, rosquillas, monedas, parts, textos, disparadores, jefe, peligros, banner, menuSel = 0;
   let pausaPrevia = null, resultado = null;
 
+  /* ---------------- Dificultad y amuletos ---------------- */
+  // FÁCIL: más vida, ataques más lentos y avisos más largos. Es la opción por defecto.
+  const DIFS = {
+    facil: { nombre: "FÁCIL", hp: 4, jefeHp: 200, vel: 0.78, pausa: 1.4, aviso: 1.4, drop: 0.3, enemVel: 0.75 },
+    normal: { nombre: "NORMAL", hp: 3, jefeHp: 260, vel: 0.95, pausa: 1.05, aviso: 1.1, drop: 0.15, enemVel: 0.9 }
+  };
+  const AMULETOS = {
+    corazon: { nombre: "Corazón extra", desc: "Empiezas con +1 de vida", icono: "♥" },
+    humo: { nombre: "Dash de humo", desc: "Eres invencible mientras haces dash", icono: "≈" },
+    parry: { nombre: "Parry automático", desc: "Tocar algo rosa en el aire hace parry solo", icono: "✦" }
+  };
+  let dif = "facil", amuleto = "corazon";
+  try { const g = JSON.parse(localStorage.getItem("shakeweek-dia1") || "{}"); if (DIFS[g.dif]) dif = g.dif; if (AMULETOS[g.amuleto]) amuleto = g.amuleto; } catch (e) {}
+  const D = () => DIFS[dif];
+  const hpMax = () => D().hp + (amuleto === "corazon" ? 1 : 0) + 2;
+
+  /* ---------------- Consumibles ---------------- */
+  // Se recogen tocándolos. Algunos están en el nivel, otros caen de los enemigos y del jefe.
+  const CONSUMIBLES = {
+    vida:    { nombre: "+1 VIDA",          color: "#e3222e", dur: 0 },
+    escudo:  { nombre: "ESCUDO DE NATA",   color: "#fffaf0", dur: 0 },
+    triple:  { nombre: "TRIPLE PAJITA",    color: "#ffcf3a", dur: 14 },
+    tele:    { nombre: "PAJITA TELEDIRIGIDA", color: "#2fe6ff", dur: 14 },
+    turbo:   { nombre: "TURBO BATIDO",     color: "#ff5fa8", dur: 12 },
+    super:   { nombre: "+1 CARTA SÚPER",   color: "#ff2fd0", dur: 0 }
+  };
+  let consumibles = [], puntoControl = null, recogidos = 0;
+  const CONTROL_X = 1580;
+
   function nuevoJugador(x = 80) {
-    return { x, y: SUELO, vx: 0, vy: 0, suelo: true, mira: 1, hp: 3, inv: 0, dash: 0, dashCd: 0, dashAire: true,
-      parryVent: 0, parryUsado: false, cartas: 0, cad: 0, anim: 0, est: 1, ultimoSeguro: x, parries: 0, ex: 0, flash: 0 };
+    return { x, y: SUELO, vx: 0, vy: 0, suelo: true, mira: 1, hp: D().hp + (amuleto === "corazon" ? 1 : 0), inv: 0, dash: 0, dashCd: 0, dashAire: true,
+      parryVent: 0, parryUsado: false, cartas: 0, cad: 0, anim: 0, est: 1, ultimoSeguro: x, parries: 0, ex: 0, flash: 0,
+      arma: null, armaT: 0, escudo: 0 };
   }
 
-  function reiniciar(desdeJefe = false) {
-    p = nuevoJugador(desdeJefe ? AX + 120 : 80);
-    balas = []; enemigos = []; proys = []; parts = []; textos = []; peligros = [];
+  function soltarConsumible(x, y, tipo = null, caer = true) {
+    const pool = ["vida", "vida", "escudo", "triple", "tele", "turbo", "super"];
+    if (!tipo) tipo = p.hp < 2 ? "vida" : pool[Math.floor(Math.random() * pool.length)];
+    consumibles.push({ tipo, x, y, vy: caer ? -220 : 0, cae: caer, t: 0, vida: caer ? 12 : Infinity });
+  }
+
+  function reiniciar(modo = false) {
+    if (modo === true) modo = "jefe"; if (modo === false) modo = "inicio";
+    const desdeJefe = modo === "jefe", desdeControl = modo === "control" && puntoControl;
+    if (modo === "inicio") puntoControl = null;
+    p = nuevoJugador(desdeJefe ? AX + 120 : desdeControl ? CONTROL_X : 80);
+    balas = []; enemigos = []; proys = []; parts = []; textos = []; peligros = []; consumibles = []; recogidos = 0;
     rosquillas = [[795, 214], [1500, 200], [2235, 214], [1880, 104]].map(([x, y]) => ({ x, y, cd: 0 }));
-    monedas = [[640, 150], [1500, 116], [2480, 166]].map(([x, y]) => ({ x, y, ok: desdeJefe }));
+    monedas = [[640, 150], [1500, 116], [2480, 166]].map(([x, y], i) => ({ x, y, ok: desdeJefe || (desdeControl && puntoControl.monedas[i]) }));
+    // Consumibles colocados en el nivel
+    if (!desdeJefe) [["turbo", 330, SUELO - 22], ["vida", 1055, 200], ["escudo", 1720, SUELO - 22], ["triple", 2000, 200], ["tele", 2720, SUELO - 22]]
+      .filter(([, x]) => !desdeControl || x > CONTROL_X).forEach(([t, x, y]) => soltarConsumible(x, y, t, false));
     disparadores = [
       { g: 120, t: "mini", x: 700 }, { g: 300, t: "cereza", dy: 0 }, { g: 430, t: "mini", x: 900 },
       { g: 600, t: "cereza", dy: 0 }, { g: 640, t: "cereza", dy: 70 },
@@ -174,19 +218,26 @@
       { g: 1560, t: "mini", x: 2060 }, { g: 1660, t: "cereza", dy: 40 }, { g: 1760, t: "mini", x: 2150 },
       { g: 1900, t: "cereza", dy: 0 }, { g: 1960, t: "cereza", dy: 60 },
       { g: 2280, t: "mini", x: 2700 }, { g: 2360, t: "mini", x: 2740 }, { g: 2460, t: "cereza", dy: 20 }, { g: 2560, t: "cereza", dy: 70 }
-    ].filter(d => !desdeJefe);
-    if (!desdeJefe) [1250, 2060, 2620].forEach(x => enemigos.push({ tipo: "batidora", x, y: SUELO, hp: 12, t: Math.random(), disp: 0, flash: 0 }));
-    jefe = null; enJefe = false; camX = desdeJefe ? AX : 0; tiempoJuego = desdeJefe ? (resultado?.tiempoJefe || 0) : 0;
+    ].filter(d => !desdeJefe && (!desdeControl || d.g > CONTROL_X));
+    if (!desdeJefe) [1250, 2060, 2620].filter(x => !desdeControl || x > CONTROL_X)
+      .forEach(x => enemigos.push({ tipo: "batidora", x, y: SUELO, hp: 9, t: Math.random(), disp: 1.2, flash: 0 }));
+    jefe = null; enJefe = false;
+    camX = desdeJefe ? AX : desdeControl ? CONTROL_X - 230 : 0;
+    tiempoJuego = desdeJefe ? (resultado?.tiempoJefe || 0) : desdeControl ? puntoControl.tiempo : 0;
     hitstop = 0; temblor = 0; reloj = 0;
     estado = "juego"; ocultarMenu();
-    if (desdeJefe) empezarJefe(); else { mostrarBanner("¡PREPARADOS!", "", 1.1, () => mostrarBanner("¡A POR ELLOS!", "", 1.0)); Sonido.empezarMusica(false); }
+    if (desdeJefe) empezarJefe();
+    else {
+      mostrarBanner(desdeControl ? "¡SEGUIMOS!" : "¡PREPARADOS!", "", 1.1, () => mostrarBanner("¡A POR ELLOS!", "", 1.0));
+      Sonido.empezarMusica(false);
+    }
   }
 
   function mostrarBanner(texto, sub = "", dur = 1.4, alAcabar = null, color = PAL.crema) { banner = { texto, sub, t: 0, dur, alAcabar, color }; }
 
   /* ---------------- Utilidades ---------------- */
   const choca = (a, b) => a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
-  const cajaJug = () => ({ x: p.x - 12, y: p.y - 54, w: 24, h: 52 });
+  const cajaJug = () => ({ x: p.x - 10, y: p.y - 48, w: 20, h: 46 }); // caja de daño algo menor que el dibujo (más justo)
   function particulas(x, y, colores, n = 12, vel = 180, grav = 500) {
     for (let i = 0; i < n; i++) {
       const a = Math.random() * Math.PI * 2, v = vel * (0.3 + Math.random() * 0.9);
@@ -228,6 +279,7 @@
   /* ---------------- Jugador ---------------- */
   function actualizarJugador(dt) {
     p.inv -= dt; p.dashCd -= dt; p.cad -= dt; p.parryVent -= dt; p.flash -= dt;
+    if (p.arma) { p.armaT -= dt; if (p.armaT <= 0) { p.arma = null; textos.push({ t: "SE ACABÓ EL POTENCIADOR", x: p.x, y: p.y - 90, vida: 1, c: PAL.grisC }); } }
     const cayendoAntes = p.y;
 
     // Dash
@@ -252,6 +304,7 @@
 
     // Movimiento con colisiones
     p.x += p.vx * dt;
+    if (p.empuje) { p.x += p.empuje * dt; p.empuje *= Math.pow(0.02, dt); if (Math.abs(p.empuje) < 10) p.empuje = 0; }
     if (enJefe) p.x = Math.max(AX + 16, Math.min(AX + AW - 16, p.x)); else p.x = Math.max(camX + 14, Math.min(AX + AW - 16, p.x));
     const antes = p.y; p.y += p.vy * dt;
     const estabaSuelo = p.suelo; p.suelo = false;
@@ -263,19 +316,24 @@
     p.est += (1 - p.est) * Math.min(1, dt * 12);
     p.anim += dt * (p.vx ? 1 : 0.3);
 
-    // Caída a un foso: pierdes 1 HP y vuelves a la orilla segura
+    // Caída a un foso: ya no quita vida, solo te devuelve a la orilla segura
     if (p.y > H + 40) {
-      recibirDano(true);
-      p.x = p.ultimoSeguro - p.mira * 30; p.y = SUELO - 120; p.vy = -200; p.vx = 0;
+      p.x = p.ultimoSeguro - p.mira * 30; p.y = SUELO - 120; p.vy = -200; p.vx = 0; p.inv = 1.2;
+      sfx.salto(); textos.push({ t: "¡UPS!", x: p.x, y: SUELO - 140, vida: 0.9, c: PAL.rosa });
     }
 
-    // Disparo
+    // Disparo (cambia según el potenciador activo)
     if (K.disparo && p.cad <= 0 && p.dash <= 0) {
       let dx = p.mira, dy = 0;
       if (K.arr) { if (K.izq || K.der) { dx = p.mira * 0.707; dy = -0.707; } else { dx = 0; dy = -1; } }
       const ox = dx === 0 ? p.x + p.mira * 4 : p.x + p.mira * 24, oy = dy === -1 ? p.y - 80 : dy ? p.y - 60 : p.y - 36;
-      balas.push({ x: ox, y: oy + (Math.random() * 4 - 2), vx: dx * 560, vy: dy * 560, dmg: 1, vida: 0.9, ex: false });
-      p.cad = 0.11; sfx.disparo();
+      const base = Math.atan2(dy, dx), vel = p.arma === "tele" ? 430 : 560;
+      const angulos = p.arma === "triple" ? [-0.2, 0, 0.2] : [0];
+      for (const da of angulos) {
+        balas.push({ x: ox, y: oy + (Math.random() * 4 - 2), vx: Math.cos(base + da) * vel, vy: Math.sin(base + da) * vel,
+          dmg: p.arma === "triple" ? 0.75 : 1, vida: p.arma === "tele" ? 1.4 : 0.9, ex: false, tele: p.arma === "tele", color: p.arma });
+      }
+      p.cad = p.arma === "turbo" ? 0.06 : 0.1; sfx.disparo();
     }
     // EX (super disparo)
     if (pul("ex") && p.cartas >= 1 && p.dash <= 0) {
@@ -286,8 +344,9 @@
     }
 
     // Parry: si saltas otra vez en el aire tocando algo ROSA, rebotas y ganas una carta
-    if (p.parryVent > 0) {
-      const c = cajaJug(); c.x -= 10; c.y -= 12; c.w += 20; c.h += 24;
+    const autoParry = amuleto === "parry" && !p.suelo;
+    if (p.parryVent > 0 || autoParry) {
+      const c = cajaJug(); c.x -= 12; c.y -= 14; c.w += 24; c.h += 28;
       let objetivo = null;
       for (const r of rosquillas) if (r.cd <= 0 && choca(c, { x: r.x - 12, y: r.y - 12, w: 24, h: 24 })) objetivo = r;
       for (const pr of proys) if (pr.rosa && !pr.fuera && choca(c, { x: pr.x - pr.r, y: pr.y - pr.r, w: pr.r * 2, h: pr.r * 2 })) objetivo = pr;
@@ -305,12 +364,33 @@
       m.ok = true; sfx.moneda(); particulas(m.x, m.y, [PAL.oro, PAL.blanco], 12, 140, 300);
       textos.push({ t: "MONEDA", x: m.x, y: m.y - 22, vida: 0.9, c: PAL.oro });
     }
+    // Consumibles
+    for (const c of consumibles) if (!c.ok && Math.abs(c.x - p.x) < 22 && Math.abs(c.y - (p.y - 28)) < 38) recoger(c);
     void cayendoAntes;
+  }
+
+  function recoger(c) {
+    c.ok = true; recogidos++;
+    const def = CONSUMIBLES[c.tipo];
+    if (c.tipo === "vida") { if (p.hp < hpMax()) p.hp++; else sumarSuper(1); }
+    else if (c.tipo === "escudo") p.escudo = 1;
+    else if (c.tipo === "super") sumarSuper(1);
+    else { p.arma = c.tipo; p.armaT = def.dur; }
+    sfx.moneda(); Sonido.tono(660, 1320, 0.18, "triangle", 0.12, 0.1);
+    particulas(c.x, c.y, [def.color, PAL.blanco, PAL.oro], 16, 170, 200);
+    textos.push({ t: def.nombre, x: p.x, y: p.y - 96, vida: 1.2, c: def.color });
   }
 
   function recibirDano(foso = false) {
     if (p.inv > 0 && !foso) return;
-    p.hp--; p.inv = 1.5; p.flash = 0.12; hitstop = 0.14; temblor = 7; sfx.golpe();
+    if (amuleto === "humo" && p.dash > 0 && !foso) return;
+    if (p.escudo > 0 && !foso) {
+      p.escudo = 0; p.inv = 1.2; hitstop = 0.08; temblor = 4; sfx.parry();
+      particulas(p.x, p.y - 30, [PAL.blanco, PAL.crema], 18, 200, 0);
+      textos.push({ t: "¡ESCUDO ROTO!", x: p.x, y: p.y - 92, vida: 0.9, c: PAL.blanco });
+      return;
+    }
+    p.hp--; p.inv = 2; p.flash = 0.12; hitstop = 0.14; temblor = 7; sfx.golpe();
     particulas(p.x, p.y - 30, [PAL.rojo, PAL.blanco, PAL.negro], 16, 220);
     if (!foso) { p.vy = -280; p.dash = 0; }
     if (p.hp <= 0) morir();
@@ -323,7 +403,7 @@
     // Disparadores de oleadas
     disparadores = disparadores.filter(d => {
       if (p.x < d.g) return true;
-      if (d.t === "mini") enemigos.push({ tipo: "mini", x: d.x, y: SUELO, vy: 0, hp: 4, t: Math.random() * 2, salto: 1 + Math.random(), flash: 0, mira: -1 });
+      if (d.t === "mini") enemigos.push({ tipo: "mini", x: d.x, y: SUELO, vy: 0, hp: 3, t: Math.random() * 2, salto: 1 + Math.random(), flash: 0, mira: -1 });
       if (d.t === "cereza") enemigos.push({ tipo: "cereza", x: camX + W + 30, base: 110 + d.dy, y: 110 + d.dy, hp: 2, t: Math.random() * 6, flash: 0, picado: false, vy: 0 });
       return false;
     });
@@ -332,10 +412,10 @@
       e.flash -= dt; e.t += dt;
       if (e.tipo === "mini") {
         const dir = Math.sign(p.x - e.x) || -1; e.mira = dir;
-        e.x += dir * 72 * dt;
+        e.x += dir * 72 * D().enemVel * dt;
         e.salto -= dt;
         const enSuelo = e.y >= SUELO && sueloEn(e.x);
-        if (enSuelo && e.salto <= 0) { e.vy = -330; e.salto = 1.2 + Math.random() * 1.2; }
+        if (enSuelo && e.salto <= 0) { e.vy = -300; e.salto = 1.8 + Math.random() * 1.4; }
         e.vy += 1300 * dt; e.y += e.vy * dt;
         if (e.y >= SUELO && sueloEn(e.x) && e.y - e.vy * dt <= SUELO + 2) { e.y = SUELO; e.vy = 0; }
         if (e.y > H + 60) e.muerto = true;
@@ -343,8 +423,8 @@
       } else if (e.tipo === "cereza") {
         if (!e.picado) {
           e.x -= 115 * dt; e.y = e.base + Math.sin(e.t * 3) * 26;
-          if (Math.abs(e.x - p.x) < 70 && e.x > p.x) { e.picado = true; e.vy = 40; e.vx = (p.x - e.x) * 1.2; }
-        } else { e.vy += 500 * dt; e.y += e.vy * dt; e.x += (e.vx - 60) * dt; }
+          if (Math.abs(e.x - p.x) < 70 && e.x > p.x) { e.picado = true; e.vy = 20; e.vx = (p.x - e.x) * 0.8; }
+        } else { e.vy += 380 * dt; e.y += e.vy * dt; e.x += (e.vx - 60) * dt; }
         if (e.x < camX - 60 || e.y > H + 40) e.muerto = true;
         if (choca(cajaJug(), { x: e.x - 12, y: e.y - 12, w: 24, h: 24 })) recibirDano();
       } else if (e.tipo === "batidora") {
@@ -354,8 +434,8 @@
           if (e.disp <= 0) {
             e.n = (e.n || 0) + 1;
             const tVuelo = 1.1, dx = p.x - e.x;
-            proys.push({ x: e.x, y: e.y - 60, vx: dx / tVuelo, vy: -340, grav: 560, r: 6, rosa: e.n % 3 === 0, tipo: "sirope" });
-            e.disp = 1.7; e.boca = 0.2;
+            proys.push({ x: e.x, y: e.y - 60, vx: dx / tVuelo, vy: -340, grav: 560, r: 6, rosa: e.n % 2 === 0, tipo: "sirope" });
+            e.disp = 2.6; e.boca = 0.2;
           }
           e.boca = (e.boca || 0) - dt;
         }
@@ -376,12 +456,24 @@
     e.muerto = true; sfx.boom();
     const cols = e.tipo === "cereza" ? [PAL.rojo, PAL.verde, PAL.blanco] : [PAL.cian, PAL.magenta, PAL.verde, PAL.blanco];
     particulas(e.x, e.y - 20, cols, 22, 240);
-    if (e.tipo === "batidora") temblor = 5;
+    if (e.tipo === "batidora") { temblor = 5; soltarConsumible(e.x, e.y - 60); }
+    else if (Math.random() < D().drop) soltarConsumible(e.x, Math.min(e.y - 20, SUELO - 30));
   }
 
   /* ---------------- Balas ---------------- */
   function actualizarBalas(dt) {
     for (const b of balas) {
+      if (b.tele) {
+        // Pajita teledirigida: gira poco a poco hacia el objetivo más cercano
+        let obj = null, mejor = 1e9;
+        for (const e of enemigos) { const c = cajaEnemigo(e), d = Math.hypot(c.x + c.w / 2 - b.x, c.y + c.h / 2 - b.y); if (d < mejor) { mejor = d; obj = { x: c.x + c.w / 2, y: c.y + c.h / 2 }; } }
+        if (jefe && jefe.vivo && jefe.visible) { const c = cajaJefe(), d = Math.hypot(c.x + c.w / 2 - b.x, c.y + c.h / 2 - b.y); if (d < mejor) obj = { x: c.x + c.w / 2, y: c.y + c.h / 2 }; }
+        if (obj) {
+          const v = Math.hypot(b.vx, b.vy), a = Math.atan2(b.vy, b.vx), objA = Math.atan2(obj.y - b.y, obj.x - b.x);
+          let da = objA - a; while (da > Math.PI) da -= Math.PI * 2; while (da < -Math.PI) da += Math.PI * 2;
+          const na = a + Math.max(-7 * dt, Math.min(7 * dt, da)); b.vx = Math.cos(na) * v; b.vy = Math.sin(na) * v;
+        }
+      }
       b.x += b.vx * dt; b.y += b.vy * dt; b.vida -= dt;
       const cb = b.ex ? { x: b.x - 14, y: b.y - 14, w: 28, h: 28 } : { x: b.x - 5, y: b.y - 3, w: 10, h: 6 };
       for (const e of enemigos) {
@@ -411,7 +503,7 @@
       if (pr.y > SUELO + 4 && pr.grav && sueloEn(pr.x)) { pr.fuera = true; particulas(pr.x, SUELO, [pr.rosa ? PAL.rosa : PAL.cian, PAL.blanco], 6, 90); }
       if (pr.x < camX - 40 || pr.x > camX + W + 40 || pr.y > H + 30 || pr.y < -60) pr.fuera = true;
       if (!pr.fuera && choca(cj, { x: pr.x - pr.r + 2, y: pr.y - pr.r + 2, w: pr.r * 2 - 4, h: pr.r * 2 - 4 })) {
-        if (p.parryVent > 0 && pr.rosa) continue; // lo resuelve el parry
+        if ((p.parryVent > 0 || (amuleto === "parry" && !p.suelo)) && pr.rosa) continue; // lo resuelve el parry
         if (p.inv <= 0) { recibirDano(); pr.fuera = true; }
       }
     }
@@ -419,19 +511,32 @@
     for (const r of rosquillas) r.cd -= dt;
   }
 
+  function actualizarConsumibles(dt) {
+    for (const c of consumibles) {
+      c.t += dt; c.vida -= dt;
+      if (c.cae) {
+        c.vy += 700 * dt; c.y += c.vy * dt;
+        const suelo = (enJefe || sueloEn(c.x)) ? SUELO - 16 : H + 100;
+        if (c.y >= suelo) { c.y = suelo; c.vy = 0; c.cae = false; }
+        if (c.y > H + 40) c.ok = true;
+      }
+    }
+    consumibles = consumibles.filter(c => !c.ok && c.vida > 0);
+  }
+
   /* ---------------- JEFE: ALTER EGO ---------------- */
   function cajaJefe() { return { x: jefe.x - 40, y: jefe.y - 136, w: 80, h: 128 }; }
 
   function empezarJefe() {
     enJefe = true;
-    jefe = { x: AX + 470, y: SUELO, vy: 0, vx: 0, hp: 160, max: 160, est: "entrada", t: 0, sub: 0, vivo: true, visible: true, alfa: 0,
+    jefe = { x: AX + 470, y: SUELO, vy: 0, vx: 0, hp: D().jefeHp, max: D().jefeHp, est: "entrada", t: 0, sub: 0, vivo: true, visible: true, alfa: 0,
       flash: 0, mira: -1, glitch: 1, ciclo: 0, fase: 1, faseVista: 1, aire: false, squash: 1 };
     peligros = []; proys = []; enemigos = enemigos.filter(e => e.tipo === "mini" && e.x > AX);
     sfx.glitch(); Sonido.pararMusica();
     resultado = { tiempoJefe: tiempoJuego };
   }
 
-  function faseDe(j) { return j.hp > 106 ? 1 : j.hp > 53 ? 2 : 3; }
+  function faseDe(j) { const r = j.hp / j.max; return r > 0.66 ? 1 : r > 0.33 ? 2 : 3; }
 
   function actualizarJefe(dt) {
     const j = jefe; if (!j) return;
@@ -442,12 +547,17 @@
       j.fase = fase; j.glitch = 1.5; sfx.glitch(); temblor = 10; flashPantalla = 0.12;
       j.est = "transicion"; j.sub = 0; j.aire = false;
       textos.push({ t: fase === 2 ? "¡GLITCH!" : "¡ERROR FATAL!", x: j.x, y: j.y - 190, vida: 1.2, c: PAL.cian });
+      // Ayuda entre fases: cae una vida y un potenciador (en la 3.ª, la teledirigida, que apunta sola)
+      const lado = p.x > AX + AW / 2 ? AX + 140 : AX + AW - 140;
+      soltarConsumible(lado, 40, "vida"); soltarConsumible(lado + (lado < AX + AW / 2 ? 70 : -70), 40, fase === 3 ? "tele" : "triple");
       if (fase === 3) mostrarBanner("¡VUELA ALTO!", "MANTÉN ↑ PARA APUNTAR ARRIBA", 2.2, null, PAL.cian);
     }
     if (!j.vivo) return;
 
     // Contacto con el cuerpo
-    if (j.visible && j.alfa > 0.6 && choca(cajaJug(), { x: j.x - 32, y: j.y - 120, w: 64, h: 112 })) recibirDano();
+    if (j.visible && j.alfa > 0.6 && p.inv <= 0 && choca(cajaJug(), { x: j.x - 26, y: j.y - 112, w: 52, h: 100 })) {
+      recibirDano(); p.empuje = (p.x < j.x ? -1 : 1) * 320; // te aparta del jefe para no encadenar golpes
+    }
 
     const cambiar = (est) => { j.est = est; j.sub = 0; };
     switch (j.est) {
@@ -464,7 +574,7 @@
       case "espera": {
         if (j.fase < 3) { j.y = Math.min(SUELO, j.y + 500 * dt); j.mira = Math.sign(p.x - j.x) || -1; }
         else flotar(dt);
-        const pausa = j.fase === 1 ? 0.7 : j.fase === 2 ? 0.55 : 0.45;
+        const pausa = (j.fase === 1 ? 0.8 : j.fase === 2 ? 0.7 : 0.6) * D().pausa;
         if (j.sub > pausa) {
           j.ciclo++;
           if (j.fase === 1) cambiar(j.ciclo % 2 ? "salto" : "rafaga");
@@ -476,8 +586,10 @@
       case "salto":
         if (!j.aire) {
           j.squash = 0.8 + Math.sin(j.sub * 30) * 0.03;
-          if (j.sub > 0.38) {
-            j.aire = true; j.vy = -600; const destino = Math.max(AX + 80, Math.min(AX + AW - 80, p.x));
+          if (j.sub > 0.55 * D().aviso) {
+            // En fácil cae a tu lado (no encima): esquivas las ondas saltando
+            const lado = dif === "facil" ? (j.x < p.x ? -95 : 95) : 0;
+            j.aire = true; j.vy = -600; const destino = Math.max(AX + 80, Math.min(AX + AW - 80, p.x + lado));
             j.vx = (destino - j.x) / 0.86; j.squash = 1.2; sfx.salto();
           }
         } else {
@@ -486,20 +598,20 @@
           if (j.y >= SUELO && j.vy > 0) {
             j.y = SUELO; j.aire = false; j.squash = 0.75; temblor = 9; sfx.boom();
             particulas(j.x, SUELO, [PAL.crema, PAL.cian, PAL.magenta], 18, 200);
-            [-1, 1].forEach(d => peligros.push({ tipo: "onda", x: j.x + d * 40, dir: d, v: 270 }));
+            [-1, 1].forEach(d => peligros.push({ tipo: "onda", x: j.x + d * 40, dir: d, v: 270 * D().vel }));
             cambiar("espera");
           }
         }
         break;
       case "rafaga": {
-        const n = j.fase === 3 ? 5 : 3, volleys = j.fase === 3 ? 2 : 3, cada = 0.48;
+        const n = j.fase === 3 ? (dif === "facil" ? 3 : 5) : 3, volleys = 2, cada = 0.6;
         if (j.fase === 3) flotar(dt);
         const hechas = Math.floor(j.sub / cada);
         if (hechas > (j.hechas || 0) - 0 && hechas <= volleys && j.ultimaVolea !== hechas) {
           j.ultimaVolea = hechas;
           const ox = j.x + j.mira * 30, oy = j.y - 90, base = Math.atan2(p.y - 40 - oy, p.x - ox);
           for (let i = 0; i < n; i++) {
-            const a = base + (i - (n - 1) / 2) * 0.26, v = j.fase === 3 ? 230 : 200;
+            const a = base + (i - (n - 1) / 2) * 0.26, v = (j.fase === 3 ? 230 : 200) * D().vel;
             proys.push({ x: ox, y: oy, vx: Math.cos(a) * v, vy: Math.sin(a) * v, r: 7, rosa: hechas === 2 && i === Math.floor(n / 2), tipo: "pixel" });
           }
           j.glitch = 0.9; sfx.glitch();
@@ -514,17 +626,17 @@
           j.colocado = true; j.x = p.x > AX + AW / 2 ? AX + 60 : AX + AW - 60; j.y = SUELO; j.mira = p.x > j.x ? 1 : -1;
           sfx.glitch(); j.glitch = 1.4;
           const altos = j.ciclo % 2 ? ["bajo", "alto"] : ["alto", "bajo"];
-          j.rayos = altos.map((a, i) => ({ altura: a, inicio: 0.75 + i * 1.25 }));
+          j.rayos = altos.map((a, i) => ({ altura: a, inicio: 0.75 + i * 1.6 }));
         } else {
           j.alfa = Math.min(1, (j.sub - 0.3) / 0.25);
           for (const r of j.rayos) {
             if (!r.lanzado && j.sub > r.inicio) {
               r.lanzado = true;
-              peligros.push({ tipo: "rayo", y: r.altura === "bajo" ? SUELO - 16 : SUELO - 78, desde: j.x, dir: j.mira, aviso: 0.8, activo: 0.45 });
+              peligros.push({ tipo: "rayo", y: r.altura === "bajo" ? SUELO - 16 : SUELO - 78, desde: j.x, dir: j.mira, aviso: 0.8 * D().aviso, activo: 0.45 });
               sfx.aviso();
             }
           }
-          if (j.sub > j.rayos[j.rayos.length - 1].inicio + 1.5) { j.colocado = false; cambiar("espera"); }
+          if (j.sub > j.rayos[j.rayos.length - 1].inicio + 2.0) { j.colocado = false; cambiar("espera"); }
         }
         break;
       }
@@ -540,12 +652,12 @@
         flotar(dt);
         if (!j.columnas) {
           const xs = [p.x];
-          while (xs.length < 4) { const x = AX + 40 + Math.random() * (AW - 80); if (xs.every(o => Math.abs(o - x) > 70)) xs.push(x); }
+          while (xs.length < (dif === "facil" ? 3 : 4)) { const x = AX + 40 + Math.random() * (AW - 80); if (xs.every(o => Math.abs(o - x) > 70)) xs.push(x); }
           j.columnas = xs.map((x, i) => ({ x, t: -i * 0.18 }));
-          j.columnas.forEach(c => peligros.push({ tipo: "columna", x: c.x, aviso: 0.75 - c.t, y: -40, vy: 0 }));
+          j.columnas.forEach(c => peligros.push({ tipo: "columna", x: c.x, aviso: (0.75 - c.t) * D().aviso, y: -40, vy: 0 }));
           sfx.aviso();
         }
-        if (j.sub > 2.0) { j.columnas = null; cambiar("espera"); }
+        if (j.sub > 2.4) { j.columnas = null; cambiar("espera"); }
         break;
       case "ko":
         break;
@@ -606,9 +718,11 @@
   /* ---------------- Resultados (tarjeta de puntuación) ---------------- */
   function mostrarResultados() {
     const t = tiempoJuego, mon = monedas.filter(m => m.ok).length;
-    let pts = (t <= 110 ? 30 : t <= 160 ? 22 : t <= 220 ? 14 : 6) + p.hp * 10 + Math.min(3, p.parries) * 5 + Math.min(2, p.ex) * 5 + mon * 5;
+    let pts = (t <= 110 ? 30 : t <= 160 ? 22 : t <= 220 ? 14 : 6) + Math.min(3, p.hp) * 10 + Math.min(3, p.parries) * 5 + Math.min(2, p.ex) * 5 + mon * 5;
     const nota = pts >= 95 ? "A+" : pts >= 88 ? "A" : pts >= 80 ? "A-" : pts >= 72 ? "B+" : pts >= 64 ? "B" : pts >= 56 ? "B-" : pts >= 48 ? "C+" : pts >= 40 ? "C" : "D";
-    resultado = { tiempo: t, hp: p.hp, parries: p.parries, ex: p.ex, monedas: mon, pts, nota };
+    if (dif === "facil" && pts > 88) pts = 88; // en fácil la nota máxima es A
+    const nota2 = pts >= 95 ? "A+" : pts >= 88 ? "A" : pts >= 80 ? "A-" : pts >= 72 ? "B+" : pts >= 64 ? "B" : pts >= 56 ? "B-" : pts >= 48 ? "C+" : pts >= 40 ? "C" : "D";
+    resultado = { tiempo: t, hp: p.hp, parries: p.parries, ex: p.ex, monedas: mon, pts, nota: nota2, recogidos };
     guardarProgreso(pts * 10);
     estado = "resultados";
     mostrarMenu("resultados", resultado);
@@ -637,11 +751,19 @@
         <p class="pre">SHAKE WEEK · DÍA 1</p>
         <h1>LA FÁBRICA<br><span>GLITCH</span></h1>
         <p class="hist">El Alter Ego ha corrompido la fábrica de Miflshakes. Crúzala disparando y derrótalo en su guarida.</p>
+        <div class="eleccion"><span class="et">DIFICULTAD</span>
+          ${Object.entries(DIFS).map(([k, d]) => `<button class="op ${k === dif ? "sel" : ""}" data-dif="${k}">${d.nombre}${k === "facil" ? " ★" : ""}</button>`).join("")}
+        </div>
+        <div class="eleccion"><span class="et">AMULETO</span>
+          ${Object.entries(AMULETOS).map(([k, a]) => `<button class="op ${k === amuleto ? "sel" : ""}" data-amuleto="${k}" title="${a.desc}">${a.icono} ${a.nombre}</button>`).join("")}
+        </div>
+        <p class="desc">${AMULETOS[amuleto].desc}</p>
         <button class="b principal" data-accion="empezar">▶ JUGAR</button>
         <div class="ctrls">
           <span><b>← →</b> mover</span><span><b>Z</b> / <b>ESPACIO</b> saltar</span><span><b>X</b> disparar</span>
           <span><b>↑</b> apuntar arriba</span><span><b>C</b> / <b>SHIFT</b> dash</span><span><b>V</b> súper (EX)</span>
           <span class="rosa"><b>Salta otra vez</b> sobre algo <b>ROSA</b> = PARRY</span>
+          <span>Recoge los <b>consumibles</b>: vida, escudo y pajitas especiales</span>
         </div></div>`;
     } else if (tipo === "muerto") {
       menu.innerHTML = `<div class="caja">
@@ -650,7 +772,8 @@
         <p class="hist">${enJefe ? "El Alter Ego sigue en pie." : "Te has quedado a medio camino de la guarida."}</p>
         <div class="fila">
           ${enJefe ? `<button class="b principal" data-accion="jefe">↻ REINTENTAR JEFE</button>` : ""}
-          <button class="b ${enJefe ? "" : "principal"}" data-accion="reiniciar">↻ DESDE EL PRINCIPIO</button>
+          ${!enJefe && puntoControl ? `<button class="b principal" data-accion="control">↻ DESDE EL PUNTO DE CONTROL</button>` : ""}
+          <button class="b ${enJefe || puntoControl ? "" : "principal"}" data-accion="reiniciar">↻ DESDE EL PRINCIPIO</button>
           <a class="b" href="index.html">SALIR</a>
         </div></div>`;
     } else if (tipo === "resultados") {
@@ -658,10 +781,12 @@
         <h2>¡NIVEL SUPERADO!</h2>
         <ul class="filas">
           <li><span>TIEMPO</span><b>${fmt(datos.tiempo)}</b></li>
-          <li><span>VIDA</span><b>${"♥".repeat(datos.hp)}${"·".repeat(3 - datos.hp)}</b></li>
+          <li><span>VIDA</span><b>${"♥".repeat(Math.max(0, datos.hp))}</b></li>
           <li><span>PARRIES</span><b>${Math.min(3, datos.parries)}/3</b></li>
           <li><span>SÚPER (EX)</span><b>${Math.min(2, datos.ex)}/2</b></li>
           <li><span>MONEDAS</span><b>${datos.monedas}/3</b></li>
+          <li><span>CONSUMIBLES</span><b>${datos.recogidos}</b></li>
+          <li><span>DIFICULTAD</span><b>${DIFS[dif].nombre}</b></li>
         </ul>
         <div class="nota"><small>NOTA</small><b>${datos.nota}</b></div>
         <p class="sello">Sello del lunes conseguido ✔</p>
@@ -678,17 +803,24 @@
     const primero = menu.querySelector(".principal, .b"); if (primero) primero.focus();
   }
   menu.addEventListener("click", e => {
+    const op = e.target.closest("[data-dif],[data-amuleto]");
+    if (op) {
+      if (op.dataset.dif) dif = op.dataset.dif; else amuleto = op.dataset.amuleto;
+      try { localStorage.setItem("shakeweek-dia1", JSON.stringify({ dif, amuleto })); } catch (er) {}
+      Sonido.iniciar(); Sonido.tono(880, 880, 0.05, "square", 0.05); mostrarMenu("titulo"); return;
+    }
     const b = e.target.closest("[data-accion]"); if (!b) return;
     Sonido.iniciar();
     const a = b.dataset.accion;
-    if (a === "empezar" || a === "reiniciar") reiniciar(false);
-    if (a === "jefe") reiniciar(true);
+    if (a === "empezar" || a === "reiniciar") reiniciar("inicio");
+    if (a === "jefe") reiniciar("jefe");
+    if (a === "control") reiniciar("control");
     if (a === "continuar") pausar();
   });
   function accionPrincipal() {
     Sonido.iniciar();
     if (estado === "titulo") reiniciar(false);
-    else if (estado === "muerto") reiniciar(enJefe);
+    else if (estado === "muerto") reiniciar(enJefe ? "jefe" : puntoControl ? "control" : "inicio");
     else if (estado === "pausa") pausar();
     else if (estado === "resultados") location.href = "index.html";
   }
@@ -718,6 +850,11 @@
     actualizarEnemigos(dt);
     actualizarBalas(dt);
     actualizarProyectiles(dt);
+    actualizarConsumibles(dt);
+    if (!enJefe && !puntoControl && p.x > CONTROL_X) {
+      puntoControl = { tiempo: tiempoJuego, monedas: monedas.map(m => m.ok) };
+      sfx.moneda(); textos.push({ t: "¡PUNTO DE CONTROL!", x: p.x, y: p.y - 100, vida: 1.6, c: PAL.verde });
+    }
     if (enJefe) { actualizarJefe(dt); actualizarPeligros(dt); }
 
     // Cámara
@@ -835,6 +972,23 @@
       ctx.fillStyle = PAL.blanco; ctx.fillRect(r.x - 6, y - 7, 2, 2); ctx.fillRect(r.x + 4, y - 4, 2, 2); ctx.fillStyle = PAL.cian; ctx.fillRect(r.x - 7, y + 3, 2, 2);
       ctx.globalAlpha = 1;
     }
+    // Carteles de ayuda y bandera del punto de control
+    for (const [cx, l1, l2] of CARTELES) {
+      if (cx < camX - 120 || cx > camX + W + 120) continue;
+      ctx.fillStyle = "#3d2a1e"; ctx.fillRect(cx - 3, SUELO - 50, 6, 50);
+      ctx.fillStyle = PAL.negro; ctx.fillRect(cx - 62, SUELO - 86, 124, 40);
+      ctx.fillStyle = "#e9d7b8"; ctx.fillRect(cx - 60, SUELO - 84, 120, 36);
+      ctx.font = `7px ${FUENTE}`; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillStyle = PAL.negro;
+      ctx.fillText(l1, cx, SUELO - 72); ctx.fillStyle = PAL.rojoOsc; ctx.fillText(l2, cx, SUELO - 60);
+    }
+    {
+      const fx = CONTROL_X, ok = !!puntoControl;
+      ctx.fillStyle = PAL.crema; ctx.fillRect(fx, SUELO - 90, 4, 90);
+      ctx.fillStyle = ok ? PAL.verde : PAL.grisC; const ond = Math.round(Math.sin(reloj * 6) * 2);
+      ctx.fillRect(fx + 4, SUELO - 90 + ond, 30, 8); ctx.fillRect(fx + 4, SUELO - 82 - ond, 24, 8);
+    }
+    // Consumibles
+    for (const c of consumibles) dibujarConsumible(c);
     // Monedas
     for (const m of monedas) if (!m.ok) {
       const an = Math.max(2, Math.round(Math.abs(Math.cos(reloj * 4 + m.x)) * 12));
@@ -906,6 +1060,10 @@
         const rot = p.dash > 0 ? p.mira * 0.25 : (p.suelo && p.vx ? Math.sin(p.anim * 14) * 0.06 : 0) + p.mira * 0.04;
         if (p.suelo) { ctx.fillStyle = "rgba(0,0,0,.35)"; ctx.fillRect(Math.round(p.x - 16), Math.round(p.y - 1), 32, 3); }
         sprite(p.flash > 0 ? A.heroeBlanco : A.heroe, p.x, p.y + 2 + bob, p.mira < 0, p.est, rot);
+        if (p.escudo) {
+          ctx.globalAlpha = 0.35 + Math.sin(reloj * 6) * 0.1; ctx.strokeStyle = PAL.blanco; ctx.lineWidth = 3;
+          ctx.beginPath(); ctx.ellipse(Math.round(p.x), Math.round(p.y - 36), 30, 42, 0, 0, Math.PI * 2); ctx.stroke(); ctx.globalAlpha = 1;
+        }
         if (p.parryVent > 0) { ctx.strokeStyle = PAL.rosa; ctx.lineWidth = 2; ctx.strokeRect(Math.round(p.x - 22), Math.round(p.y - 70), 44, 70); }
         if (K.disparo && p.cad > 0.06 && estado === "juego" && p.dash <= 0) {
           const fx = K.arr && !(K.izq || K.der) ? p.x + p.mira * 4 : p.x + p.mira * 26, fy = K.arr ? (K.izq || K.der ? p.y - 62 : p.y - 82) : p.y - 36;
@@ -927,7 +1085,8 @@
       } else {
         const hor = Math.abs(b.vx) > Math.abs(b.vy);
         const w = hor ? 12 : 4, h = hor ? 4 : 12;
-        ctx.fillStyle = PAL.rojo; ctx.fillRect(x - w / 2 - 1, y - h / 2 - 1, w + 2, h + 2);
+        ctx.fillStyle = b.color === "tele" ? PAL.cian : b.color === "triple" ? PAL.oro : b.color === "turbo" ? PAL.rosa : PAL.rojo;
+        ctx.fillRect(x - w / 2 - 1, y - h / 2 - 1, w + 2, h + 2);
         ctx.fillStyle = PAL.blanco; ctx.fillRect(x - w / 2, y - h / 2, w, h);
         ctx.fillStyle = PAL.rosa; ctx.fillRect(hor ? x + (b.vx > 0 ? 2 : -6) : x - 2, hor ? y - 2 : y + (b.vy > 0 ? 2 : -6), 4, 4);
       }
@@ -962,6 +1121,25 @@
     ctx.fillStyle = PAL.crema; ctx.fillRect(x - 4, y - 66 - b, 8, 6);
   }
 
+  function dibujarConsumible(c) {
+    if (c.vida < 3 && Math.floor(reloj * 10) % 2) return; // parpadea antes de desaparecer
+    const def = CONSUMIBLES[c.tipo], x = Math.round(c.x), y = Math.round(c.y + (c.cae ? 0 : Math.sin(reloj * 3 + c.x) * 4));
+    // burbuja con brillo
+    ctx.globalAlpha = 0.25 + Math.abs(Math.sin(reloj * 4)) * 0.2; ctx.fillStyle = def.color; ctx.fillRect(x - 15, y - 15, 30, 30); ctx.globalAlpha = 1;
+    ctx.fillStyle = PAL.negro; ctx.fillRect(x - 13, y - 12, 26, 24); ctx.fillRect(x - 12, y - 13, 24, 26);
+    ctx.fillStyle = def.color; ctx.fillRect(x - 11, y - 11, 22, 22);
+    ctx.fillStyle = PAL.negro; ctx.fillRect(x - 9, y - 9, 18, 18);
+    const f = (c2, a, b, w, h) => { ctx.fillStyle = c2; ctx.fillRect(x + a, y + b, w, h); };
+    switch (c.tipo) {
+      case "vida": f(PAL.blanco, -5, -4, 10, 10); f(PAL.rojo, -5, -1, 10, 3); f(PAL.rojo, -6, -6, 12, 3); f(PAL.blanco, 1, -9, 2, 4); break;
+      case "escudo": f(PAL.blanco, -6, 0, 12, 5); f(PAL.blanco, -4, -4, 8, 4); f(PAL.blanco, -2, -7, 4, 3); f(PAL.crema, -6, 4, 12, 2); break;
+      case "triple": f(PAL.oro, -7, -6, 3, 12); f(PAL.oro, -1, -7, 3, 14); f(PAL.oro, 5, -6, 3, 12); f(PAL.rojo, -1, -3, 3, 2); break;
+      case "tele": f(PAL.cian, -7, -1, 14, 2); f(PAL.cian, -1, -7, 2, 14); f(PAL.blanco, -2, -2, 4, 4); f(PAL.cian, -6, -6, 3, 3); f(PAL.cian, 3, 3, 3, 3); break;
+      case "turbo": f(PAL.rosa, 0, -8, 4, 6); f(PAL.rosa, -3, -3, 8, 3); f(PAL.rosa, -4, 0, 4, 7); break;
+      case "super": f(PAL.magenta, -5, -7, 10, 14); f(PAL.blanco, -3, -5, 6, 2); f(PAL.rosa, -3, 1, 6, 4); break;
+    }
+  }
+
   function dibujarHUD() {
     if (!p || estado === "titulo") return;
     // HP al estilo cartucho
@@ -970,6 +1148,7 @@
     ctx.fillStyle = hpCol; ctx.fillRect(14, H - 32, 60, 20);
     ctx.font = `10px ${FUENTE}`; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillStyle = PAL.negro;
     ctx.fillText(p.hp > 0 ? `HP ${p.hp}` : "MUERTO", 44, H - 21);
+    if (p.escudo) { ctx.strokeStyle = PAL.blanco; ctx.lineWidth = 2; ctx.strokeRect(11, H - 35, 66, 26); }
     // Cartas de súper
     for (let i = 0; i < 5; i++) {
       const lleno = Math.max(0, Math.min(1, p.cartas - i)), x = 86 + i * 14, y = H - 32;
@@ -979,6 +1158,17 @@
       const hh = Math.round(20 * lleno); ctx.fillRect(x, y + 20 - hh, 10, hh);
     }
     if (p.cartas >= 1) texto("V = SÚPER", 120, H - 44, 8, PAL.rosa);
+    // Escudo y potenciador activo
+    if (p.escudo) { ctx.fillStyle = PAL.negro; ctx.fillRect(160, H - 34, 24, 24); ctx.fillStyle = PAL.blanco; ctx.fillRect(162, H - 32, 20, 20); ctx.fillStyle = PAL.negro; ctx.fillRect(166, H - 24, 12, 8); }
+    if (p.arma) {
+      const def = CONSUMIBLES[p.arma], x = p.escudo ? 192 : 162, k = p.armaT / def.dur;
+      ctx.fillStyle = PAL.negro; ctx.fillRect(x, H - 34, 124, 24);
+      ctx.fillStyle = "#2a2433"; ctx.fillRect(x + 2, H - 32, 120, 20);
+      ctx.fillStyle = def.color; ctx.fillRect(x + 2, H - 32, Math.round(120 * k), 20);
+      ctx.font = `7px ${FUENTE}`; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillStyle = PAL.negro;
+      ctx.fillText(def.nombre.replace("PAJITA ", ""), x + 62, H - 21);
+    }
+    texto(DIFS[dif].nombre, W - 14, H - 20, 8, PAL.grisC, "right");
     texto(`${monedas.filter(m => m.ok).length}/3 ◉`, W - 14, 18, 10, PAL.oro, "right");
   }
 
