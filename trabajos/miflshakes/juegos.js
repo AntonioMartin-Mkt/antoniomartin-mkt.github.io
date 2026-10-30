@@ -137,10 +137,10 @@
      DÍA 1 · LUNES — «Huida de la cocina» (plataformas)
      ========================================================= */
   const plataformas = {
-    id: 1, dia: "Lunes", titulo: "Huida de la cocina",
+    id: 1, dia: "Lunes", titulo: "La fábrica glitch",
     historia: "El Alter Ego ha invadido la cocina. Cruza la encimera, salta sobre sus secuaces y llega al mostrador.",
     controles: "← → para moverte · Espacio / ↑ para saltar · Pisa a los secuaces para eliminarlos",
-    objetivo: "Llega al mostrador",
+    objetivo: "Derrota al Alter Ego",
     iniciar(g) {
       const SUELO = 460;
       g.SUELO = SUELO;
@@ -282,10 +282,10 @@
      DÍA 2 · MARTES — «Lluvia de toppings» (atrapar)
      ========================================================= */
   const lluvia = {
-    id: 2, dia: "Martes", titulo: "Lluvia de toppings",
+    id: 2, dia: "Martes", titulo: "Laberinto glitch",
     historia: "El Alter Ego lanza ingredientes desde el techo, pero mezcla guindillas, sal y cebolla. Atrapa solo lo dulce.",
     controles: "← → para moverte · Atrapa 25 toppings dulces en 40 segundos · Esquiva 🌶️ 🧂 🧅",
-    objetivo: "Atrapa 25 toppings",
+    objetivo: "Cómete todos los toppings",
     iniciar(g) {
       g.p = { x: W / 2, vx: 0, mira: 1, inv: 0, est: 1 };
       g.cosas = []; g.prox = 0.6; g.vidas = 3; g.atrapados = 0; g.meta = 25; g.resto = 40; g.combo = 0;

@@ -359,7 +359,7 @@ function abrir(id) {
     $("#registro").scrollIntoView({ behavior: "smooth" }); $("#form input[name=nombre]").focus({ preventScroll: true });
     return;
   }
-  if (id === 1) { location.href = "dia1.html"; return; }
+  if (id === 1 || id === 2) { location.href = `dia${id}.html`; return; }
   actual = JUEGOS.find(j => j.id === id);
   $("#tituloJuego").textContent = `Día ${actual.id} · ${actual.dia}`;
   intro();
