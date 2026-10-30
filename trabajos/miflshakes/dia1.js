@@ -209,7 +209,7 @@
     rosquillas = [[795, 214], [1500, 200], [2235, 214], [1880, 104]].map(([x, y]) => ({ x, y, cd: 0 }));
     monedas = [[640, 150], [1500, 116], [2480, 166]].map(([x, y], i) => ({ x, y, ok: desdeJefe || (desdeControl && puntoControl.monedas[i]) }));
     // Consumibles colocados en el nivel
-    if (!desdeJefe) [["turbo", 330, SUELO - 22], ["vida", 1055, 200], ["escudo", 1720, SUELO - 22], ["triple", 2000, 200], ["tele", 2720, SUELO - 22]]
+    if (!desdeJefe) [["turbo", 330, SUELO - 22], ["vida", 1055, 200], ["escudo", 1720, SUELO - 22], ["escudo", 1250, SUELO - 22], ["triple", 2000, 200], ["vida", 2320, SUELO - 22], ["tele", 2720, SUELO - 22]]
       .filter(([, x]) => !desdeControl || x > CONTROL_X).forEach(([t, x, y]) => soltarConsumible(x, y, t, false));
     disparadores = [
       { g: 120, t: "mini", x: 700 }, { g: 300, t: "cereza", dy: 0 }, { g: 430, t: "mini", x: 900 },
@@ -219,8 +219,6 @@
       { g: 1900, t: "cereza", dy: 0 }, { g: 1960, t: "cereza", dy: 60 },
       { g: 2280, t: "mini", x: 2700 }, { g: 2360, t: "mini", x: 2740 }, { g: 2460, t: "cereza", dy: 20 }, { g: 2560, t: "cereza", dy: 70 }
     ].filter(d => !desdeJefe && (!desdeControl || d.g > CONTROL_X));
-    if (!desdeJefe) [1250, 2060, 2620].filter(x => !desdeControl || x > CONTROL_X)
-      .forEach(x => enemigos.push({ tipo: "batidora", x, y: SUELO, hp: 9, t: Math.random(), disp: 1.2, flash: 0 }));
     jefe = null; enJefe = false;
     camX = desdeJefe ? AX : desdeControl ? CONTROL_X - 230 : 0;
     tiempoJuego = desdeJefe ? (resultado?.tiempoJefe || 0) : desdeControl ? puntoControl.tiempo : 0;
@@ -404,28 +402,37 @@
     disparadores = disparadores.filter(d => {
       if (p.x < d.g) return true;
       if (d.t === "mini") enemigos.push({ tipo: "mini", x: d.x, y: SUELO, vy: 0, hp: 3, t: Math.random() * 2, salto: 1 + Math.random(), flash: 0, mira: -1 });
-      if (d.t === "cereza") enemigos.push({ tipo: "cereza", x: camX + W + 30, base: 110 + d.dy, y: 110 + d.dy, hp: 2, t: Math.random() * 6, flash: 0, picado: false, vy: 0 });
+      if (d.t === "cereza") enemigos.push({ tipo: "cereza", x: camX + W + 30, base: 100 + d.dy * 0.8, y: 100 + d.dy * 0.8, hp: 1, t: Math.random() * 6, flash: 0, picado: false, vy: 0 });
       return false;
     });
 
     for (const e of enemigos) {
       e.flash -= dt; e.t += dt;
       if (e.tipo === "mini") {
-        const dir = Math.sign(p.x - e.x) || -1; e.mira = dir;
-        e.x += dir * 72 * D().enemVel * dt;
-        e.salto -= dt;
+        // Deambulan al azar por su zona: andan, se paran, cambian de sentido y a veces saltan
+        if (e.x0 === undefined) { e.x0 = e.x; e.dir = Math.random() < 0.5 ? -1 : 1; e.cambio = 0; }
+        e.cambio -= dt;
+        if (e.cambio <= 0) {
+          const r = Math.random();
+          e.dir = r < 0.3 ? 0 : r < 0.65 ? -1 : 1;           // 30 % de las veces se queda quieto
+          e.cambio = 0.8 + Math.random() * 1.6;
+        }
         const enSuelo = e.y >= SUELO && sueloEn(e.x);
-        if (enSuelo && e.salto <= 0) { e.vy = -300; e.salto = 1.8 + Math.random() * 1.4; }
+        const minX = enJefe ? AX + 30 : e.x0 - 150, maxX = enJefe ? AX + AW - 30 : e.x0 + 150;
+        const sig = e.x + e.dir * 22;
+        if (e.dir && (sig < minX || sig > maxX || (enSuelo && !sueloEn(sig)))) e.dir *= -1; // no se tira a los fosos
+        if (e.dir) e.mira = e.dir;
+        e.x += e.dir * 55 * D().enemVel * dt;
+        e.salto -= dt;
+        if (enSuelo && e.salto <= 0) { e.vy = -260; e.salto = 2.5 + Math.random() * 2.5; }
         e.vy += 1300 * dt; e.y += e.vy * dt;
         if (e.y >= SUELO && sueloEn(e.x) && e.y - e.vy * dt <= SUELO + 2) { e.y = SUELO; e.vy = 0; }
         if (e.y > H + 60) e.muerto = true;
         if (choca(cajaJug(), { x: e.x - 14, y: e.y - 44, w: 28, h: 42 })) recibirDano();
       } else if (e.tipo === "cereza") {
-        if (!e.picado) {
-          e.x -= 115 * dt; e.y = e.base + Math.sin(e.t * 3) * 26;
-          if (Math.abs(e.x - p.x) < 70 && e.x > p.x) { e.picado = true; e.vy = 20; e.vx = (p.x - e.x) * 0.8; }
-        } else { e.vy += 380 * dt; e.y += e.vy * dt; e.x += (e.vx - 60) * dt; }
-        if (e.x < camX - 60 || e.y > H + 40) e.muerto = true;
+        // Vuelan en línea ondulada por encima de tu cabeza: solo te dan si saltas contra ellas
+        e.x -= 75 * dt; e.y = e.base + Math.sin(e.t * 2) * 22;
+        if (e.x < camX - 60) e.muerto = true;
         if (choca(cajaJug(), { x: e.x - 12, y: e.y - 12, w: 24, h: 24 })) recibirDano();
       } else if (e.tipo === "batidora") {
         const visible = e.x > camX - 20 && e.x < camX + W + 20;
@@ -929,9 +936,11 @@
       if (s.x > camX + W || s.x + s.w < camX) continue;
       ctx.fillStyle = PAL.negro; ctx.fillRect(s.x, SUELO, s.w, H - SUELO);
       const T = 20;
-      for (let x = Math.max(s.x, Math.floor(camX / T) * T); x < Math.min(s.x + s.w, camX + W + T); x += T) {
+      for (let x = Math.floor(Math.max(s.x, camX) / T) * T; x < Math.min(s.x + s.w, camX + W + T); x += T) {
+        const x0 = Math.max(x, s.x), x1 = Math.min(x + T, s.x + s.w);
+        if (x1 <= x0) continue;
         for (let y = SUELO + 8; y < H; y += T) {
-          if (((x / T) + (y - SUELO - 8) / T) % 2 === 0) { ctx.fillStyle = "#5a0f1c"; ctx.fillRect(x, y, Math.min(T, s.x + s.w - x), T); }
+          if ((x / T + (y - SUELO - 8) / T) % 2 === 0) { ctx.fillStyle = "#5a0f1c"; ctx.fillRect(x0, y, x1 - x0, T); }
         }
       }
       ctx.fillStyle = PAL.rojo; ctx.fillRect(s.x, SUELO, s.w, 6);
