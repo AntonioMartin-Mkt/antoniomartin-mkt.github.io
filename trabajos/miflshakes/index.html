@@ -265,7 +265,7 @@
   </div>
 </div>
 
-<script src="juegos.js"></script>
+<script src="juegos.js?v=202610301621"></script>
 <script>
 /* ---------------------------------------------------------
    Si conectas Google Sheets, pega aquí la URL de la
@@ -305,6 +305,7 @@ function revisarRacha() {
 function estado(i) {
   const v = victorias();
   if (v[i]) return "ganado";
+  if (est.modo === "demo") return "abierto"; // demo (portfolio): todos los días se pueden jugar en cualquier orden
   const n = siguiente();
   if (i !== n) return "bloqueado";
   if (est.modo === "demo" || i === 1) return "abierto";
@@ -315,7 +316,7 @@ const textos = { ganado: "Jugar otra vez", abierto: "¡Jugar!", bloqueado: "🔒
 function pintar() {
   document.querySelectorAll("[data-modo]").forEach(b => b.setAttribute("aria-pressed", b.dataset.modo === est.modo));
   $("#subRetos").textContent = est.modo === "demo"
-    ? "Modo demo: puedes jugar los 5 días seguidos sin esperar. En modo campaña se desbloquea uno al día."
+    ? "Modo demo: puedes jugar los 5 días en el orden que quieras. En modo campaña se desbloquea uno al día."
     : "Un juego nuevo cada día. Si te saltas un día, la racha vuelve a empezar.";
   $("#sellos").innerHTML = JUEGOS.map(j => {
     const e = estado(j.id), mejor = est.mejores[j.id];
@@ -359,7 +360,7 @@ function abrir(id) {
     $("#registro").scrollIntoView({ behavior: "smooth" }); $("#form input[name=nombre]").focus({ preventScroll: true });
     return;
   }
-  if (id === 1 || id === 3) { location.href = `dia${id}.html`; return; }
+  if (id === 1 || id === 3) { location.href = `dia${id}.html?v=202610301621`; return; }
   actual = JUEGOS.find(j => j.id === id);
   $("#tituloJuego").textContent = `Día ${actual.id} · ${actual.dia}`;
   intro();
