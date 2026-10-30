@@ -429,7 +429,7 @@
      DÍA 4 · JUEVES — «Carrera al mostrador» (runner)
      ========================================================= */
   const carrera = {
-    id: 4, dia: "Jueves", titulo: "Torre glitch", enlace: "dia4.html",
+    id: 4, dia: "Jueves", titulo: "La Batitorre", enlace: "dia4.html",
     historia: "El Alter Ego te persigue por la calle lanzando cubitos y vasos. Corre 1.000 metros sin que te alcance.",
     controles: "Espacio / ↑ para saltar · Pulsa otra vez en el aire para doble salto",
     objetivo: "Derriba las 3 torres",

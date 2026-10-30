@@ -1,10 +1,11 @@
 /* =============================================================
-   SHAKE WEEK · DÍA 4 — Fondos de cada torre (pixel art en código)
-   1) Prado con un castillo-escuela gótico y estudiantes volando en escoba
-   2) Cafetería americana de los años 50
-   3) El mismo prado de noche con la nave nodriza del Alter Ego
-   La parte fija se pinta una vez en un lienzo aparte; lo que se
-   mueve (nubes, escobas, ventilador, neón, drones) en cada frame.
+   SHAKE WEEK · DÍA 4 «LA BATITORRE» — Fondos de cada torre
+   1) El Batidín: castillo sobre la montaña (imagen fija de día) y magos en escoba
+   2) Bum Galletón: cafetería americana de los años 50
+   3) El M***halla: ciudad en guerra, en llamas, con aviones, helicópteros
+      y una nave negra con forma de calamar sobre la montaña
+   La parte fija se pinta una vez en un lienzo aparte; lo que se mueve
+   (escobas, ventilador, neón, fuego, humo, aviones) en cada frame.
    ============================================================= */
 (() => {
   "use strict";
@@ -12,132 +13,22 @@
   const cache = {};
   const lienzo = () => { const c = document.createElement("canvas"); c.width = W; c.height = H; return c; };
   const rect = (x, c, a, b, w, h) => { x.fillStyle = c; x.fillRect(Math.round(a), Math.round(b), Math.round(w), Math.round(h)); };
+  const imgCastillo = new Image(); imgCastillo.src = "fondos/castillo.jpg";
 
-  /* ---------------- Piezas compartidas ---------------- */
-  function colinas(x, base, amp, fase, color) {
-    for (let i = 0; i < W; i += 4) {
-      const h = amp * (0.55 + 0.25 * Math.sin(i / 70 + fase) + 0.2 * Math.sin(i / 23 + fase * 2));
-      rect(x, color, i, base - h, 4, h + 80);
-    }
-  }
-  function arbol(x, cx, cy, s, hoja, sombra) {
-    rect(x, "#5a3a1e", cx - 3 * s, cy, 6 * s, 22 * s);
-    for (const [dx, dy, r] of [[0, -6, 14], [-10, 2, 10], [10, 2, 10], [0, 6, 11]]) {
-      x.fillStyle = hoja; x.beginPath(); x.arc(cx + dx * s, cy + dy * s, r * s, 0, Math.PI * 2); x.fill();
-    }
-    x.fillStyle = sombra; x.beginPath(); x.arc(cx + 6 * s, cy + 8 * s, 8 * s, 0, Math.PI * 2); x.fill();
-  }
-  // Castillo-escuela gótico gigante (diseño propio): torres, tejados, ventanas ojivales,
-  // terrazas, contrafuertes, gárgolas, puente cubierto, reloj y banderas.
-  const banderas = { dia: [], noche: [] };
-  function castillo(x, noche) {
-    const c = lienzo(), k = c.getContext("2d");
-    const piedra = noche ? "#4b4959" : "#aaa598", sombra = noche ? "#34323f" : "#807b71", oscura = noche ? "#211f2b" : "#57534c";
-    const tejado = noche ? "#1c2440" : "#3c4a6c", tejadoC = noche ? "#2a3658" : "#566898";
-    const lista = noche ? banderas.noche : banderas.dia; lista.length = 0;
-    const R = (col, a, b, w, h) => { k.fillStyle = col; k.fillRect(Math.round(a), Math.round(b), Math.round(w), Math.round(h)); };
-    const ventana = (vx, vy, w, h, luz) => {
-      k.fillStyle = oscura; k.fillRect(vx - 1, vy - 1, w + 2, h + 2); k.beginPath(); k.arc(vx + w / 2, vy, w / 2 + 1, Math.PI, 0); k.fill();
-      k.fillStyle = luz ? (noche ? "#ffcf5a" : "#ffe7a6") : (noche ? "#15152a" : "#3a4762");
-      k.fillRect(vx, vy, w, h); k.beginPath(); k.arc(vx + w / 2, vy, w / 2, Math.PI, 0); k.fill();
-      if (w >= 6) R(oscura, vx + w / 2 - 0.5, vy - w / 2, 1, h + w / 2);
-    };
-    const piedras = (px, py, w, h) => { k.fillStyle = sombra; for (let yy = py + 4; yy < py + h; yy += 6) for (let xx = px + ((yy / 6) % 2) * 5; xx < px + w - 3; xx += 10) k.fillRect(Math.round(xx), Math.round(yy), 6, 1); };
-    const almenas = (px, py, w) => { for (let xx = px; xx < px + w - 2; xx += 8) R(piedra, xx, py - 5, 5, 5); };
-    const gargola = (gx, gy, d) => { // figura de piedra agazapada con alas
-      R(oscura, gx, gy, 6 * d, 4); R(oscura, gx + 5 * d, gy - 2, 3 * d, 3); R(oscura, gx + 7 * d, gy - 1, 2 * d, 1);
-      R(oscura, gx + 1 * d, gy - 4, 2 * d, 4); R(oscura, gx, gy - 5, 2 * d, 2); R(oscura, gx + 1, gy + 4, 1, 2);
-      R(noche ? "#ff3a3a" : "#2a2622", gx + 6 * d, gy - 2, 1, 1);
-    };
-    const torre = (cx, top, w, base, alto, nv = 3, bandera = true) => {
-      R(piedra, cx - w / 2, top, w, base - top);
-      R(sombra, cx + w / 2 - Math.round(w * 0.32), top, Math.round(w * 0.32), base - top);
-      R("rgba(255,255,255,.12)", cx - w / 2 + 2, top, 2, base - top);
-      piedras(cx - w / 2, top, w, base - top);
-      R(sombra, cx - w / 2 - 3, top - 4, w + 6, 4); almenas(cx - w / 2 - 3, top - 4, w + 6);
-      if (alto) {
-        k.fillStyle = tejado; k.beginPath(); k.moveTo(cx - w / 2 - 4, top - 6); k.lineTo(cx, top - 6 - alto); k.lineTo(cx + w / 2 + 4, top - 6); k.fill();
-        k.fillStyle = tejadoC; k.beginPath(); k.moveTo(cx - w / 2 - 4, top - 6); k.lineTo(cx, top - 6 - alto); k.lineTo(cx - 3, top - 6); k.fill();
-        if (bandera) { R(oscura, cx, top - 16 - alto, 1, 11); lista.push({ x: cx + 1, y: top - 16 - alto }); }
-      }
-      for (let i = 0; i < nv; i++) ventana(cx - 2, top + 12 + i * 20, 4, 8, (i * 7 + cx) % 3 === 0);
-    };
-    // risco de roca y lago
-    k.fillStyle = noche ? "#2c2a34" : "#6e6a60";
-    k.beginPath(); k.moveTo(178, 266); k.lineTo(204, 246); k.lineTo(250, 242); k.lineTo(640, 238); k.lineTo(640, 270); k.closePath(); k.fill();
-    for (let i = 0; i < 9; i++) R(noche ? "#24222c" : "#5a564e", 200 + i * 48, 250 + (i % 3) * 5, 30, 2);
-    R(noche ? "#141a3a" : "#5f9fd0", 140, 258, 120, 12);
-    for (let i = 0; i < 8; i++) R(noche ? "#2a3a6a" : "#9fd0f0", 150 + i * 13, 261 + (i % 2) * 4, 7, 1);
-    // torres del fondo (más lejanas)
-    k.globalAlpha = 0.75; torre(244, 150, 16, 246, 30, 2); torre(624, 132, 18, 246, 34, 3); k.globalAlpha = 1;
-    // muralla con almenas y puerta
-    R(piedra, 226, 214, 404, 32); piedras(226, 214, 404, 32); almenas(226, 214, 404);
-    for (let i = 0; i < 12; i++) ventana(240 + i * 32, 224, 3, 6, (i % 4) === 1);
-    R(oscura, 412, 228, 22, 18); k.fillStyle = oscura; k.beginPath(); k.arc(423, 228, 11, Math.PI, 0); k.fill();
-    R(noche ? "#3a2a1e" : "#5a3a1e", 414, 230, 18, 16);
-    // torres de la izquierda y terraza con balaustrada
-    torre(262, 168, 26, 246, 36);
-    R(sombra, 282, 198, 40, 4); for (let i = 284; i < 322; i += 5) R(piedra, i, 191, 2, 7); R(piedra, 282, 190, 40, 2);
-    torre(304, 138, 22, 214, 42, 3);
-    // gran salón: tejado a dos aguas, ventanales y contrafuertes
-    R(piedra, 330, 160, 140, 54); piedras(330, 160, 140, 54); R(sombra, 330, 206, 140, 8);
-    for (let i = 0; i < 6; i++) ventana(338 + i * 22, 174, 8, 24, i % 2 === 0);
-    for (let i = 0; i < 7; i++) { k.strokeStyle = sombra; k.lineWidth = 3; k.beginPath(); k.moveTo(332 + i * 22, 214); k.lineTo(326 + i * 22, 188); k.stroke(); }
-    k.fillStyle = tejado; k.beginPath(); k.moveTo(326, 162); k.lineTo(474, 162); k.lineTo(456, 122); k.lineTo(344, 122); k.closePath(); k.fill();
-    k.fillStyle = tejadoC; for (let i = 0; i < 5; i++) k.fillRect(352 + i * 22, 132, 10, 2);
-    for (let i = 0; i < 3; i++) { R(piedra, 362 + i * 36, 132, 10, 14); k.fillStyle = tejado; k.beginPath(); k.moveTo(360 + i * 36, 132); k.lineTo(367 + i * 36, 122); k.lineTo(374 + i * 36, 132); k.fill(); ventana(365 + i * 36, 137, 4, 6, true); }
-    torre(344, 150, 10, 164, 18, 0, false); torre(456, 146, 10, 164, 18, 0, false);
-    gargola(326, 160, -1); gargola(474, 160, 1);
-    // gran torre del reloj con balcón
-    torre(490, 84, 32, 246, 56, 0);
-    for (let i = 0; i < 3; i++) ventana(486, 150 + i * 26, 8, 14, i !== 1);
-    R(sombra, 470, 130, 40, 4); for (let i = 472; i < 508; i += 5) R(piedra, i, 123, 2, 7); R(piedra, 470, 122, 40, 2);
-    gargola(470, 120, -1); gargola(510, 120, 1);
-    k.fillStyle = noche ? "#d9cfa8" : "#f3e6cf"; k.beginPath(); k.arc(490, 104, 10, 0, Math.PI * 2); k.fill();
-    k.strokeStyle = oscura; k.lineWidth = 2; k.beginPath(); k.arc(490, 104, 10, 0, Math.PI * 2); k.stroke();
-    k.lineWidth = 1.5; k.beginPath(); k.moveTo(490, 104); k.lineTo(490, 97); k.moveTo(490, 104); k.lineTo(495, 106); k.stroke();
-    // puente cubierto hacia la torre de la derecha
-    R(piedra, 506, 186, 50, 12); R(tejado, 504, 180, 54, 6);
-    for (let i = 0; i < 3; i++) { k.fillStyle = oscura; k.beginPath(); k.arc(516 + i * 15, 198, 5, 0, Math.PI); k.fill(); ventana(513 + i * 15, 189, 4, 5, true); }
-    torre(570, 128, 28, 246, 46, 4);
-    gargola(553, 124, -1); gargola(587, 124, 1);
-    // terraza de la derecha
-    R(sombra, 590, 208, 36, 4); for (let i = 592; i < 624; i += 5) R(piedra, i, 201, 2, 7); R(piedra, 590, 200, 36, 2);
-    // hiedra
-    if (!noche) for (let i = 0; i < 40; i++) R(i % 2 ? "#4f8a3e" : "#3e7a34", 228 + (i * 23) % 130, 226 + (i * 7) % 20, 3, 3);
-    // perspectiva aérea: el castillo queda lejos, más claro (de día) o más azulado (de noche)
-    k.globalCompositeOperation = "source-atop";
-    k.fillStyle = noche ? "rgba(40,30,90,.22)" : "rgba(200,232,250,.34)"; k.fillRect(0, 0, W, H);
-    x.drawImage(c, 0, 0);
-  }
-
-  function sueloPrado(x, noche) {
-    rect(x, noche ? "#1f4a2a" : "#58b85a", 0, 296, W, G - 296);
-    for (let i = 0; i < W; i += 7) { rect(x, noche ? "#2d6a3a" : "#7fd47a", i, 296 + (i * 13) % 18, 2, 3); }
-    for (let i = 0; i < 26; i++) { const fx = (i * 97) % W, fy = 300 + (i * 31) % 14; rect(x, noche ? "#8a8ab0" : ["#fffaf0", "#ffe14a", "#ff5fa8"][i % 3], fx, fy, 3, 3); }
-    rect(x, noche ? "#245a30" : "#4caf50", 0, G, W, 6);
-    for (let i = 0; i < W; i += 4) rect(x, noche ? "#2f7a3e" : "#6fcf6a", i, G - 3 + ((i / 4) % 3), 2, 4);
-    rect(x, noche ? "#3a2416" : "#6b4226", 0, G + 6, W, H - G);
-    for (let i = 0; i < 60; i++) rect(x, noche ? "#2a1a10" : "#4e2f1a", (i * 53) % W, G + 10 + (i * 17) % (H - G - 12), 4, 3);
-  }
-
-  /* ---------------- 1) Prado de día ---------------- */
-  function prado(noche) {
+  /* ---------------- 1) El Batidín: castillo (imagen fija) ---------------- */
+  function castillo() {
     const c = lienzo(), x = c.getContext("2d");
-    const g = x.createLinearGradient(0, 0, 0, 260);
-    if (noche) { g.addColorStop(0, "#07051a"); g.addColorStop(0.6, "#2a1450"); g.addColorStop(1, "#7a3a6e"); }
-    else { g.addColorStop(0, "#5fb4ee"); g.addColorStop(1, "#d6f1ff"); }
-    x.fillStyle = g; x.fillRect(0, 0, W, H);
-    if (!noche) {
-      x.fillStyle = "#fff3a0"; x.beginPath(); x.arc(560, 58, 30, 0, Math.PI * 2); x.fill();
-      x.fillStyle = "#ffe14a"; x.beginPath(); x.arc(560, 58, 24, 0, Math.PI * 2); x.fill();
-    } else for (let i = 0; i < 90; i++) rect(x, "#fffaf0", (i * 137) % W, (i * 71) % 200, (i % 7 === 0) ? 2 : 1, (i % 7 === 0) ? 2 : 1);
-    colinas(x, 236, 60, 0.5, noche ? "#1a2a3a" : "#8fd08a");
-    colinas(x, 290, 26, 2.1, noche ? "#16302a" : "#5fb85f");
-    arbol(x, 40, 236, 1.2, noche ? "#1d4a2a" : "#3e9e4a", noche ? "#163a22" : "#2f7f3a");
-    arbol(x, 112, 248, 1, noche ? "#1d4a2a" : "#3e9e4a", noche ? "#163a22" : "#2f7f3a");
-    castillo(x, noche);
-    sueloPrado(x, noche);
+    x.fillStyle = "#a9d4e6"; x.fillRect(0, 0, W, H);
+    x.imageSmoothingEnabled = false;
+    x.drawImage(imgCastillo, 0, -46, 640, 359);
+    // franja de prado delante, donde está la honda
+    rect(x, "#58b85a", 0, 292, W, G - 292);
+    for (let i = 0; i < W; i += 6) rect(x, "#7fd47a", i, 292 + (i * 13) % 16, 2, 3);
+    for (let i = 0; i < 24; i++) rect(x, ["#fffaf0", "#ffe14a", "#ff5fa8"][i % 3], (i * 97) % W, 298 + (i * 31) % 12, 3, 3);
+    rect(x, "#4caf50", 0, G, W, 6);
+    for (let i = 0; i < W; i += 4) rect(x, "#6fcf6a", i, G - 3 + ((i / 4) % 3), 2, 4);
+    rect(x, "#6b4226", 0, G + 6, W, H - G);
+    for (let i = 0; i < 60; i++) rect(x, "#4e2f1a", (i * 53) % W, G + 10 + (i * 17) % (H - G - 12), 4, 3);
     return c;
   }
 
@@ -189,7 +80,108 @@
     return c;
   }
 
-  /* ---------------- Partes animadas ---------------- */
+  /* ---------------- 3) El M***halla: ciudad en guerra ---------------- */
+  // Edificios en ruinas: el tejado roto se dibuja como una línea dentada
+  function ruina(x, bx, by, w, h, color, sombra, ventanas, roto = 0.5, semilla = 1) {
+    x.fillStyle = color; x.beginPath(); x.moveTo(bx, G);
+    x.lineTo(bx, by);
+    const pasos = Math.max(3, Math.floor(w / 8));
+    for (let i = 0; i <= pasos; i++) { const px = bx + (w * i) / pasos, caida = ((i * 37 + semilla * 13) % 11) / 10 * h * roto * (i > pasos * 0.4 ? 1 : 0.2); x.lineTo(px, by + caida); }
+    x.lineTo(bx + w, G); x.closePath(); x.fill();
+    rect(x, sombra, bx + w - 6, by + h * 0.15, 6, G - by);
+    for (let fy = by + 10; fy < G - 16; fy += 14) for (let fx = bx + 5; fx < bx + w - 9; fx += 11) {
+      const n = (fx * 7 + fy * 3 + semilla) % 9;
+      const col = n === 0 ? "#ffb02a" : n === 1 ? "#ff6a1a" : n < 5 ? "#120a0c" : ventanas;
+      if (fy > by + h * roto * 0.55 || fx < bx + w * 0.4) rect(x, col, fx, fy, 6, 8);
+    }
+    // agujeros de impacto
+    for (let i = 0; i < 2; i++) { x.fillStyle = "#0a0608"; x.beginPath(); x.arc(bx + w * (0.3 + i * 0.35), by + h * (0.45 + i * 0.2), 6 + i * 3, 0, Math.PI * 2); x.fill(); }
+  }
+  function semaforo(x, sx, inclinado = 0) {
+    x.save(); x.translate(sx, 296); x.rotate(inclinado);
+    rect(x, "#2a2a30", -1, -42, 3, 42); rect(x, "#111", -4, -54, 9, 16);
+    rect(x, "#3a0a0a", -2, -52, 5, 4); rect(x, "#3a3008", -2, -47, 5, 4); rect(x, "#0a3a14", -2, -42, 5, 4);
+    x.restore();
+  }
+  function farola(x, fx) { rect(x, "#22222a", fx, 250, 2, 46); rect(x, "#22222a", fx, 250, 10, 2); rect(x, "#ffcf6a", fx + 8, 252, 4, 2); }
+  function coche(x, cx, color) {
+    rect(x, "#0a0608", cx - 1, 282, 30, 12); rect(x, color, cx, 283, 28, 8); rect(x, color, cx + 6, 278, 15, 6);
+    rect(x, "#1a1416", cx + 8, 279, 5, 4); rect(x, "#1a1416", cx + 14, 279, 5, 4);
+    rect(x, "#0a0608", cx + 3, 290, 6, 5); rect(x, "#0a0608", cx + 19, 290, 6, 5);
+  }
+  // Nave con forma de calamar, toda negra, sobre la montaña (diseño propio)
+  function calamar(x, cx, cy) {
+    x.fillStyle = "#050407";
+    x.beginPath(); x.moveTo(cx, cy); // punta de arriba
+    x.lineTo(cx + 9, cy + 18); x.lineTo(cx + 22, cy + 28); x.lineTo(cx + 15, cy + 34); // aleta derecha
+    x.lineTo(cx + 18, cy + 72); x.lineTo(cx + 14, cy + 84);
+    x.lineTo(cx - 14, cy + 84); x.lineTo(cx - 18, cy + 72);
+    x.lineTo(cx - 15, cy + 34); x.lineTo(cx - 22, cy + 28); x.lineTo(cx - 9, cy + 18); x.closePath(); x.fill();
+    // tentáculos colgando
+    const tent = [[-14, 28, -30], [-8, 40, -14], [-3, 46, -4], [3, 44, 6], [8, 40, 16], [14, 30, 30]];
+    for (const [dx, largo, abre] of tent) {
+      x.strokeStyle = "#050407"; x.lineWidth = 4; x.lineCap = "round";
+      x.beginPath(); x.moveTo(cx + dx, cy + 82); x.quadraticCurveTo(cx + dx + abre * 0.4, cy + 82 + largo * 0.6, cx + dx + abre, cy + 82 + largo); x.stroke();
+    }
+    // brillo sutil en el borde
+    x.strokeStyle = "rgba(255,120,60,.25)"; x.lineWidth = 1; x.beginPath(); x.moveTo(cx + 1, cy + 2); x.lineTo(cx + 17, cy + 72); x.stroke();
+  }
+  function ciudad() {
+    const c = lienzo(), x = c.getContext("2d");
+    const g = x.createLinearGradient(0, 0, 0, 290);
+    g.addColorStop(0, "#120709"); g.addColorStop(0.45, "#3e1210"); g.addColorStop(0.8, "#a33a16"); g.addColorStop(1, "#e0661e");
+    x.fillStyle = g; x.fillRect(0, 0, W, H);
+    // montaña del fondo con la nave calamar
+    x.fillStyle = "#24141a"; x.beginPath(); x.moveTo(330, 260); x.lineTo(430, 150); x.lineTo(470, 166); x.lineTo(520, 104); x.lineTo(560, 140); x.lineTo(600, 128); x.lineTo(660, 210); x.lineTo(660, 260); x.fill();
+    x.fillStyle = "#1c1016"; x.beginPath(); x.moveTo(520, 104); x.lineTo(560, 140); x.lineTo(600, 128); x.lineTo(660, 210); x.lineTo(520, 210); x.fill();
+    calamar(x, 520, 10);
+    // horizonte de ciudad lejana
+    for (let i = 0; i < 26; i++) { const bx = i * 26 - 6, h = 30 + (i * 41) % 70; rect(x, "#2c1418", bx, 250 - h, 24, h + 10); if (i % 3 === 0) rect(x, "#ff7a2a", bx + 6, 250 - h + 10, 4, 4); }
+    // edificios en primer plano del fondo
+    ruina(x, 0, 150, 70, 120, "#3a2224", "#2a1618", "#4a2e2a", 0.6, 1);                 // bloque de pisos
+    // hospital
+    x.fillStyle = "#7d736c"; x.fillRect(74, 162, 112, 134); rect(x, "#5e5550", 176, 162, 10, 134);
+    for (let fy = 182; fy < 280; fy += 16) for (let fx = 82; fx < 172; fx += 14) rect(x, (fx + fy) % 5 ? "#2a2a34" : "#ff8a2a", fx, fy, 8, 10);
+    rect(x, "#e8e0d6", 98, 166, 64, 12); x.font = '8px "Press Start 2P", monospace'; x.textAlign = "center"; x.textBaseline = "middle"; x.fillStyle = "#1a3a8a"; x.fillText("HOSPITAL", 130, 172);
+    rect(x, "#1a3a8a", 118, 140, 24, 22); x.fillStyle = "#fffaf0"; x.font = '14px "Press Start 2P", monospace'; x.fillText("H", 130, 152);
+    x.fillStyle = "#0a0608"; x.beginPath(); x.moveTo(150, 162); x.lineTo(186, 162); x.lineTo(186, 200); x.lineTo(170, 186); x.closePath(); x.fill(); // esquina derrumbada
+    // colegio de ladrillo con reloj
+    rect(x, "#6e2e22", 196, 196, 104, 100); rect(x, "#5a241a", 290, 196, 10, 100);
+    for (let fy = 202; fy < 296; fy += 6) for (let fx = 196 + ((fy / 6) % 2) * 6; fx < 300; fx += 12) rect(x, "#5a2418", fx, fy, 8, 1);
+    x.fillStyle = "#6e2e22"; x.beginPath(); x.moveTo(190, 198); x.lineTo(248, 168); x.lineTo(306, 198); x.fill();
+    rect(x, "#e8e0d6", 218, 204, 60, 11); x.font = '7px "Press Start 2P", monospace'; x.fillStyle = "#3a1a10"; x.fillText("COLEGIO", 248, 210);
+    x.fillStyle = "#e8e0d6"; x.beginPath(); x.arc(248, 186, 7, 0, Math.PI * 2); x.fill(); rect(x, "#1a1416", 247, 181, 1, 5); rect(x, "#1a1416", 248, 186, 4, 1);
+    for (let i = 0; i < 5; i++) rect(x, i === 2 ? "#ff9a2a" : "#1a1016", 204 + i * 18, 226, 10, 14);
+    for (let i = 0; i < 5; i++) rect(x, i % 2 ? "#120a0c" : "#1a1016", 204 + i * 18, 254, 10, 14);
+    rect(x, "#0a0608", 238, 270, 20, 26);
+    rect(x, "#2a2a30", 306, 150, 2, 50); rect(x, "#8a2a2a", 308, 152, 14, 8);           // mástil con bandera rota
+    // torre de oficinas partida
+    ruina(x, 324, 96, 58, 200, "#2e2a36", "#211e28", "#3a3644", 0.7, 3);
+    // tiendas con toldos
+    rect(x, "#4a3a34", 386, 236, 80, 60); rect(x, "#2a7a3a", 390, 230, 34, 8); rect(x, "#9a2a2a", 428, 230, 34, 8);
+    for (let i = 390; i < 424; i += 6) rect(x, "#e8e0d6", i, 230, 3, 8);
+    rect(x, "#120a0c", 394, 248, 26, 30); rect(x, "#ff8a2a", 432, 250, 26, 26);
+    rect(x, "#2a9a4a", 446, 220, 10, 3); rect(x, "#2a9a4a", 449, 217, 4, 9);              // cruz verde de farmacia
+    ruina(x, 470, 180, 64, 116, "#3a2224", "#2a1618", "#4a2e2a", 0.5, 5);
+    ruina(x, 538, 206, 52, 90, "#2e1e22", "#22151a", "#3a2a2a", 0.4, 7);
+    ruina(x, 594, 170, 50, 126, "#3a2428", "#2a181c", "#4a2e30", 0.65, 9);
+    // calle: acera, asfalto con líneas, semáforos, farolas, coches quemados y escombros
+    rect(x, "#3a3438", 0, 278, W, 4); rect(x, "#1e1a1e", 0, 282, W, 14);
+    for (let i = 0; i < W; i += 30) rect(x, "#c9a23a", i, 288, 14, 2);
+    semaforo(x, 66, 0); semaforo(x, 316, 0.5); semaforo(x, 560, 0);
+    farola(x, 150); farola(x, 470); farola(x, 610);
+    coche(x, 186, "#2a1a14"); coche(x, 520, "#3a1a10");
+    for (let i = 0; i < 18; i++) rect(x, ["#3a2e2a", "#2a2224", "#4a3a34"][i % 3], (i * 71) % W, 286 + (i % 4) * 2, 6 + (i % 3) * 4, 4);
+    // suelo del juego: asfalto roto
+    rect(x, "#2a2428", 0, 296, W, G - 296);
+    rect(x, "#3a3036", 0, G, W, 6); rect(x, "#1c171b", 0, G + 6, W, H - G);
+    for (let i = 0; i < 40; i++) rect(x, "#0e0b0d", (i * 83) % W, G + 8 + (i * 13) % (H - G - 10), 10 + (i % 4) * 6, 1);
+    for (let i = 0; i < 20; i++) rect(x, "#4a3e44", (i * 113) % W, 300 + (i * 7) % 14, 5, 3);
+    return c;
+  }
+  // Puntos de fuego (sobre edificios del fondo) y columnas de humo
+  const FUEGOS = [[30, 160], [140, 168], [170, 200], [262, 196], [346, 110], [372, 140], [500, 196], [616, 184], [440, 236], [80, 250], [560, 214]];
+
   function nube(ctx, cx, cy, s, color = "#ffffff") {
     ctx.fillStyle = color;
     for (const [dx, dy, w, h] of [[-20, 0, 40, 10], [-14, -6, 28, 8], [-6, -11, 14, 6], [-26, 4, 52, 6]]) ctx.fillRect(Math.round(cx + dx * s), Math.round(cy + dy * s), Math.round(w * s), Math.round(h * s));
@@ -208,83 +200,62 @@
     ctx.fillStyle = "#222"; ctx.fillRect(-2, 2, 4, 6);                                  // pierna
     ctx.restore();
   }
-  // Nave nodriza del Alter Ego: un vaso gigante corrupto que flota sobre el prado
-  function nave(ctx, t) {
-    const cx = 150, cy = 70 + Math.sin(t * 1.2) * 5;
-    // haz tractor sobre la torre
-    ctx.globalAlpha = 0.12 + Math.sin(t * 3) * 0.04; ctx.fillStyle = "#2fe6ff";
-    ctx.beginPath(); ctx.moveTo(cx - 26, cy + 52); ctx.lineTo(cx + 26, cy + 52); ctx.lineTo(cx + 420, G); ctx.lineTo(cx + 230, G); ctx.fill(); ctx.globalAlpha = 1;
-    // cuerpo (trapecio) con franja cian
-    ctx.fillStyle = "#0b0a0f"; ctx.beginPath(); ctx.moveTo(cx - 62, cy - 34); ctx.lineTo(cx + 62, cy - 34); ctx.lineTo(cx + 44, cy + 56); ctx.lineTo(cx - 44, cy + 56); ctx.fill();
-    ctx.fillStyle = "#24222e"; ctx.beginPath(); ctx.moveTo(cx - 58, cy - 30); ctx.lineTo(cx + 58, cy - 30); ctx.lineTo(cx + 41, cy + 52); ctx.lineTo(cx - 41, cy + 52); ctx.fill();
-    ctx.fillStyle = "#2fe6ff"; ctx.fillRect(cx - 52, cy + 14, 104, 12);
-    // tapa abovedada y pajita
-    ctx.fillStyle = "#c1863a"; ctx.beginPath(); ctx.ellipse(cx, cy - 34, 66, 24, 0, Math.PI, 0); ctx.fill();
-    ctx.fillStyle = "#e0a85a"; ctx.fillRect(cx - 40, cy - 48, 30, 4);
-    ctx.fillStyle = "#0b0a0f"; ctx.fillRect(cx - 68, cy - 36, 136, 5);
-    for (let i = 0; i < 6; i++) { ctx.fillStyle = i % 2 ? "#0b0a0f" : "#2fe6ff"; ctx.fillRect(cx + 14 + i * 3, cy - 92 + i * 7, 7, 8); }
-    // ojos enfadados que brillan
-    const parp = Math.floor(t * 2) % 9 === 0;
-    for (const s of [-1, 1]) {
-      ctx.fillStyle = "#fffaf0"; ctx.fillRect(cx + s * 22 - 10, cy - 18, 20, parp ? 3 : 14);
-      if (!parp) { ctx.fillStyle = "#ff2fd0"; ctx.fillRect(cx + s * 22 - 4 + s * 2, cy - 13, 8, 8); }
-      ctx.fillStyle = "#0b0a0f"; ctx.fillRect(cx + s * 22 - 12, cy - 22 + (s > 0 ? 0 : 0), 24, 3);
-    }
-    // luces de la base
-    for (let i = 0; i < 5; i++) { ctx.fillStyle = (Math.floor(t * 6) + i) % 2 ? "#3dff7a" : "#ff2fd0"; ctx.fillRect(cx - 36 + i * 18, cy + 46, 6, 4); }
-    // fallos de imagen
-    if (Math.random() < 0.3) { const y = cy - 40 + Math.random() * 90; ctx.drawImage(ctx.canvas, cx - 70, y, 140, 5, cx - 70 + (Math.random() - 0.5) * 16, y, 140, 5); }
+  function avion(ctx, x, y, d) {
+    ctx.save(); ctx.translate(Math.round(x), Math.round(y)); ctx.scale(d, 1);
+    ctx.fillStyle = "#0e0a0c"; ctx.fillRect(-16, -2, 30, 4); ctx.fillRect(10, -1, 6, 2);
+    ctx.beginPath(); ctx.moveTo(-2, 0); ctx.lineTo(-12, 9); ctx.lineTo(-6, 9); ctx.lineTo(6, 0); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(-2, 0); ctx.lineTo(-10, -7); ctx.lineTo(-5, -7); ctx.lineTo(4, 0); ctx.fill();
+    ctx.fillRect(-16, -6, 4, 6);
+    ctx.fillStyle = "#ffb02a"; ctx.fillRect(-20 + Math.random() * 2, -1, 4, 2);
+    ctx.restore();
   }
-  // Drones glitch (diseño propio: rombos con núcleo brillante)
-  function dron(ctx, x, y, t) {
-    x = Math.round(x); y = Math.round(y);
-    ctx.fillStyle = "#0b0a0f"; ctx.fillRect(x - 9, y - 3, 18, 6); ctx.fillRect(x - 3, y - 9, 6, 18);
-    ctx.fillStyle = "#2fe6ff"; ctx.fillRect(x - 7, y - 1, 14, 2); ctx.fillRect(x - 1, y - 7, 2, 14);
-    ctx.fillStyle = Math.floor(t * 8) % 2 ? "#ff2fd0" : "#fffaf0"; ctx.fillRect(x - 2, y - 2, 4, 4);
+  function helicoptero(ctx, x, y, d, t) {
+    ctx.save(); ctx.translate(Math.round(x), Math.round(y)); ctx.scale(d, 1);
+    ctx.fillStyle = "#0e0a0c";
+    ctx.beginPath(); ctx.ellipse(0, 0, 11, 6, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.fillRect(-26, -2, 18, 3); ctx.fillRect(-28, -6, 3, 7); ctx.fillRect(-4, 6, 2, 3); ctx.fillRect(-8, 9, 14, 1);
+    ctx.fillRect(-1, -9, 2, 4);
+    const a = Math.abs(Math.sin(t * 40)) * 18; ctx.fillRect(-a, -10, a * 2, 1);
+    ctx.fillStyle = "#3a4a5a"; ctx.fillRect(3, -3, 6, 4);
+    ctx.fillStyle = Math.floor(t * 4) % 2 ? "#ff2a2a" : "#2a0a0a"; ctx.fillRect(-28, -7, 2, 2);
+    ctx.restore();
   }
 
   /* ---------------- Dibujo de cada fondo ---------------- */
   function dibujar(ctx, nivel, t) {
-    const clave = ["prado", "cafeteria", "noche"][nivel] || "prado";
-    if (!cache[clave]) cache[clave] = clave === "prado" ? prado(false) : clave === "cafeteria" ? cafeteria() : prado(true);
-    // Profundidad: el fondo se dibuja algo desenfocado y con bruma para que se separe del
-    // escenario de juego (el suelo donde están la honda y la torre queda nítido)
-    const corte = clave === "cafeteria" ? 300 : 296;
-    ctx.save(); ctx.beginPath(); ctx.rect(0, 0, W, corte); ctx.clip();
-    ctx.filter = "blur(1.2px)"; ctx.drawImage(cache[clave], 0, 0); ctx.filter = "none";
-    ctx.restore();
-    ctx.drawImage(cache[clave], 0, corte, W, H - corte, 0, corte, W, H - corte);
+    const clave = ["castillo", "cafeteria", "ciudad"][nivel] || "castillo";
+    if (clave === "castillo" && !imgCastillo.complete) { ctx.fillStyle = "#a9d4e6"; ctx.fillRect(0, 0, W, H); return; }
+    if (!cache[clave]) cache[clave] = clave === "castillo" ? castillo() : clave === "cafeteria" ? cafeteria() : ciudad();
+    const corte = clave === "cafeteria" ? 300 : clave === "ciudad" ? 296 : 292;
+    if (clave === "castillo") ctx.drawImage(cache[clave], 0, 0); // la imagen del castillo va fija y nítida
+    else {
+      // profundidad: el fondo algo desenfocado, el suelo de juego nítido
+      ctx.save(); ctx.beginPath(); ctx.rect(0, 0, W, corte); ctx.clip();
+      ctx.filter = "blur(1px)"; ctx.drawImage(cache[clave], 0, 0); ctx.filter = "none"; ctx.restore();
+      ctx.drawImage(cache[clave], 0, corte, W, H - corte, 0, corte, W, H - corte);
+    }
 
-    if (clave === "prado" || clave === "noche") ondearBanderas(ctx, clave === "noche" ? banderas.noche : banderas.dia, t);
-    if (clave === "prado") {
-      for (const [x0, y, s, v] of [[60, 52, 1.2, 8], [300, 34, 0.9, 5], [520, 96, 1, 7], [800, 70, 1.3, 6]]) nube(ctx, ((x0 + t * v) % 760) - 60, y, s);
-      // estudiantes dando vueltas al castillo en escoba (pequeños: están lejos)
-      const capas = ["#3a2a6e", "#7a1e2a", "#1e5a3a", "#2a2a2a", "#5a3a1e", "#1e3a5a", "#6a1e5a"];
-      for (let i = 0; i < 7; i++) {
-        const a = t * (0.35 + i * 0.05) + i * 0.9, ox = 430 + (i % 3 - 1) * 70, oy = 120 + (i % 2) * 40;
-        const x = ox + Math.cos(a) * (150 + i * 6), y = oy + Math.sin(a) * 30;
-        ctx.save(); ctx.globalAlpha = Math.sin(a) < 0 ? 0.55 : 0.9; ctx.translate(x, y); ctx.scale(0.55, 0.55);
-        escoba(ctx, 0, 0, t + i, capas[i], -Math.sin(a) >= 0 ? -1 : 1); ctx.restore();
-      }
-      // y un par que pasan más cerca
-      for (let i = 0; i < 2; i++) {
-        const d = i ? -1 : 1; let x = ((t * (42 + i * 12) + i * 300) % (W + 160)) - 80; if (d < 0) x = W - x;
-        escoba(ctx, x, 46 + i * 36 + Math.sin(t * 1.6 + i) * 8, t + i, i ? "#7a1e2a" : "#3a2a6e", d);
+    if (clave === "castillo") {
+      // magos en escoba pasando por delante del castillo
+      const capas = ["#3a2a6e", "#7a1e2a", "#1e5a3a", "#2a2a2a", "#5a3a1e"];
+      for (let i = 0; i < 5; i++) {
+        const d = i % 2 ? -1 : 1, vel = 34 + i * 8;
+        let x = ((t * vel + i * 170) % (W + 160)) - 80; if (d < 0) x = W - x;
+        const y = 70 + i * 34 + Math.sin(t * 1.5 + i * 2) * 10, esc = 0.7 + (i % 3) * 0.2;
+        ctx.save(); ctx.translate(x, y); ctx.scale(esc, esc); escoba(ctx, 0, 0, t + i, capas[i], d); ctx.restore();
       }
     } else if (clave === "cafeteria") {
-      // ventilador del techo girando
       ctx.save(); ctx.translate(250, 30); ctx.fillStyle = "#8a857e"; ctx.fillRect(-2, -18, 4, 14);
-      ctx.rotate(t * 7); ctx.fillStyle = "#c9c4bc"; ctx.fillRect(-34, -3, 68, 6); ctx.fillRect(-3, -34 * 0.25, 6, 17); ctx.restore();
+      ctx.rotate(t * 7); ctx.fillStyle = "#c9c4bc"; ctx.fillRect(-34, -3, 68, 6); ctx.fillRect(-3, -8, 6, 17); ctx.restore();
       ctx.fillStyle = "#6a655e"; ctx.fillRect(244, 26, 12, 8);
-      // cartel de neón ovalado
-      const on = Math.floor(t * 3) % 13 !== 0;
-      ctx.lineWidth = 3; ctx.strokeStyle = on ? "#ff5fa8" : "#9a4a62";
-      ctx.beginPath(); ctx.ellipse(110, 74, 62, 22, 0, 0, Math.PI * 2); ctx.stroke();
-      if (on) { ctx.globalAlpha = 0.18; ctx.fillStyle = "#ff5fa8"; ctx.beginPath(); ctx.ellipse(110, 74, 72, 30, 0, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1; }
-      ctx.font = '10px "Press Start 2P", monospace'; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-      ctx.fillStyle = on ? "#2fe6ff" : "#2a6a72"; ctx.fillText("MIFLSHAKES", 110, 72);
-      ctx.font = '6px "Press Start 2P", monospace'; ctx.fillStyle = on ? "#fffaf0" : "#9a9a9a"; ctx.fillText("DINER · DESDE 1955", 110, 86);
-      // luces de la gramola y notas musicales
+      // cartel de neón: placa oscura detrás para que se lea bien
+      const on = Math.floor(t * 2) % 17 !== 0;
+      ctx.fillStyle = "#2a1424"; ctx.beginPath(); ctx.ellipse(110, 76, 74, 28, 0, 0, Math.PI * 2); ctx.fill();
+      if (on) { ctx.globalAlpha = 0.25; ctx.fillStyle = "#ff5fa8"; ctx.beginPath(); ctx.ellipse(110, 76, 80, 33, 0, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1; }
+      ctx.lineWidth = 3; ctx.strokeStyle = on ? "#ff8ac4" : "#7a3a5a"; ctx.beginPath(); ctx.ellipse(110, 76, 70, 25, 0, 0, Math.PI * 2); ctx.stroke();
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.font = '12px "Press Start 2P", monospace'; ctx.fillStyle = "#000"; ctx.fillText("MIFLSHAKES", 111, 72); ctx.fillStyle = on ? "#7ff4ff" : "#2a6a72"; ctx.fillText("MIFLSHAKES", 110, 71);
+      ctx.font = '7px "Press Start 2P", monospace'; ctx.fillStyle = on ? "#fffaf0" : "#8a8a8a"; ctx.fillText("DINER · DESDE 1955", 110, 88);
       for (let i = 0; i < 4; i++) { ctx.fillStyle = ["#ff5fa8", "#ffe14a", "#2fe6ff", "#3dff7a"][(i + Math.floor(t * 4)) % 4]; ctx.fillRect(160 + i * 8, 222, 6, 18); }
       for (let i = 0; i < 3; i++) {
         const k = (t * 0.6 + i / 3) % 1; ctx.globalAlpha = 1 - k; ctx.fillStyle = "#3a2a1e";
@@ -293,29 +264,42 @@
       }
       ctx.globalAlpha = 1;
     } else {
-      // estrellas que titilan
-      for (let i = 0; i < 18; i++) if ((Math.floor(t * 3) + i) % 5 === 0) { ctx.fillStyle = "#fffaf0"; ctx.fillRect((i * 151) % W, (i * 43) % 190, 2, 2); }
-      nube(ctx, ((140 + t * 6) % 760) - 60, 210, 1.6, "rgba(160,120,200,.5)");
-      nave(ctx, t);
-      // escuadrón de drones
-      for (let i = 0; i < 5; i++) {
-        const k = (t * 0.12 + i * 0.2) % 1;
-        dron(ctx, 640 - k * 760 + Math.sin(t * 2 + i) * 6, 150 + i * 14 + Math.sin(t * 3 + i * 2) * 8, t + i);
+      // luz blanca en la punta de la nave calamar
+      const pulso = 0.6 + Math.sin(t * 2.5) * 0.4;
+      ctx.globalAlpha = 0.25 * pulso; ctx.fillStyle = "#ffffff"; ctx.beginPath(); ctx.arc(520, 10, 22, 0, Math.PI * 2); ctx.fill();
+      ctx.globalAlpha = 0.6 * pulso; ctx.beginPath(); ctx.arc(520, 10, 9, 0, Math.PI * 2); ctx.fill();
+      ctx.globalAlpha = 1; ctx.fillRect(518, 8, 4, 4);
+      // fuego y humo
+      for (const [i, [fx, fy]] of FUEGOS.entries()) {
+        for (let k = 0; k < 5; k++) { // humo que sube
+          const f = (t * 0.25 + k / 5 + i * 0.13) % 1;
+          ctx.globalAlpha = 0.35 * (1 - f); ctx.fillStyle = "#2a1a1c";
+          const r = 6 + f * 18; ctx.fillRect(Math.round(fx - r / 2 + Math.sin(f * 6 + i) * 8 + f * 20), Math.round(fy - 10 - f * 90), Math.round(r), Math.round(r * 0.7));
+        }
+        ctx.globalAlpha = 1;
+        for (let k = 0; k < 6; k++) { // llamas
+          const h = 5 + ((Math.floor(t * 12) + k * 3 + i) % 5) * 2;
+          ctx.fillStyle = k % 3 === 0 ? "#ffe14a" : k % 3 === 1 ? "#ff8a1a" : "#e3222e";
+          ctx.fillRect(fx - 7 + k * 2.5, fy - h, 3, h);
+        }
+        ctx.globalAlpha = 0.18; ctx.fillStyle = "#ff8a1a"; ctx.beginPath(); ctx.arc(fx, fy - 4, 14, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1;
       }
-      // escobas huyendo
-      escoba(ctx, ((t * 60) % (W + 160)) - 80, 46 + Math.sin(t * 2) * 6, t, "#3a2a6e", 1);
+      // aviones y helicópteros cruzando
+      for (let i = 0; i < 2; i++) {
+        const d = i ? -1 : 1; let x = ((t * 150 + i * 400) % (W + 300)) - 150; if (d < 0) x = W - x;
+        const y = 40 + i * 34; avion(ctx, x, y, d);
+        ctx.globalAlpha = 0.3; ctx.fillStyle = "#c9b8b0"; ctx.fillRect(d > 0 ? x - 80 : x + 16, y - 1, 64, 2); ctx.globalAlpha = 1;
+      }
+      for (let i = 0; i < 2; i++) {
+        const d = i ? 1 : -1; let x = ((t * 28 + i * 330) % (W + 120)) - 60; if (d < 0) x = W - x;
+        const y = 92 + i * 40 + Math.sin(t * 1.3 + i) * 6;
+        helicoptero(ctx, x, y, d, t + i);
+        ctx.globalAlpha = 0.1; ctx.fillStyle = "#fffbe0"; ctx.beginPath(); ctx.moveTo(x, y + 4); ctx.lineTo(x - 30 + Math.sin(t + i) * 30, 290); ctx.lineTo(x + 30 + Math.sin(t + i) * 30, 290); ctx.fill(); ctx.globalAlpha = 1;
+      }
+      // fogonazos lejanos
+      if (Math.floor(t * 1.7) % 7 === 0 && (t * 1.7) % 1 < 0.15) { ctx.globalAlpha = 0.25; ctx.fillStyle = "#ffcf6a"; ctx.fillRect(0, 0, W, 290); ctx.globalAlpha = 1; }
     }
   }
 
-  function ondearBanderas(ctx, lista, t) {
-    const cols = ["#c4161f", "#ffcf3a", "#2a4aa8", "#2f7f3a"];
-    lista.forEach((b, i) => {
-      ctx.globalAlpha = 0.85;
-      for (let s = 0; s < 4; s++) { ctx.fillStyle = cols[i % 4]; ctx.fillRect(b.x + s * 3, b.y + Math.round(Math.sin(t * 6 + s + i) * 1.5), 3, 5); }
-      ctx.globalAlpha = 1;
-    });
-  }
-
-  // Suelo dibujado aparte: el de la torre (va por encima de los bloques que caen fuera)
   window.FONDOS4 = { dibujar };
 })();

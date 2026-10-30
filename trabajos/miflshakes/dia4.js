@@ -1,6 +1,6 @@
 /* =============================================================
-   SHAKE WEEK · DÍA 4 — «TORRE GLITCH»
-   Lanza batidos con la pajita-tirachinas para derribar las torres
+   SHAKE WEEK · DÍA 4 — «LA BATITORRE»
+   Lanza la munición con la pajita-tirachinas para derribar las torres
    donde se esconden los clones del Alter Ego. Cada sabor tiene un
    poder distinto. Física con Matter.js (lib/matter.min.js).
    ============================================================= */
@@ -17,10 +17,10 @@
 
   /* ---------------- Batidos: cada color tiene un poder ---------------- */
   const BATIDOS = {
-    fresa:    { nombre: "FRESA",    color: "#ff5fa8", radio: 11, densidad: 0.004,  poder: "Golpe normal y fiable" },
-    platano:  { nombre: "PLÁTANO",  color: "#ffe14a", radio: 10, densidad: 0.0035, poder: "Toca en el aire: ¡acelerón!" },
-    arandano: { nombre: "ARÁNDANO", color: "#4b5cff", radio: 9,  densidad: 0.004,  poder: "Toca en el aire: se divide en 3" },
-    chocolate:{ nombre: "CHOCOLATE",color: "#7a4a2a", radio: 13, densidad: 0.007,  poder: "Toca: ¡explota! (o al rato de chocar)" },
+    fresa:    { nombre: "FRESA Y NATA",    color: "#ff5fa8", radio: 11, densidad: 0.004,  poder: "Golpe normal y fiable" },
+    platano:  { nombre: "AZUQUITA",        color: "#f3e6cf", radio: 10, densidad: 0.0035, poder: "Toca en el aire: ¡acelerón! (la bolsa sale y el azúcar sigue)" },
+    arandano: { nombre: "M&MS",            color: "#c9ccd6", radio: 9,  densidad: 0.004,  poder: "Toca en el aire: se abre en 3 bolitas" },
+    chocolate:{ nombre: "PUCHERO CALIENTE",color: "#e3222e", radio: 13, densidad: 0.007,  poder: "Toca: ¡revienta! (o al rato de chocar)" },
     menta:    { nombre: "MENTA",    color: "#7dffb8", radio: 11, densidad: 0.004,  poder: "Toca: congela y vuelve frágil todo lo cercano" }
   };
   // Materiales de la torre
@@ -36,7 +36,7 @@
   // b(x, y, w, h, material) · c(x, y, rey)  — y = centro; G = suelo
   const NIVELES = [
     {
-      nombre: "LA CASETA", municion: ["fresa", "fresa", "platano"],
+      nombre: "EL BATIDÍN", municion: ["fresa", "fresa", "platano"],
       montar: (b, c) => {
         b(420, G - 30, 16, 60, "hormigon"); b(500, G - 30, 16, 60, "hormigon"); b(460, G - 67, 112, 14, "galleta");
         c(460, G - 15);
@@ -46,7 +46,7 @@
       }
     },
     {
-      nombre: "HIELO Y GALLETA", municion: ["fresa", "arandano", "platano", "chocolate"],
+      nombre: "BUM GALLETÓN", municion: ["fresa", "arandano", "platano", "chocolate"],
       montar: (b, c) => {
         b(382, G - 8, 52, 16, "hormigon"); b(368, G - 52, 12, 72, "hielo"); b(396, G - 52, 12, 72, "hielo"); b(382, G - 95, 52, 14, "hielo"); c(382, G - 117);
         b(446, G - 13, 26, 26, "tnt");
@@ -56,7 +56,7 @@
       }
     },
     {
-      nombre: "EL EDIFICIO GLITCH", municion: ["fresa", "menta", "arandano", "chocolate", "platano"],
+      nombre: "EL M***HALLA", municion: ["fresa", "menta", "arandano", "chocolate", "platano"],
       montar: (b, c) => {
         b(374, G - 13, 26, 26, "tnt");
         b(430, G - 30, 18, 60, "hormigon"); b(520, G - 30, 16, 60, "hormigon"); b(610, G - 30, 18, 60, "hormigon"); b(520, G - 67, 200, 14, "lata");
@@ -182,7 +182,7 @@
     }
     anillos.push({ x, y, r: 0, max: r, t: 0.5, c: PAL.cian });
   }
-  let anillos = [];
+  let anillos = [], bolsas = [];
 
   /* ---------------- Lanzar y poderes ---------------- */
   function lanzar(vx, vy) {
@@ -202,19 +202,25 @@
     const t = pr.plugin.tipo, v = pr.velocity, sp = Math.hypot(v.x, v.y) || 1;
     pr.plugin.poderUsado = true;
     if (t === "platano") {
+      // la bolsita sale volando hacia atrás y el azúcar sigue disparado
+      bolsas.push({ x: pr.position.x, y: pr.position.y, vx: -v.x / sp * 2.5, vy: -3.5, rot: 0, vr: -0.3 * Math.sign(v.x || 1), t: 1.6 });
+      pr.plugin.sinBolsa = true;
       Body.setVelocity(pr, { x: v.x / sp * 18, y: v.y / sp * 18 }); sfx.acelerar();
-      for (let i = 0; i < 10; i++) parts.push({ x: pr.position.x, y: pr.position.y, vx: -v.x / sp * (2 + i * 0.4), vy: -v.y / sp * (2 + i * 0.4), t: 0.4, c: PAL.amarillo, s: 3 });
+      for (let i = 0; i < 14; i++) parts.push({ x: pr.position.x, y: pr.position.y, vx: -v.x / sp * (1 + i * 0.3) + (Math.random() - 0.5) * 2, vy: -v.y / sp * (1 + i * 0.3) + (Math.random() - 0.5) * 2, t: 0.5, c: i % 3 ? PAL.blanco : PAL.crema, s: 2 });
     } else if (t === "arandano") {
-      sfx.dividir();
-      for (const da of [-0.22, 0.22]) {
+      // el paquete se rompe: salen 3 bolitas de colores
+      sfx.dividir(); particulas(pr.position.x, pr.position.y, ["#c9ccd6", PAL.blanco, "#8a8e98"], 14, 3);
+      const cols = ["#e3222e", "#ffcf3a", "#3dbb5a", "#3d6cff", "#ff8a1a", "#7a4a2a"].sort(() => Math.random() - 0.5);
+      pr.plugin.bola = cols[0];
+      for (const [i, da] of [[1, -0.22], [2, 0.22]]) {
         const ang = Math.atan2(v.y, v.x) + da;
         const h = Bodies.circle(pr.position.x, pr.position.y, 8, { density: 0.004, friction: 0.6, restitution: 0.25, frictionAir: 0.004, label: "proyectil" });
-        h.plugin = { tipo: "arandano", poderUsado: true, hijo: true, t: pr.plugin.t, quieto: 0 };
+        h.plugin = { tipo: "arandano", poderUsado: true, hijo: true, t: pr.plugin.t, quieto: 0, bola: cols[i] };
         Body.setVelocity(h, { x: Math.cos(ang) * sp, y: Math.sin(ang) * sp });
         Composite.add(engine.world, h); proyectiles.push(h);
       }
     } else if (t === "chocolate") {
-      explotar(pr.position.x, pr.position.y, 96, 20); quitarProyectil(pr);
+      pr.plugin.revienta = 0.3; sfx.hervir(); // se hincha, se pone rojo y revienta
     } else if (t === "menta") {
       congelarZona(pr.position.x, pr.position.y, 86);
     } else pr.plugin.poderUsado = true;
@@ -279,6 +285,7 @@
     explosion: () => { Sonido.ruido(0.6, 0.4, 600); Sonido.tono(140, 30, 0.6, "sine", 0.4); },
     hielo: () => { [1800, 2400, 3000].forEach((f, i) => Sonido.tono(f, f * 0.7, 0.2, "triangle", 0.07, i * 0.05)); },
     acelerar: () => Sonido.tono(400, 1600, 0.2, "sawtooth", 0.08),
+    hervir: () => { for (let i = 0; i < 4; i++) Sonido.tono(300 + i * 120, 500 + i * 160, 0.07, "square", 0.06, i * 0.06); },
     dividir: () => [880, 1100, 1320].forEach((f, i) => Sonido.tono(f, f, 0.06, "square", 0.06, i * 0.04)),
     estrella: i => Sonido.tono(880 + i * 220, 880 + i * 220, 0.18, "square", 0.08),
     victoria: () => [523, 659, 784, 1047].forEach((f, i) => Sonido.tono(f, f, 0.16, "square", 0.08, i * 0.12)),
@@ -322,6 +329,7 @@
       const p = pr.plugin; p.t += dt;
       if (Math.random() < 0.5 && pr.speed > 3) parts.push({ x: pr.position.x, y: pr.position.y, vx: 0, vy: 0, t: 0.25, c: BATIDOS[p.tipo].color, s: 2 });
       if (p.mecha !== undefined && !p.poderUsado) { p.mecha -= dt; if (p.mecha <= 0) { p.poderUsado = true; explotar(pr.position.x, pr.position.y, 90, 18); quitarProyectil(pr); continue; } }
+      if (p.revienta !== undefined) { p.revienta -= dt; if (p.revienta <= 0) { explotar(pr.position.x, pr.position.y, 96, 20); quitarProyectil(pr); continue; } }
       if (pr.speed < 0.25) p.quieto += dt; else p.quieto = 0;
       if (p.quieto > 1.2 || p.t > 9 || pr.position.x > W + 60 || pr.position.x < -60 || pr.position.y > H + 60) {
         particulas(pr.position.x, pr.position.y, [BATIDOS[p.tipo].color, PAL.blanco], 8, 2); quitarProyectil(pr);
@@ -356,18 +364,94 @@
   // Cada torre tiene su escenario (ver fondos4.js)
   function dibujarFondo() { window.FONDOS4.dibujar(ctx, nivelIdx, reloj); }
 
-  function dibujarBatido(x, y, tipo, ang = 0, esc = 1) {
+  // Dibujo de cada munición (pl = estado del proyectil en vuelo, si lo hay)
+  function dibujarBatido(x, y, tipo, ang = 0, esc = 1, pl = null) {
     const def = BATIDOS[tipo], r = def.radio * esc;
-    ctx.save(); ctx.translate(Math.round(x), Math.round(y)); ctx.rotate(ang);
-    const w = Math.round(r * 1.5), h = Math.round(r * 1.7);
-    ctx.fillStyle = PAL.negro; ctx.fillRect(-w / 2 - 2, -h / 2 - 2, w + 4, h + 4);
-    ctx.fillStyle = def.color; ctx.fillRect(-w / 2, -h / 2 + 3, w, h - 3);
-    ctx.fillStyle = PAL.blanco; ctx.fillRect(-w / 2, -h / 2 + Math.round(h * 0.45), w, 3);
-    ctx.fillRect(-w / 2 - 1, -h / 2 - 1, w + 2, 4); ctx.fillRect(-w / 2 + 2, -h / 2 - 4, w - 4, 3);
-    ctx.fillStyle = PAL.rojo; ctx.fillRect(2, -h / 2 - 10, 3, 7); ctx.fillStyle = PAL.blanco; ctx.fillRect(2, -h / 2 - 8, 3, 2);
-    // ojitos decididos
-    ctx.fillStyle = PAL.negro; ctx.fillRect(-4, -1, 2, 3); ctx.fillRect(2, -1, 2, 3);
+    ctx.save(); ctx.translate(Math.round(x), Math.round(y));
+    const R = (c, a, b, w, h) => { ctx.fillStyle = c; ctx.fillRect(Math.round(a), Math.round(b), Math.round(w), Math.round(h)); };
+    if (tipo === "fresa") {
+      // Fresa y nata: bola rosa con una espiral de nata que gira
+      ctx.rotate(ang);
+      ctx.fillStyle = PAL.negro; ctx.beginPath(); ctx.arc(0, 0, r + 1.5, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#ff5fa8"; ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = "#fff4f8"; ctx.lineWidth = Math.max(2, r * 0.28); ctx.lineCap = "round"; ctx.beginPath();
+      for (let k = 0; k <= 1; k += 0.05) { const a = k * Math.PI * 3.2, rr = k * r * 0.85; k ? ctx.lineTo(Math.cos(a) * rr, Math.sin(a) * rr) : ctx.moveTo(0, 0); }
+      ctx.stroke(); ctx.globalAlpha = 0.45; ctx.strokeStyle = "#ffb3d1"; ctx.lineWidth = 1; ctx.stroke(); ctx.globalAlpha = 1;
+      R("rgba(255,255,255,.7)", -r * 0.5, -r * 0.6, 2, 2);
+    } else if (tipo === "platano") {
+      if (pl?.sinBolsa) {
+        // solo el azúcar disparado
+        for (let i = 0; i < 9; i++) { const a = i * 2.4 + reloj * 9, d = (i % 3) * 3; R(i % 2 ? PAL.blanco : PAL.crema, Math.cos(a) * d - 1.5, Math.sin(a) * d - 1.5, 3, 3); }
+        R(PAL.blanco, -1, -1, 2, 2);
+      } else {
+        // Azuquita: bolsita de papel con lazo rosa y azúcar asomando
+        ctx.rotate(ang * 0.5);
+        const w = r * 1.6, h = r * 1.5;
+        R(PAL.negro, -w / 2 - 1, -h / 2 + 1, w + 2, h + 1);
+        R("#d9b77a", -w / 2, -h / 2 + 2, w, h - 1); R("#c09a5a", w / 2 - 3, -h / 2 + 2, 3, h - 1);
+        R(PAL.negro, -w / 3 - 1, -h / 2 - 4, w * 0.66 + 2, 7); R("#e8cf9a", -w / 3, -h / 2 - 3, w * 0.66, 5);
+        R(PAL.blanco, -w / 3 + 1, -h / 2 - 6, 3, 3); R(PAL.blanco, 1, -h / 2 - 7, 3, 4); R(PAL.crema, -2, -h / 2 - 5, 2, 2);
+        R("#ff5fa8", -w / 3 - 2, -h / 2 + 1, w * 0.66 + 4, 2); R("#ff5fa8", -5, -h / 2 - 2, 4, 3); R("#ff5fa8", 1, -h / 2 - 2, 4, 3); R("#c43a7a", -1, -h / 2, 2, 2);
+        R("#8a6a3a", -3, 1, 6, 1);
+      }
+    } else if (tipo === "arandano") {
+      if (pl?.bola) {
+        // bolita de chocolate de color
+        ctx.fillStyle = PAL.negro; ctx.beginPath(); ctx.arc(0, 0, r * 0.85 + 1.5, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = pl.bola; ctx.beginPath(); ctx.arc(0, 0, r * 0.85, 0, Math.PI * 2); ctx.fill();
+        R("rgba(255,255,255,.75)", -r * 0.4, -r * 0.45, 3, 2);
+      } else {
+        // paquete plateado rectangular con forma redondeada
+        ctx.rotate(ang);
+        const w = r * 2.2, h = r * 1.7;
+        ctx.fillStyle = PAL.negro; ctx.beginPath(); ctx.roundRect(-w / 2 - 1.5, -h / 2 - 1.5, w + 3, h + 3, h / 2); ctx.fill();
+        ctx.fillStyle = "#c9ccd6"; ctx.beginPath(); ctx.roundRect(-w / 2, -h / 2, w, h, h / 2); ctx.fill();
+        R("#eef0f6", -w / 2 + 3, -h / 2 + 2, w - 8, 2); R("#8a8e98", -w / 2 + 3, h / 2 - 3, w - 6, 1);
+        for (const s of [-1, 1]) for (let i = -2; i <= 2; i += 2) R("#8a8e98", s * (w / 2 - 1), i, s * 2, 1); // bordes rizados
+        for (const [c, dx] of [["#e3222e", -5], ["#ffcf3a", 0], ["#3d6cff", 5]]) { ctx.fillStyle = c; ctx.beginPath(); ctx.arc(dx, 1, 2.2, 0, Math.PI * 2); ctx.fill(); }
+      }
+    } else if (tipo === "chocolate") {
+      const k = pl?.revienta !== undefined ? 1 - pl.revienta / 0.3 : pl?.mecha !== undefined && pl.mecha < 0.8 ? 1 - pl.mecha / 0.8 : -1;
+      if (k >= 0) {
+        // a punto de reventar: se vuelve una bola roja que se hincha y parpadea
+        const rr = r * (1 + k * 0.6) + Math.sin(reloj * 40) * 1.5;
+        ctx.fillStyle = PAL.negro; ctx.beginPath(); ctx.arc(0, 0, rr + 2, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = Math.floor(reloj * 16) % 2 ? "#ff3a2a" : "#c4161f"; ctx.beginPath(); ctx.arc(0, 0, rr, 0, Math.PI * 2); ctx.fill();
+        R("#ffcf3a", -rr * 0.4, -rr * 0.5, 4, 3); R(PAL.blanco, -rr * 0.45, -rr * 0.55, 2, 2);
+      } else {
+        // Puchero caliente: olla rectangular con asas, tapa y vapor
+        ctx.rotate(ang);
+        const w = r * 2, h = r * 1.4;
+        R(PAL.negro, -w / 2 - 4, -h / 2 + 1, w + 8, 5); R("#3a3640", -w / 2 - 3, -h / 2 + 2, 3, 3); R("#3a3640", w / 2, -h / 2 + 2, 3, 3);
+        R(PAL.negro, -w / 2 - 1, -h / 2 - 1, w + 2, h + 2);
+        R("#5a5462", -w / 2, -h / 2, w, h); R("#7a7484", -w / 2 + 2, -h / 2 + 2, 3, h - 4); R("#3a3640", w / 2 - 4, -h / 2, 4, h);
+        R(PAL.negro, -w / 2 - 2, -h / 2 - 4, w + 4, 5); R("#8a8494", -w / 2 - 1, -h / 2 - 3, w + 2, 3); R(PAL.negro, -2, -h / 2 - 7, 4, 3);
+        R("#c4161f", -w / 2 + 3, -2, w - 6, 3);
+        if (pl || Math.floor(reloj * 3) % 2) { ctx.globalAlpha = 0.6; R(PAL.blanco, -4 + Math.sin(reloj * 6) * 2, -h / 2 - 12, 2, 4); R(PAL.blanco, 3 + Math.sin(reloj * 5) * 2, -h / 2 - 14, 2, 5); ctx.globalAlpha = 1; }
+      }
+    } else {
+      // Menta: el vasito de siempre
+      ctx.rotate(ang);
+      const w = Math.round(r * 1.5), h = Math.round(r * 1.7);
+      R(PAL.negro, -w / 2 - 2, -h / 2 - 2, w + 4, h + 4);
+      R(def.color, -w / 2, -h / 2 + 3, w, h - 3);
+      R(PAL.blanco, -w / 2, -h / 2 + Math.round(h * 0.45), w, 3);
+      R(PAL.blanco, -w / 2 - 1, -h / 2 - 1, w + 2, 4); R(PAL.blanco, -w / 2 + 2, -h / 2 - 4, w - 4, 3);
+      R(PAL.rojo, 2, -h / 2 - 10, 3, 7); R(PAL.blanco, 2, -h / 2 - 8, 3, 2);
+      R(PAL.negro, -4, -1, 2, 3); R(PAL.negro, 2, -1, 2, 3);
+    }
     ctx.restore();
+  }
+  function dibujarBolsas() {
+    bolsas = bolsas.filter(b => (b.t -= 1 / 60) > 0);
+    for (const b of bolsas) {
+      b.vy += 0.25; b.x += b.vx; b.y += b.vy; b.rot += b.vr;
+      ctx.save(); ctx.globalAlpha = Math.min(1, b.t * 2); ctx.translate(b.x, b.y); ctx.rotate(b.rot);
+      ctx.fillStyle = PAL.negro; ctx.fillRect(-9, -7, 18, 15); ctx.fillStyle = "#d9b77a"; ctx.fillRect(-8, -6, 16, 13);
+      ctx.fillStyle = "#ff5fa8"; ctx.fillRect(-8, -6, 16, 2); ctx.fillRect(-3, -9, 6, 3);
+      ctx.restore();
+    }
+    ctx.globalAlpha = 1;
   }
 
   function dibujarBloque(cu) {
@@ -463,7 +547,7 @@
       ctx.drawImage(A.heroe, 150 - A.heroe.width / 2, G - A.heroe.height + 2 - (estado === "fin_nivel" && clones.length === 0 ? Math.abs(Math.sin(reloj * 10)) * 8 : 0));
       cuerpos.forEach(dibujarBloque); clones.forEach(dibujarClon);
       dibujarHonda(); dibujarGuia();
-      proyectiles.forEach(pr => dibujarBatido(pr.position.x, pr.position.y, pr.plugin.tipo, pr.angle, pr.plugin.hijo ? 0.75 : 1));
+      proyectiles.forEach(pr => dibujarBatido(pr.position.x, pr.position.y, pr.plugin.tipo, pr.angle, pr.plugin.hijo ? 0.75 : 1, pr.plugin)); dibujarBolsas();
       anillos.forEach(a => { ctx.globalAlpha = Math.min(1, a.t * 3); ctx.strokeStyle = a.c; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(a.x, a.y, a.r, 0, Math.PI * 2); ctx.stroke(); ctx.globalAlpha = 1; });
       parts.forEach(q => { ctx.globalAlpha = Math.min(1, q.t * 3); ctx.fillStyle = q.c; ctx.fillRect(Math.round(q.x), Math.round(q.y), q.s, q.s); });
       ctx.globalAlpha = 1;
@@ -484,8 +568,8 @@
     if (tipo === "titulo") {
       menu.innerHTML = `<div class="caja">
         <p class="pre">SHAKE WEEK · DÍA 4</p>
-        <h1>TORRE<br><span>GLITCH</span></h1>
-        <p class="hist">Los clones del Alter Ego se han atrincherado en tres torres. Tira de la pajita-tirachinas y lanza batidos para derribarlas.</p>
+        <h1>LA BATI<br><span>TORRE</span></h1>
+        <p class="hist">Los clones del Alter Ego se han atrincherado en tres torres. Tira de la pajita-tirachinas y lánzales fresa y nata, azuquita, M&Ms y pucheros calientes hasta derribarlas.</p>
         <div class="batidos">${Object.entries(BATIDOS).map(([, b]) => `<span><i style="background:${b.color}"></i><b style="color:${b.color}">${b.nombre}</b><small>${b.poder}</small></span>`).join("")}</div>
         <div class="eleccion"><span class="et">DIFICULTAD</span>
           ${Object.entries(DIFS).map(([k, d]) => `<button class="op ${k === dif ? "sel" : ""}" data-dif="${k}">${d.nombre}${k === "facil" ? " ★" : ""}</button>`).join("")}
