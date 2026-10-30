@@ -1,5 +1,5 @@
 /* =============================================================
-   SHAKE WEEK · DÍA 2 — «LABERINTO GLITCH»
+   SHAKE WEEK · DÍA 3 — «LABERINTO GLITCH»
    Comecocos arcade: el vaso Miflshakes recorre un laberinto
    (diseño propio) comiéndose los toppings mientras cuatro clones
    glitch del Alter Ego lo persiguen.
@@ -57,7 +57,7 @@
     normal: { nombre: "NORMAL", vidas: 3, vJug: 7.6, vFant: 6.8, vMiedo: 4.2, miedo: 6, salidas: [0, 3, 8, 14], azar: 0.15, ciclo: [[7, 20], [7, 20], [5, 9999]], consumible: 20 }
   };
   let dif = "facil";
-  try { const g = JSON.parse(localStorage.getItem("shakeweek-dia2") || "{}"); if (DIFS[g.dif]) dif = g.dif; } catch (e) {}
+  try { const g = JSON.parse(localStorage.getItem("shakeweek-dia3") || "{}"); if (DIFS[g.dif]) dif = g.dif; } catch (e) {}
   const D = () => DIFS[dif];
 
   // Los cuatro clones glitch, cada uno con su personalidad
@@ -172,7 +172,7 @@
   let estado = "cargando", reloj = 0, tiempoJuego = 0, banner = null, temblor = 0, pausaT = 0;
   let toppings, quedan, total, jug, fantasmas, puntos, vidas, record, fantasmasComidos, cadena, frutasComidas, fruta, frutasSalidas;
   let consumible, proxConsumible, activo, escudo, parts, textos, miedoT, modoIdx, modoT, modoActual, muerteT, completadoT, vidaExtraDada, comidosIman;
-  try { record = +localStorage.getItem("shakeweek-dia2-record") || 0; } catch (e) { record = 0; }
+  try { record = +localStorage.getItem("shakeweek-dia3-record") || 0; } catch (e) { record = 0; }
 
   function nuevaPartida() {
     toppings = MAPA.map(f => f.split("").map(ch => ch === "." ? 1 : ch === "o" ? 2 : 0));
@@ -429,7 +429,7 @@
   }
 
   /* ---------------- Resultados y guardado ---------------- */
-  function guardarRecord() { try { localStorage.setItem("shakeweek-dia2-record", String(record)); } catch (e) {} }
+  function guardarRecord() { try { localStorage.setItem("shakeweek-dia3-record", String(record)); } catch (e) {} }
   function mostrarResultados() {
     guardarRecord();
     let pts = Math.min(40, puntos / 110) + Math.min(3, vidas) * 10 + Math.min(8, fantasmasComidos) * 2.5 + frutasComidas.length * 5;
@@ -441,8 +441,8 @@
       const modo = est.modo === "campana" ? "campana" : "demo";
       est.modo = est.modo || "demo"; est.demo = est.demo || {}; est.campana = est.campana || {}; est.mejores = est.mejores || {};
       const d = new Date(), hoy = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-      if (!est[modo][2]) est[modo][2] = hoy;
-      est.mejores[2] = Math.max(est.mejores[2] || 0, puntos);
+      if (!est[modo][3]) est[modo][3] = hoy;
+      est.mejores[3] = Math.max(est.mejores[3] || 0, puntos);
       localStorage.setItem("shakeweek-v1", JSON.stringify(est));
     } catch (e) {}
     estado = "resultados";
@@ -457,7 +457,7 @@
     const fmt = s => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
     if (tipo === "titulo") {
       menu.innerHTML = `<div class="caja">
-        <p class="pre">SHAKE WEEK · DÍA 2</p>
+        <p class="pre">SHAKE WEEK · DÍA 3</p>
         <h1>LABERINTO<br><span>GLITCH</span></h1>
         <p class="hist">Los clones del Alter Ego se han colado en el almacén de toppings. Cómetelos todos sin que te pillen. Los <b class="rosa">batidos de fresa</b> los asustan: ¡entonces puedes comértelos a ellos!</p>
         <div class="clones">${CLONES.map(c => `<span style="color:${c.color}">■ ${c.nombre}<small>${c.desc}</small></span>`).join("")}</div>
@@ -486,7 +486,7 @@
           <li><span>DIFICULTAD</span><b>${D().nombre}</b></li>
         </ul>
         <div class="nota"><small>NOTA</small><b>${datos.nota}</b></div>
-        <p class="sello">Sello del martes conseguido ✔ · Récord: ${record}</p>
+        <p class="sello">Sello del miércoles conseguido ✔ · Récord: ${record}</p>
         <div class="fila"><a class="b principal" href="index.html">VOLVER A SHAKE WEEK</a><button class="b" data-accion="empezar">↻ MEJORAR NOTA</button></div></div>`;
     } else if (tipo === "pausa") {
       menu.innerHTML = `<div class="caja"><h2>PAUSA</h2><div class="fila col">
@@ -497,7 +497,7 @@
   }
   menu.addEventListener("click", e => {
     const op = e.target.closest("[data-dif]");
-    if (op) { dif = op.dataset.dif; try { localStorage.setItem("shakeweek-dia2", JSON.stringify({ dif })); } catch (er) {} Sonido.iniciar(); Sonido.tono(880, 880, 0.05); mostrarMenu("titulo"); return; }
+    if (op) { dif = op.dataset.dif; try { localStorage.setItem("shakeweek-dia3", JSON.stringify({ dif })); } catch (er) {} Sonido.iniciar(); Sonido.tono(880, 880, 0.05); mostrarMenu("titulo"); return; }
     const b = e.target.closest("[data-accion]"); if (!b) return;
     Sonido.iniciar();
     if (b.dataset.accion === "empezar") { tiempoVivo = 0; escudo = false; nuevaPartida(); }
@@ -641,7 +641,7 @@
   }
   function dibujarPaneles() {
     // Izquierda: marcador
-    txt("DÍA 2", 10, 22, 8, PAL.rosa);
+    txt("DÍA 3", 10, 22, 8, PAL.rosa);
     txt("PUNTOS", 10, 56, 7, PAL.grisC); txt(String(puntos ?? 0).padStart(6, "0"), 10, 70, 9, PAL.crema);
     txt("RÉCORD", 10, 96, 7, PAL.grisC); txt(String(record).padStart(6, "0"), 10, 110, 9, PAL.oro);
     txt("TOPPINGS", 10, 136, 7, PAL.grisC); txt(`${quedan ?? 0}`, 10, 150, 9, PAL.crema);
@@ -751,6 +751,6 @@
     estado = "titulo"; mostrarMenu("titulo");
     requestAnimationFrame(bucle);
   });
-  window.__dia2 = { completar: () => { quedan = 0; completar(); }, get estado() { return estado; }, get jug() { return jug; }, get quedan() { return quedan; }, get fantasmas() { return fantasmas; },
+  window.__dia3 = { completar: () => { quedan = 0; completar(); }, get estado() { return estado; }, get jug() { return jug; }, get quedan() { return quedan; }, get fantasmas() { return fantasmas; },
     vaciar(n = 3) { let k = 0; for (let f = 0; f < FIL; f++) for (let c = 0; c < COL; c++) if (toppings[f][c] && k++ >= n) { toppings[f][c] = 0; quedan--; } } };
 })();

@@ -282,10 +282,10 @@
      DÍA 2 · MARTES — «Lluvia de toppings» (atrapar)
      ========================================================= */
   const lluvia = {
-    id: 2, dia: "Martes", titulo: "Laberinto glitch",
+    id: 2, dia: "Martes", titulo: "Lluvia de toppings",
     historia: "El Alter Ego lanza ingredientes desde el techo, pero mezcla guindillas, sal y cebolla. Atrapa solo lo dulce.",
     controles: "← → para moverte · Atrapa 25 toppings dulces en 40 segundos · Esquiva 🌶️ 🧂 🧅",
-    objetivo: "Cómete todos los toppings",
+    objetivo: "Atrapa 25 toppings",
     iniciar(g) {
       g.p = { x: W / 2, vx: 0, mira: 1, inv: 0, est: 1 };
       g.cosas = []; g.prox = 0.6; g.vidas = 3; g.atrapados = 0; g.meta = 25; g.resto = 40; g.combo = 0;
@@ -357,10 +357,10 @@
      DÍA 3 · MIÉRCOLES — «Vuelo de pajita» (tipo Flappy)
      ========================================================= */
   const vuelo = {
-    id: 3, dia: "Miércoles", titulo: "Vuelo de pajita",
+    id: 3, dia: "Miércoles", titulo: "Laberinto glitch",
     historia: "El Alter Ego ha levantado un muro de pajitas gigantes. Sopla por la tuya para volar y cruza 12 huecos.",
     controles: "Espacio / ↑ / toca el botón para impulsarte · No toques las pajitas ni el suelo",
-    objetivo: "Cruza 12 pajitas",
+    objetivo: "Cómete todos los toppings",
     iniciar(g) {
       g.p = { y: H / 2, vy: 0 }; g.tubos = []; g.prox = 0.4; g.pasados = 0; g.meta = 12; g.desp = 0;
       g.vidas = 3; g.inv = 0;
