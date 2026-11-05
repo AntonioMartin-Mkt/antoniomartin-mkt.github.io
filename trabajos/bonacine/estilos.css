@@ -334,6 +334,21 @@ h2 {
 .barra-cta.activa { transform: none; visibility: visible; transition: transform .3s var(--curva); }
 .barra-cta .boton { width: 100%; }
 
+/* ---------- Chatbot ---------- */
+#cb-abrir {
+  position: fixed; right: 20px; bottom: 20px; z-index: 16;
+  width: 56px; height: 56px; border: 0; border-radius: 50%;
+  background: var(--verde-marca); color: var(--negro); font-size: 26px; line-height: 1; cursor: pointer;
+  box-shadow: 0 2px 10px rgb(0 0 0 / .3); transition: transform .12s var(--curva), bottom .3s var(--curva);
+}
+#cb-abrir:active { transform: scale(.95); }
+#cb-marco {
+  position: fixed; right: 20px; bottom: 90px; z-index: 16;
+  width: 360px; max-width: calc(100vw - 40px); height: 520px; max-height: calc(100dvh - 110px);
+  border: 0; border-radius: 12px; background: var(--blanco); box-shadow: 0 4px 20px rgb(0 0 0 / .3);
+}
+#cb-marco[hidden] { display: none; }
+
 /* ---------- Adaptación ---------- */
 @media (max-width: 1000px) {
   .pie-rejilla { grid-template-columns: 1fr 1fr 1fr; }
@@ -358,6 +373,9 @@ h2 {
   .pie-news { grid-column: 1 / -1; }
   .pie { padding-bottom: 104px; }
   .barra-cta { display: block; }
+  /* En móvil el chat sube cuando aparece la barra del botón de descuento */
+  body:has(.barra-cta.activa) #cb-abrir { bottom: 96px; }
+  body:has(.barra-cta.activa) #cb-marco { bottom: 166px; max-height: calc(100dvh - 186px); }
 }
 
 @media (prefers-reduced-motion: reduce) {
