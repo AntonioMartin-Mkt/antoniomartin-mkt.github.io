@@ -1,5 +1,12 @@
 /* BonaCine, landing de la tarjeta de residente. Se carga después de estilos.css. */
 
+@font-face {
+  font-family: "Bodoni Moda";
+  src: url("fuentes/bodoni-moda-800.woff2") format("woff2");
+  font-weight: 800;
+  font-display: swap;
+}
+
 /* ---------- Oferta ---------- */
 .oferta .envoltura {
   display: grid; grid-template-columns: minmax(0, 1fr) minmax(340px, 440px);
@@ -12,27 +19,65 @@ h1 {
 }
 .oferta-sub { max-width: 34ch; margin-top: 18px; font-size: clamp(1.125rem, 1.7vw, 1.375rem); line-height: 1.4; }
 
-/* La tarjeta: nombre en vivo y el bloque rojo del logo */
-.tarjeta-visual {
-  position: relative; overflow: hidden; container-type: inline-size;
-  width: min(100%, 420px); aspect-ratio: 1.586; margin-top: clamp(24px, 4vh, 36px);
-  border-radius: 14px; background: var(--fondo); color: var(--negro);
-  box-shadow: 0 22px 44px -16px rgb(0 0 0 / .7);
+/* Tarjeta 3D: dos caras reales y un canto, girados con transformaciones CSS */
+.escena3d {
+  --grosor: 2.5px;
+  width: min(100%, 440px); aspect-ratio: 1.586; margin-top: clamp(26px, 4vh, 40px);
+  perspective: 1100px; cursor: grab; touch-action: pan-y; user-select: none; -webkit-user-select: none;
+  border-radius: 16px;
 }
-.tv-cabeza { position: absolute; top: 6cqw; left: 6cqw; display: flex; align-items: center; gap: 2.5cqw; }
-.tv-cabeza img { width: auto; height: 13cqw; }
-.tv-marca { font-family: "Cormorant Garamond", Georgia, serif; font-weight: 600; font-size: 7.5cqw; line-height: 1; }
-.tv-tipo { position: absolute; left: 6cqw; bottom: 16cqw; font-size: 3.6cqw; font-weight: 700; color: var(--gris); }
-.tv-nombre {
-  position: absolute; left: 6cqw; bottom: 6cqw; max-width: 58cqw; overflow: hidden;
-  font-size: 6cqw; font-weight: 800; line-height: 1.25; white-space: nowrap; text-overflow: ellipsis;
+.escena3d.agarrada { cursor: grabbing; }
+.escena3d:focus-visible { outline: 3px solid var(--verde-marca); outline-offset: 8px; }
+.tarjeta3d {
+  --luz: 50%;
+  position: relative; width: 100%; height: 100%; transform-style: preserve-3d;
+  transform: rotateX(-6deg) rotateY(-16deg);
 }
-.tv-bloque { position: absolute; right: 0; bottom: 0; width: 30cqw; height: 34cqw; background: var(--rojo); color: var(--blanco); }
-.tv-ovalo { position: absolute; top: 4cqw; right: 4cqw; width: 8.5cqw; height: 7cqw; border-radius: 50%; background: var(--blanco); }
-.tv-importe { position: absolute; left: 3.5cqw; bottom: 3cqw; font-size: 11cqw; font-weight: 900; font-stretch: 62%; line-height: 1; }
+.cara, .capa-canto { position: absolute; inset: 0; border-radius: 4.2% / 6.7%; }
+.capa-canto { background: #C9C9CE; }
+.cara {
+  overflow: hidden; container-type: inline-size; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+  background: var(--fondo); color: var(--negro);
+}
+.cara-frente { transform: translateZ(var(--grosor)); box-shadow: 0 0 1px rgb(0 0 0 / .3); }
+.cara-dorso { transform: rotateY(180deg) translateZ(var(--grosor)); }
+/* Reflejo que recorre la tarjeta al girarla */
+.brillo {
+  position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(105deg, transparent calc(var(--luz) - 24%), rgb(255 255 255 / .55) var(--luz), transparent calc(var(--luz) + 24%));
+  mix-blend-mode: soft-light;
+}
+
+/* Frente */
+.tf-bloque { position: absolute; top: 21%; right: 0; bottom: 0; width: 31%; background: var(--rojo); color: var(--blanco); }
+.tf-ovalo { position: absolute; top: 12%; right: 15%; width: 26%; aspect-ratio: 1.3; border-radius: 50%; background: var(--blanco); }
+.tf-importe { position: absolute; right: 12%; bottom: 13%; font: 900 12cqw/1 "Archivo", Arial, sans-serif; font-stretch: 70%; }
+.tf-marca {
+  position: absolute; top: 4.5cqw; left: 6cqw;
+  font: 800 22.5cqw/.88 "Bodoni Moda", "Times New Roman", serif; text-transform: uppercase; letter-spacing: -.01em;
+}
+.tf-tipo { position: absolute; left: 7cqw; bottom: 10.5cqw; font-size: 3.9cqw; line-height: 1; }
+.tf-nombre {
+  position: absolute; left: 7cqw; bottom: 3.6cqw; max-width: 58cqw; overflow: hidden;
+  font-size: 5.6cqw; font-weight: 800; line-height: 1.2; white-space: nowrap; text-overflow: ellipsis;
+}
+
+/* Dorso */
+.td-circulo { position: absolute; right: -6%; bottom: -44%; width: 54%; aspect-ratio: 1; border-radius: 50%; background: #E9E9EC; }
+.td-banda { position: absolute; top: 40%; right: 0; bottom: 0; width: 11%; background: var(--rojo); }
+.td-barras { position: absolute; top: 7cqw; right: 4.5cqw; display: grid; gap: 1cqw; justify-items: center; font-size: 3.2cqw; letter-spacing: .1em; }
+.barras { display: flex; align-items: stretch; height: 13cqw; }
+.barras i { display: block; height: 100%; background: var(--negro); }
+.td-datos { position: absolute; left: 6cqw; top: 13cqw; width: 54cqw; margin: 0; }
+.td-datos dt { font-size: 3.1cqw; line-height: 1.1; }
+.td-datos dd {
+  margin: .7cqw 0 2.3cqw; padding-bottom: 1.6cqw; border-bottom: 1px solid #B6B6BC; overflow: hidden;
+  font-size: 4.2cqw; font-weight: 800; line-height: 1.2; white-space: nowrap; text-overflow: ellipsis;
+}
+.escena-pista { margin-top: 14px; width: min(100%, 440px); text-align: center; font-size: .875rem; color: #C8C8CE; }
 
 /* Formulario */
-.panel-form { background: var(--fondo); color: var(--negro); border-radius: 8px; padding: clamp(22px, 3vw, 32px); }
+.panel-form { background: var(--blanco); color: var(--negro); border-radius: 8px; padding: clamp(22px, 3vw, 32px); }
 .panel-form h2 { margin-bottom: 16px; font-size: clamp(2rem, 3.4vw, 2.75rem); }
 .panel-form .campo { margin-bottom: 14px; }
 .panel-form .boton { width: 100%; margin-top: 8px; }
@@ -49,11 +94,11 @@ h1 {
 .resena { display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 18px; padding-bottom: 22px; border-bottom: 1px solid var(--linea); }
 .resena img { width: 100%; height: auto; aspect-ratio: 2 / 3; object-fit: cover; border-radius: var(--radio); }
 .resena h3 { font-size: 1.3125rem; font-weight: 800; font-stretch: 85%; line-height: 1.15; }
-.nota { display: block; margin: 4px 0 6px; color: var(--rojo-oscuro); font-size: 1.125rem; letter-spacing: .08em; line-height: 1; }
+.nota { display: block; margin: 4px 0 6px; color: var(--rojo); font-size: 1.125rem; letter-spacing: .08em; line-height: 1; }
 .nota-vacia { color: var(--linea); }
 .resena-autor { margin-top: 8px; color: var(--gris); font-size: .875rem; font-weight: 600; }
 
-.form-resena { background: var(--suave); border-radius: 8px; padding: clamp(20px, 3vw, 28px); }
+.form-resena { position: sticky; top: 92px; background: var(--suave); border-radius: 8px; padding: clamp(20px, 3vw, 28px); }
 .form-resena h3 { margin-bottom: 14px; font-size: 1.5rem; font-weight: 800; font-stretch: 85%; }
 .form-resena .campo { margin-bottom: 14px; }
 .campo select, .campo textarea {
@@ -66,8 +111,8 @@ h1 {
 .estrellas { margin: 0 0 14px; padding: 0; border: 0; }
 .estrellas legend { padding: 0; margin-bottom: 4px; font-weight: 700; }
 .estrellas-fila { display: flex; gap: 2px; }
-.estrellas-fila label { position: relative; display: grid; place-items: center; width: 44px; height: 44px; color: rgb(17 17 19 / .38); font-size: 1.875rem; cursor: pointer; }
-.estrellas-fila label.activa { color: var(--rojo-oscuro); }
+.estrellas-fila label { position: relative; display: grid; place-items: center; width: 44px; height: 44px; color: #8E8E96; font-size: 1.875rem; cursor: pointer; }
+.estrellas-fila label.activa { color: var(--rojo); }
 .estrellas-fila input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
 .estrellas-fila label:has(input:focus-visible) { outline: 3px solid var(--rojo); outline-offset: 1px; border-radius: var(--radio); }
 .form-resena .boton { width: 100%; margin-top: 6px; }
@@ -77,10 +122,11 @@ h1 {
 /* ---------- Adaptación ---------- */
 @media (max-width: 1000px) {
   .resenas-cuerpo { grid-template-columns: 1fr; }
+  .form-resena { position: static; }
 }
 @media (max-width: 860px) {
   .oferta .envoltura { grid-template-columns: 1fr; }
-  .tarjeta-visual { width: min(100%, 340px); }
+  .escena3d, .escena-pista { width: min(100%, 360px); }
 }
 @media (max-width: 767px) {
   h1 { font-size: min(calc((100vw - 32px) / 5.2), 4.5rem); }

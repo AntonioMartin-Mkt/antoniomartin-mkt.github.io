@@ -8,10 +8,10 @@
 <link rel="icon" href="img/favicon.png">
 <style>
   @font-face{font-family:"Archivo";src:url("fuentes/archivo-variable.woff2") format("woff2");font-weight:100 900;font-stretch:62% 125%;font-display:swap}
-  :root{--ink:#111113;--muted:#1F2B24;--rojo:#E11B3D;--linea:rgb(17 17 19 / .24);color-scheme:light}
+  :root{--ink:#111113;--muted:#4b4b52;--rojo:#E11B3D;--linea:#e4e4e7;color-scheme:light}
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
-  body{margin:0;background:#52EE7E;color:var(--ink);font:400 17px/1.6 "Archivo",Arial,sans-serif}
+  body{margin:0;background:#fff;color:var(--ink);font:400 17px/1.6 "Archivo",Arial,sans-serif}
   main{max-width:72ch;margin:0 auto;padding:32px 16px 80px}
   .volver{color:var(--ink);font-weight:700}
   .aviso{border-left:4px solid var(--rojo);padding:4px 0 4px 14px;color:var(--muted)}
@@ -21,7 +21,7 @@
   nav{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:16px}
   nav a{color:var(--ink);font-weight:700}
   p,li,td{color:var(--muted)}
-  a{color:#8F0C24}
+  a{color:#B4122F}
   table{width:100%;border-collapse:collapse;margin:8px 0}
   th,td{text-align:left;vertical-align:top;padding:8px 10px 8px 0;border-top:1px solid var(--linea)}
   th{color:var(--ink);width:38%}
@@ -38,7 +38,7 @@
     <a href="#privacidad">Privacidad</a>
     <a href="#cookies">Cookies</a>
     <a href="#terminos">Términos y condiciones</a>
-    <a href="#bases">Bases del descuento</a>
+    <a href="#tarjeta">Tarjeta de residente</a>
     <a href="#reclamaciones">Reclamaciones</a>
     <a href="#baja">Darse de baja</a>
   </nav>
@@ -60,23 +60,22 @@
   <h3>Responsable</h3>
   <p>BonaCine, S.L. (datos en el Aviso legal).</p>
   <h3>Qué datos tratamos</h3>
-  <p>En el registro, tu nombre y tu correo electrónico. En la tarjeta de residente, tu nombre y apellidos y tu correo electrónico. En la newsletter, solo tu correo electrónico. En las reseñas, tu nombre y tu opinión.</p>
+  <p>En la tarjeta de residente, tu nombre y apellidos y tu correo electrónico. En la newsletter, solo tu correo electrónico. En las reseñas, tu nombre y tu opinión.</p>
   <h3>Para qué los usamos</h3>
   <ul>
-    <li>Crear tu código de descuento y enviártelo.</li>
-    <li>Gestionar tu tarjeta de residente.</li>
+    <li>Gestionar tu tarjeta de residente y enviarte su código.</li>
     <li>Publicar tu reseña en la web, con tu nombre, si nos das permiso.</li>
     <li>Enviarte la cartelera y las ofertas, si nos das tu permiso marcando la casilla correspondiente.</li>
   </ul>
   <p>No elaboramos perfiles ni tomamos decisiones automatizadas que te afecten.</p>
   <h3>Base legal</h3>
-  <p>Tu consentimiento (art. 6.1.a del RGPD y art. 21 de la LSSI-CE). Puedes retirarlo cuando quieras, sin que afecte a lo anterior. Las casillas son independientes: el descuento no depende de aceptar los correos comerciales.</p>
+  <p>Tu consentimiento (art. 6.1.a del RGPD y art. 21 de la LSSI-CE). Puedes retirarlo cuando quieras, sin que afecte a lo anterior. La tarjeta de residente no depende de suscribirte a la newsletter.</p>
   <h3>Edad</h3>
-  <p>El registro es para mayores de 14 años, edad mínima para consentir en España según el art. 7 de la LOPDGDD.</p>
+  <p>La tarjeta y la newsletter son para mayores de 14 años, edad mínima para consentir en España según el art. 7 de la LOPDGDD.</p>
   <h3>Destinatarios</h3>
   <p>Google actúa como encargado del tratamiento, porque guardamos los datos en Google Sheets y enviamos los correos con su servicio. Si trata datos fuera del Espacio Económico Europeo, lo hace con garantías adecuadas, como las cláusulas contractuales tipo de la Comisión Europea. No cedemos tus datos a terceros salvo obligación legal.</p>
   <h3>Cuánto tiempo los conservamos</h3>
-  <p>Mientras sigas registrado. Cuando pidas la baja, bloquearemos tus datos durante los plazos en que pudieran exigirse responsabilidades y después los suprimiremos.</p>
+  <p>Mientras mantengas tu tarjeta o tu suscripción. Cuando pidas la baja, bloquearemos tus datos durante los plazos en que pudieran exigirse responsabilidades y después los suprimiremos.</p>
   <h3>Tus derechos</h3>
   <p>Puedes pedir el acceso, la rectificación, la supresión, la oposición, la limitación del tratamiento y la portabilidad de tus datos, y retirar tu consentimiento, escribiendo a Bonacine@gmail.com. También puedes reclamar ante la <a href="https://www.aepd.es">Agencia Española de Protección de Datos</a>.</p>
 
@@ -106,15 +105,6 @@
   <p>Revisamos las reseñas antes de publicarlas y podemos rechazar las que sean ofensivas o no traten sobre la película.</p>
   <h3>Legislación aplicable</h3>
   <p>Estas condiciones se rigen por la ley española. Si actúas como consumidor, los conflictos se resolverán en los juzgados de tu domicilio.</p>
-
-  <h2 id="bases">Bases del descuento</h2>
-  <ul>
-    <li>Registro gratuito para mayores de 14 años.</li>
-    <li>2 € de descuento en una entrada, con un código por correo electrónico.</li>
-    <li>El código se presenta en taquilla, en papel o en el móvil, y es válido hasta el 31 de enero de 2027.</li>
-    <li>Las personas registradas tienen 1 € de descuento en las sesiones de los miércoles.</li>
-    <li>No acumulable a otras promociones. Sin valor en efectivo.</li>
-  </ul>
 
   <h2 id="reclamaciones">Quejas y reclamaciones</h2>
   <p>Tienes a tu disposición hojas oficiales de quejas y reclamaciones de la Junta de Andalucía en la taquilla del cine. También puedes escribirnos a Bonacine@gmail.com.</p>

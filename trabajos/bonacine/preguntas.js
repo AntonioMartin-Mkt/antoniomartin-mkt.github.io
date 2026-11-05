@@ -20,17 +20,17 @@ const PREGUNTAS = [
     grupo: "Entradas",
     intenciones: [
       { intencion: "comprar_entrada", pregunta: "¿Dónde compro la entrada?", respuesta: "En la taquilla del cine, los días que hay sesión." },
-      { intencion: "consultar_precio", pregunta: "¿Cuánto cuesta la entrada?", respuesta: "Tienes el precio de cada sesión en taquilla, con IVA incluido. Si te registras, pagas 2 € menos en tu primera entrada y 1 € menos los miércoles." },
-      { intencion: "reservar_butaca", pregunta: "¿Puedo reservar butaca?", respuesta: "Sí, si estás registrado: en los grandes estrenos puedes reservar antes que nadie." },
+      { intencion: "consultar_precio", pregunta: "¿Cuánto cuesta la entrada?", respuesta: "Tienes el precio de cada sesión en taquilla, con IVA incluido. Con la tarjeta de residente pagas 2 € menos en cada entrada." },
+      { intencion: "reservar_butaca", pregunta: "¿Puedo reservar butaca?", respuesta: "Sí, en taquilla. En el calendario de esta página ves qué butacas quedan libres." },
       { intencion: "cancelacion", pregunta: "¿Qué pasa si se cancela una sesión?", respuesta: "Te devolvemos el importe de la entrada o te la cambiamos por otra." }
     ]
   },
   {
     grupo: "Descuentos",
     intenciones: [
-      { intencion: "conseguir_descuento", pregunta: "¿Cómo consigo el descuento?", respuesta: "Regístrate gratis en esta página con tu nombre y tu correo, y recibirás tu código al momento." },
-      { intencion: "usar_descuento", pregunta: "¿Cómo uso el descuento?", respuesta: "Enseña tu código en taquilla, en papel o en el móvil, y te descontamos 2 € de la entrada." },
-      { intencion: "caducidad_descuento", pregunta: "¿Cuándo caduca?", respuesta: "El código vale hasta el 31 de enero de 2027. El descuento de los miércoles sigue activo mientras estés registrado." }
+      { intencion: "conseguir_descuento", pregunta: "¿Cómo consigo el descuento?", respuesta: "Si vives en Bonares, pide gratis la tarjeta de residente desde el botón «Quiero mi tarjeta» y recógela en taquilla con un justificante de residencia." },
+      { intencion: "usar_descuento", pregunta: "¿Cómo uso el descuento?", respuesta: "Enseña tu tarjeta de residente en taquilla y te descontamos 2 € de cada entrada." },
+      { intencion: "caducidad_descuento", pregunta: "¿Cuándo caduca la tarjeta?", respuesta: "Vale durante todo el año natural." }
     ]
   },
   {
@@ -38,7 +38,7 @@ const PREGUNTAS = [
     intenciones: [
       { intencion: "ubicacion", pregunta: "¿Dónde está BonaCine?", respuesta: "En el Teatro Cine Colón, Calle Cervantes, 2, 21830 Bonares (Huelva)." },
       { intencion: "contactar", pregunta: "¿Cómo hablo con el cine?", respuesta: "Pregúntanos en taquilla o escríbenos a Bonacine@gmail.com." },
-      { intencion: "correos_comerciales", pregunta: "¿Me vais a llenar el correo?", respuesta: "No. Solo te escribimos con la cartelera si marcas esa casilla. El descuento es tuyo la marques o no." },
+      { intencion: "correos_comerciales", pregunta: "¿Me vais a llenar el correo?", respuesta: "No. Solo te escribimos con la cartelera si te apuntas a la newsletter." },
       { intencion: "darse_de_baja", pregunta: "¿Cómo me doy de baja?", respuesta: "Usa el enlace de baja de cualquier correo o escríbenos a Bonacine@gmail.com con el asunto «BAJA»." }
     ]
   }

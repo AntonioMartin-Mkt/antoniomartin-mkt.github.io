@@ -1,5 +1,5 @@
-/* BonaCine. Marca: rojo, verde brillante y negro. El verde sustituye al blanco de fondo.
-   El blanco queda solo para texto sobre rojo o negro; el amarillo, para el CTA. */
+/* BonaCine. Marca: rojo y negro sobre fondo blanco.
+   El verde brillante se reserva para los botones de descuento y algún detalle. */
 
 @font-face {
   font-family: "Cormorant Garamond";
@@ -18,9 +18,9 @@
 
 :root {
   --rojo: #E11B3D;
-  --rojo-oscuro: #8F0C24;
-  --rojo-texto: #8F0C24;
-  --amarillo: #FFD21F;
+  --rojo-oscuro: #B4122F;
+  --rojo-texto: #A30F2A;
+  --amarillo: #FFD21F; /* solo para «sin confirmar» en el mapa de butacas */
   --verde: #1E9E5A;
   /* Negro metálico: reflejos suaves, como una chapa cepillada */
   --metal:
@@ -29,10 +29,12 @@
     #111215;
   --negro: #111113;
   --blanco: #FFFFFF;
-  --fondo: #52EE7E;
-  --gris: #1F2B24;
-  --linea: rgb(17 17 19 / .24);
-  --suave: #38D964;
+  --fondo: #FFFFFF;
+  --verde-marca: #52EE7E;
+  --verde-canto: #17964A;
+  --gris: #4B4B52;
+  --linea: #D9D9DE;
+  --suave: #F4F4F5;
   --margen: clamp(16px, 4vw, 48px);
   --radio: 4px;
   --curva: cubic-bezier(0.16, 1, 0.3, 1);
@@ -81,18 +83,18 @@ h2 {
 }
 .boton:active { transform: scale(0.98); }
 .boton .icono { transition: transform .22s var(--curva); }
-/* CTA principal: cara amarilla y canto rojo. Al pulsar, el botón baja y se come el canto. */
+/* Botón de descuento: cara verde y canto oscuro. Al pulsar, baja y se come el canto. */
 .boton-3d {
   --canto: 7px;
   border: 0; border-radius: 8px;
-  background: var(--amarillo); color: var(--rojo-texto); font-weight: 900;
-  box-shadow: 0 var(--canto) 0 var(--rojo), 0 calc(var(--canto) + 6px) 14px rgb(17 17 19 / .3);
+  background: var(--verde-marca); color: var(--negro); font-weight: 900;
+  box-shadow: 0 var(--canto) 0 var(--verde-canto), 0 calc(var(--canto) + 6px) 14px rgb(17 17 19 / .3);
   margin-bottom: var(--canto);
   transition: transform .12s var(--curva), box-shadow .12s var(--curva);
 }
 .boton-3d:active {
   transform: translateY(calc(var(--canto) - 1px));
-  box-shadow: 0 1px 0 var(--rojo), 0 2px 4px rgb(17 17 19 / .3);
+  box-shadow: 0 1px 0 var(--verde-canto), 0 2px 4px rgb(17 17 19 / .3);
 }
 .boton-grande { --canto: 10px; min-height: 76px; padding: 0 40px; font-size: clamp(1.25rem, 2.4vw, 1.75rem); }
 .boton-hueco { background: transparent; color: var(--negro); }
@@ -101,8 +103,8 @@ h2 {
   .boton:not(.boton-3d):hover { background: var(--rojo-oscuro); border-color: var(--rojo-oscuro); color: var(--blanco); }
   .boton:hover .icono { transform: translateX(3px); }
   .boton-hueco:hover { background: var(--negro); border-color: var(--negro); }
-  .boton-3d:hover { transform: translateY(-2px); box-shadow: 0 calc(var(--canto) + 2px) 0 var(--rojo), 0 calc(var(--canto) + 9px) 16px rgb(17 17 19 / .3); }
-  .boton-3d:active { transform: translateY(calc(var(--canto) - 1px)); box-shadow: 0 1px 0 var(--rojo), 0 2px 4px rgb(17 17 19 / .3); }
+  .boton-3d:hover { transform: translateY(-2px); box-shadow: 0 calc(var(--canto) + 2px) 0 var(--verde-canto), 0 calc(var(--canto) + 9px) 16px rgb(17 17 19 / .3); }
+  .boton-3d:active { transform: translateY(calc(var(--canto) - 1px)); box-shadow: 0 1px 0 var(--verde-canto), 0 2px 4px rgb(17 17 19 / .3); }
 }
 
 /* ---------- Cabecera ---------- */
@@ -132,8 +134,8 @@ h2 {
 }
 .portada { display: grid; justify-items: center; padding: clamp(12px, 2.4vh, 24px) 12px; }
 .peliculon {
-  /* Nunca llega a los bordes de la página y deja ver la franja del CTA */
-  width: min(100%, 86vw, calc((100dvh - 248px) * 2.166), 1280px);
+  /* Nunca llega a los bordes de la página y deja asomar el carrusel */
+  width: min(100%, 86vw, calc((100dvh - 170px) * 2.166), 1280px);
   height: auto; border-radius: var(--radio); box-shadow: 0 18px 50px rgb(0 0 0 / .55);
 }
 
@@ -143,10 +145,10 @@ h2 {
   display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
   gap: 16px 40px; min-height: 124px; padding-block: 20px;
 }
-.franja p { font-size: clamp(1.5rem, 3.4vw, 2.75rem); font-weight: 900; font-stretch: 68%; line-height: 1; text-transform: uppercase; }
+.franja p { font-size: clamp(1.5rem, 2.7vw, 2.375rem); font-weight: 900; font-stretch: 68%; line-height: 1; text-transform: uppercase; }
 
 /* ---------- Carrusel vertical de carteles ---------- */
-.carteles { padding-block: 0 clamp(40px, 6vw, 72px); }
+.carteles { padding-block: 8px clamp(16px, 3vw, 28px); }
 .carrusel-vertical {
   --hueco-cartel: clamp(8px, 1.2vw, 14px);
   display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--hueco-cartel);
@@ -171,7 +173,7 @@ h2 {
 .sinopsis { margin-top: 8px; max-width: 42ch; }
 
 /* ---------- Calendario de sesiones ---------- */
-.calendario { padding-block: 0 clamp(56px, 8vw, 104px); }
+.calendario { padding-block: clamp(56px, 7vw, 88px) clamp(40px, 5vw, 64px); }
 .cal-intro { margin-top: 12px; font-size: 1.1875rem; }
 .cal-dias { display: flex; gap: 8px; margin-top: 28px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: thin; }
 .dia {
@@ -191,7 +193,7 @@ h2 {
   transition: border-color .18s ease;
 }
 .sesion:hover { border-color: var(--negro); }
-.sesion[aria-pressed="true"] { border-color: var(--rojo); box-shadow: inset 0 0 0 1px var(--rojo); }
+.sesion[aria-pressed="true"] { border-color: var(--verde-canto); box-shadow: inset 0 0 0 1px var(--verde-canto); }
 .sesion-hora { font-size: 1.75rem; font-weight: 900; font-stretch: 75%; line-height: 1; }
 .sesion-info { display: grid; gap: 2px; font-size: .9375rem; line-height: 1.3; color: var(--gris); }
 .sesion-info strong { color: var(--negro); font-size: 1.0625rem; }
@@ -217,7 +219,7 @@ h2 {
   border-radius: 28% 28% 12% 12%; font-size: clamp(9px, 1.1vw, 14px); font-weight: 900; line-height: 1;
 }
 /* Además del color, cada estado lleva su signo para quien no distingue bien rojo y verde */
-.butaca.libre { background: var(--fondo); }
+.butaca.libre { background: var(--verde-marca); }
 .butaca.pendiente { background: var(--amarillo); color: var(--negro); }
 .butaca.pendiente::after { content: "?"; }
 .butaca.ocupado { background: var(--rojo); color: var(--blanco); }
@@ -227,36 +229,7 @@ h2 {
 .leyenda .butaca { width: 20px; font-size: 11px; }
 .cal-nota { margin-top: 16px; color: var(--gris); font-size: .875rem; }
 
-/* ---------- Registro: la entrada ---------- */
-.registro { background: var(--suave); padding-block: clamp(56px, 8vw, 104px); }
-.entrada {
-  display: grid; grid-template-columns: 5fr 6fr;
-  border-radius: 8px; overflow: hidden;
-  filter: drop-shadow(0 18px 28px rgb(17 17 19 / .12));
-}
-.talon {
-  position: relative; background: var(--rojo); color: var(--blanco);
-  padding: clamp(28px, 4vw, 52px);
-  display: flex; flex-direction: column;
-}
-/* Muescas y perforación de la entrada */
-.talon::after {
-  content: ""; position: absolute; top: 0; bottom: 0; right: -9px; width: 18px;
-  background: radial-gradient(circle at 50% 50%, var(--suave) 7px, transparent 7.5px) 0 0 / 18px 26px repeat-y;
-  z-index: 1;
-}
-.talon h2 { font-size: clamp(2.25rem, 4.4vw, 3.5rem); }
-.importe {
-  margin-top: 20px;
-  font-size: clamp(5.5rem, 13vw, 10.5rem);
-  font-weight: 900; font-stretch: 62%; line-height: .9;
-}
-.importe-nota { margin-top: 6px; font-size: 1.25rem; font-weight: 700; }
-.ventajas { margin-top: auto; padding-top: 36px; display: grid; gap: 10px; }
-.ventajas li { display: flex; gap: 10px; line-height: 1.3; font-weight: 500; }
-.ventajas .icono { margin-top: .12em; }
-.matriz { background: var(--fondo); padding: clamp(28px, 4vw, 52px); padding-left: clamp(32px, 4.4vw, 60px); }
-
+/* ---------- Formularios ---------- */
 .campo { display: grid; gap: 6px; margin-bottom: 18px; }
 .campo label { font-weight: 700; }
 .campo input {
@@ -270,7 +243,7 @@ h2 {
 .error { color: var(--rojo-oscuro); font-size: .9375rem; font-weight: 600; line-height: 1.3; }
 .error:empty { display: none; }
 .casilla { display: grid; grid-template-columns: 24px 1fr; gap: 10px; margin-bottom: 12px; line-height: 1.35; font-size: .9688rem; cursor: pointer; }
-.casilla input { width: 22px; height: 22px; margin: 1px 0 0; accent-color: var(--rojo); }
+.casilla input { width: 22px; height: 22px; margin: 1px 0 0; accent-color: var(--verde-canto); }
 .casilla .error { grid-column: 2; }
 .casilla a { font-weight: 600; }
 .matriz .boton { width: 100%; margin-top: 8px; }
@@ -286,13 +259,13 @@ h2 {
 .exito .nota { color: var(--gris); font-size: .9375rem; margin-top: 14px; }
 
 /* ---------- Dónde ---------- */
-.final { padding-block: clamp(56px, 8vw, 104px); }
+.final { padding-block: clamp(32px, 4vw, 56px) clamp(56px, 8vw, 104px); }
 .final .envoltura { display: grid; grid-template-columns: 5fr 6fr; gap: 28px clamp(40px, 6vw, 80px); align-items: stretch; }
 .donde p { max-width: 40ch; margin-top: 16px; font-size: 1.1875rem; }
 .donde .lugar { display: flex; gap: 8px; align-items: flex-start; font-weight: 800; font-size: 1.0625rem; }
-.lugar .icono { margin-top: .2em; color: var(--rojo-oscuro); }
+.lugar .icono { margin-top: .2em; color: var(--rojo); }
 .donde .boton { margin-top: 22px; }
-.mapa { min-height: 360px; border: 2px solid var(--negro); border-radius: var(--radio); overflow: hidden; background: var(--suave); }
+.mapa { min-height: 360px; border: 2px solid var(--linea); border-radius: var(--radio); overflow: hidden; background: var(--suave); }
 .mapa iframe { display: block; width: 100%; height: 100%; min-height: 356px; border: 0; }
 
 /* ---------- Preguntas frecuentes ---------- */
@@ -301,7 +274,7 @@ h2 {
   display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 48px clamp(40px, 7vw, 96px); margin-top: clamp(32px, 4vw, 48px);
 }
-.faq-grupo h3 { padding-bottom: 12px; font-size: 1.375rem; font-weight: 800; font-stretch: 85%; border-bottom: 2px solid var(--negro); }
+.faq-grupo h3 { padding-bottom: 12px; font-size: 1.375rem; font-weight: 800; font-stretch: 85%; border-bottom: 3px solid var(--verde-marca); }
 .faq details { border-bottom: 1px solid var(--linea); }
 .faq summary {
   display: flex; justify-content: space-between; align-items: center; gap: 16px;
@@ -327,7 +300,7 @@ h2 {
   border-radius: var(--radio); background: var(--negro); color: var(--blanco);
   transition: background-color .18s ease;
 }
-.redes a:hover { background: var(--rojo-oscuro); }
+.redes a:hover { background: var(--verde-marca); color: var(--negro); }
 .redes .icono { width: 22px; height: 22px; }
 .aviso-redes { margin-top: 10px; color: var(--gris); font-size: .875rem; }
 .aviso-redes:empty, .estado-news:empty { display: none; }
@@ -362,13 +335,7 @@ h2 {
 @media (max-width: 1000px) {
   .pie-rejilla { grid-template-columns: 1fr 1fr 1fr; }
   .pie-news { grid-column: 1 / -1; order: -1; max-width: 520px; }
-  .entrada, .final .envoltura { grid-template-columns: 1fr; }
-  .talon::after {
-    top: auto; left: 0; right: 0; bottom: -9px; width: auto; height: 18px;
-    background: radial-gradient(circle at 50% 50%, var(--suave) 7px, transparent 7.5px) 0 0 / 26px 18px repeat-x;
-  }
-  .ventajas { margin-top: 0; }
-  .matriz { padding: 36px 28px 28px; }
+  .final .envoltura { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 767px) {

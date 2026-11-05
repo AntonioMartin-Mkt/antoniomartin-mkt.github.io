@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tarjeta de residente | BonaCine</title>
 <meta name="description" content="Si vives en Bonares, pide gratis tu tarjeta de residente de BonaCine y ahorra 2 € en cada entrada.">
-<meta name="theme-color" content="#52EE7E">
+<meta name="theme-color" content="#111215">
 <meta property="og:title" content="Tarjeta de residente | BonaCine">
 <meta property="og:description" content="Si vives en Bonares, ahorra 2 € en cada entrada.">
 <meta property="og:type" content="website">
@@ -46,15 +46,29 @@
         <div class="oferta-texto">
           <h1 id="titulo-oferta">Tarjeta de residente</h1>
           <p class="oferta-sub">Si vives en Bonares, ahorras 2 € en cada entrada. Todo el año y gratis.</p>
-          <div class="tarjeta-visual" aria-hidden="true">
-            <div class="tv-cabeza">
-              <img src="img/logo-bonacine.png" alt="" width="338" height="400">
-              <span class="tv-marca">BonaCine</span>
+          <div class="escena3d" id="escena3d" tabindex="0" role="img" aria-label="Tarjeta de residente de BonaCine. Arrástrala o usa las flechas del teclado para girarla.">
+            <div class="tarjeta3d" id="tarjeta3d">
+              <div class="cara cara-frente" aria-hidden="true">
+                <span class="tf-bloque"><span class="tf-ovalo"></span><span class="tf-importe">-2€</span></span>
+                <p class="tf-marca">Bona<br>Cine</p>
+                <p class="tf-tipo">Tarjeta de residente</p>
+                <p class="tf-nombre" data-tarjeta="nombre">Tu nombre aquí</p>
+                <span class="brillo"></span>
+              </div>
+              <div class="cara cara-dorso" aria-hidden="true">
+                <span class="td-circulo"></span>
+                <span class="td-banda"></span>
+                <div class="td-barras"><span class="barras" id="barras"></span><span class="td-numero" id="td-numero">0002456</span></div>
+                <dl class="td-datos">
+                  <dt>Fecha de nacimiento:</dt><dd>dd/mm/aaaa</dd>
+                  <dt>Nombre:</dt><dd data-tarjeta="nombre">Tu nombre aquí</dd>
+                  <dt>Correo electrónico:</dt><dd data-tarjeta="email">tu@correo.com</dd>
+                </dl>
+                <span class="brillo"></span>
+              </div>
             </div>
-            <p class="tv-tipo">Tarjeta de residente</p>
-            <p class="tv-nombre" id="tv-nombre">Tu nombre aquí</p>
-            <span class="tv-bloque"><span class="tv-ovalo"></span><span class="tv-importe">-2 €</span></span>
           </div>
+          <p class="escena-pista">Arrástrala para girarla</p>
         </div>
 
         <div class="panel-form">
@@ -155,7 +169,7 @@
         <li><a href="legal.html#privacidad">Política de privacidad</a></li>
         <li><a href="legal.html#cookies">Política de cookies</a></li>
         <li><a href="legal.html#terminos">Términos y condiciones</a></li>
-        <li><a href="legal.html#bases">Bases del descuento</a></li>
+        <li><a href="legal.html#tarjeta">Tarjeta de residente</a></li>
         <li><a href="legal.html#reclamaciones">Quejas y reclamaciones</a></li>
         <li><a href="legal.html#baja">Darse de baja</a></li>
       </ul>

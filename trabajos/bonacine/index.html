@@ -4,10 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>BonaCine | Estrenos en Bonares, Huelva</title>
-<meta name="description" content="El Peliculón llega a Bonares. Regístrate gratis en BonaCine y llévate 2 € de descuento en tu primera entrada.">
-<meta name="theme-color" content="#52EE7E">
+<meta name="description" content="El Peliculón llega a Bonares. Consulta las sesiones de BonaCine y pide tu tarjeta de residente: 2 € menos en cada entrada.">
+<meta name="theme-color" content="#E11B3D">
 <meta property="og:title" content="BonaCine | Estrenos en Bonares, Huelva">
-<meta property="og:description" content="Regístrate gratis y llévate 2 € de descuento en tu primera entrada.">
+<meta property="og:description" content="Consulta las sesiones y pide tu tarjeta de residente: 2 € menos en cada entrada.">
 <meta property="og:type" content="website">
 <meta property="og:image" content="portada.jpg">
 <link rel="icon" href="img/favicon.png">
@@ -41,7 +41,7 @@
       </nav>
     </div>
     <a class="nombre" href="#portada">BonaCine</a>
-    <a class="boton boton-3d" href="#registro">Quiero mi descuento</a>
+    <a class="boton boton-3d" href="tarjeta.html">Quiero mi tarjeta</a>
   </div>
 </header>
 
@@ -54,16 +54,16 @@
     <img class="peliculon" src="img/interstellar-horizontal.jpg" alt="Cartel horizontal de Interstellar: tres astronautas sobre un planeta helado" width="1280" height="591" fetchpriority="high">
   </section>
 
-  <section class="franja" id="franja" aria-label="Descuento">
-    <div class="envoltura">
-      <p>2 € menos en tu primera entrada</p>
-      <a class="boton boton-3d boton-grande" href="#registro">Quiero mi descuento <svg class="icono" aria-hidden="true"><use href="#i-flecha"/></svg></a>
-    </div>
-  </section>
-
   <section class="carteles" id="carteles" aria-label="Carteles de películas">
     <!-- Se rellena desde peliculas.js -->
     <div class="carrusel-vertical" id="carrusel-carteles"></div>
+  </section>
+
+  <section class="franja" id="franja" aria-label="Tarjeta de residente">
+    <div class="envoltura">
+      <p>¿Vives en Bonares? 2 € menos en cada entrada</p>
+      <a class="boton boton-3d boton-grande" href="tarjeta.html">Quiero mi tarjeta <svg class="icono" aria-hidden="true"><use href="#i-flecha"/></svg></a>
+    </div>
   </section>
 
   </div>
@@ -79,57 +79,6 @@
         <div class="cal-mapa" id="cal-mapa" aria-live="polite"></div>
       </div>
       <p class="cal-nota">Datos de ejemplo: la ocupación de las salas está simulada.</p>
-    </div>
-  </section>
-
-  <section class="registro" id="registro" aria-labelledby="titulo-registro">
-    <div class="envoltura">
-      <div class="entrada">
-        <div class="talon">
-          <h2 id="titulo-registro">Tu entrada, más barata</h2>
-          <p class="importe">-2 €</p>
-          <p class="importe-nota">en tu primera entrada</p>
-          <ul class="ventajas">
-            <li><svg class="icono" aria-hidden="true"><use href="#i-check"/></svg>1 € menos todos los miércoles</li>
-            <li><svg class="icono" aria-hidden="true"><use href="#i-check"/></svg>Reserva de butaca antes que nadie en los grandes estrenos</li>
-            <li><svg class="icono" aria-hidden="true"><use href="#i-check"/></svg>Gratis y sin tarjeta</li>
-          </ul>
-        </div>
-
-        <div class="matriz">
-          <form id="form-registro" novalidate>
-            <div class="campo">
-              <label for="nombre">Nombre</label>
-              <input id="nombre" name="nombre" type="text" autocomplete="given-name" required aria-describedby="error-nombre">
-              <p class="error" id="error-nombre"></p>
-            </div>
-            <div class="campo">
-              <label for="email">Correo electrónico</label>
-              <input id="email" name="email" type="email" inputmode="email" autocomplete="email" required aria-describedby="error-email">
-              <p class="error" id="error-email"></p>
-            </div>
-            <label class="casilla">
-              <input id="privacidad" name="privacidad" type="checkbox" required aria-describedby="error-privacidad">
-              <span>Tengo más de 14 años y acepto la <a href="legal.html#privacidad" target="_blank">política de privacidad</a> y las <a href="legal.html#bases" target="_blank">bases del descuento</a>.</span>
-              <p class="error" id="error-privacidad"></p>
-            </label>
-            <label class="casilla">
-              <input id="ofertas" name="ofertas" type="checkbox">
-              <span>Quiero recibir la cartelera y las ofertas por correo (opcional).</span>
-            </label>
-            <button class="boton boton-3d" id="enviar" type="submit"><span>Quiero mi descuento</span></button>
-            <p class="error" id="error-general" role="alert"></p>
-          </form>
-
-          <div class="exito" id="exito" hidden>
-            <h3 tabindex="-1">Ya tienes tu descuento</h3>
-            <p>Enséñalo en taquilla y te descontamos 2 € en tu primera entrada.</p>
-            <p class="codigo" id="codigo"></p>
-            <button class="boton boton-hueco" id="copiar" type="button"><svg class="icono" aria-hidden="true"><use href="#i-copiar"/></svg><span>Copiar código</span></button>
-            <p class="nota" id="nota-exito"></p>
-          </div>
-        </div>
-      </div>
     </div>
   </section>
 
@@ -170,7 +119,7 @@
         <li><a href="legal.html#privacidad">Política de privacidad</a></li>
         <li><a href="legal.html#cookies">Política de cookies</a></li>
         <li><a href="legal.html#terminos">Términos y condiciones</a></li>
-        <li><a href="legal.html#bases">Bases del descuento</a></li>
+        <li><a href="legal.html#tarjeta">Tarjeta de residente</a></li>
         <li><a href="legal.html#reclamaciones">Quejas y reclamaciones</a></li>
         <li><a href="legal.html#baja">Darse de baja</a></li>
       </ul>
@@ -214,7 +163,7 @@
 </footer>
 
 <div class="barra-cta" id="barra-cta">
-  <a class="boton boton-3d" href="#registro">Quiero mi descuento</a>
+  <a class="boton boton-3d" href="tarjeta.html">Quiero mi tarjeta</a>
 </div>
 
 <script src="peliculas.js"></script>
