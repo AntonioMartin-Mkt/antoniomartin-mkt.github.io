@@ -217,22 +217,30 @@ h1 span { display: block; white-space: nowrap; }
 }
 .exito .nota { color: var(--gris); font-size: .9375rem; margin-top: 14px; }
 
-/* ---------- Dónde y preguntas ---------- */
+/* ---------- Dónde ---------- */
 .final { padding-block: clamp(56px, 8vw, 104px); }
-.final .envoltura { display: grid; grid-template-columns: 5fr 6fr; gap: clamp(40px, 7vw, 96px); }
-.donde p { max-width: 36ch; margin-top: 18px; font-size: 1.1875rem; }
+.final .envoltura { display: grid; grid-template-columns: 5fr 6fr; gap: 24px clamp(40px, 7vw, 96px); align-items: end; }
+.donde > p:first-child { max-width: 40ch; font-size: 1.1875rem; }
 .lugar { display: flex; gap: 8px; align-items: center; margin-top: 18px; font-weight: 800; }
 .lugar .icono { color: var(--rojo); }
-.preguntas details { border-bottom: 1px solid var(--linea); }
-.preguntas details:first-child { border-top: 1px solid var(--linea); }
-.preguntas summary {
-  display: flex; justify-content: space-between; align-items: center; gap: 16px;
-  padding: 18px 0; font-size: 1.1875rem; font-weight: 700; line-height: 1.25; cursor: pointer; list-style: none;
+
+/* ---------- Preguntas frecuentes ---------- */
+.faq { padding-block: 0 clamp(56px, 8vw, 104px); }
+.faq-grupos {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 48px clamp(40px, 7vw, 96px); margin-top: clamp(32px, 4vw, 48px);
 }
-.preguntas summary::-webkit-details-marker { display: none; }
-.preguntas summary::after { content: "+"; font-size: 1.6rem; font-weight: 500; line-height: 1; transition: transform .22s var(--curva); }
-.preguntas details[open] summary::after { transform: rotate(45deg); }
-.preguntas details p { padding-bottom: 18px; color: var(--gris); max-width: 58ch; }
+.faq-grupo h3 { padding-bottom: 12px; font-size: 1.375rem; font-weight: 800; font-stretch: 85%; border-bottom: 2px solid var(--negro); }
+.faq details { border-bottom: 1px solid var(--linea); }
+.faq summary {
+  display: flex; justify-content: space-between; align-items: center; gap: 16px;
+  min-height: 56px; padding: 12px 0; font-size: 1.125rem; font-weight: 700; line-height: 1.25; cursor: pointer; list-style: none;
+}
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: "+"; font-size: 1.6rem; font-weight: 500; line-height: 1; transition: transform .22s var(--curva); }
+.faq details[open] summary::after { transform: rotate(45deg); }
+.faq summary:hover { color: var(--rojo-oscuro); }
+.faq details p { padding-bottom: 16px; color: var(--gris); max-width: 58ch; }
 
 /* ---------- Pie ---------- */
 .pie { background: var(--suave); padding-block: 56px 28px; font-size: .9688rem; line-height: 1.45; }
@@ -310,6 +318,7 @@ h1 span { display: block; white-space: nowrap; }
   .boton-grande { width: 100%; padding: 0 16px; }
   .estrenos .envoltura { grid-template-columns: 1fr; }
   .peli { max-width: 340px; }
+  .faq-grupos { grid-template-columns: 1fr; }
   .pie-rejilla { grid-template-columns: 1fr 1fr; }
   .pie-news { grid-column: 1 / -1; }
   .pie { padding-bottom: 104px; }

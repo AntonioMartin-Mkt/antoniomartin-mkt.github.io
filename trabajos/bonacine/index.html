@@ -125,27 +125,21 @@
     </div>
   </section>
 
-  <section class="final" id="preguntas" aria-label="Información práctica">
+  <section class="final" id="donde" aria-labelledby="titulo-donde">
     <div class="envoltura">
+      <h2 id="titulo-donde">Tu cine está aquí al lado</h2>
       <div class="donde">
-        <h2>Tu cine está aquí al lado</h2>
         <p>Una sala de pueblo con los estrenos de la ciudad. Sin coche, sin aparcar y sin ir hasta Huelva.</p>
         <p class="lugar"><svg class="icono" aria-hidden="true"><use href="#i-lugar"/></svg>Bonares, Huelva. Sesiones de miércoles a domingo.</p>
       </div>
-      <div class="preguntas">
-        <details open>
-          <summary>¿Cómo uso el descuento?</summary>
-          <p>Al registrarte recibes un código. Enséñalo en taquilla, en papel o en el móvil, y te descontamos 2 € de la entrada.</p>
-        </details>
-        <details>
-          <summary>¿Cuándo caduca?</summary>
-          <p>El código vale hasta el 31 de enero de 2027. El descuento de los miércoles sigue activo mientras estés registrado.</p>
-        </details>
-        <details>
-          <summary>¿Me vais a llenar el correo?</summary>
-          <p>No. Solo te escribimos con la cartelera si marcas esa casilla, y puedes darte de baja cuando quieras. El descuento es tuyo la marques o no.</p>
-        </details>
-      </div>
+    </div>
+  </section>
+
+  <section class="faq" id="preguntas" aria-labelledby="titulo-preguntas">
+    <div class="envoltura">
+      <h2 id="titulo-preguntas">Preguntas frecuentes</h2>
+      <!-- Se rellena desde preguntas.js -->
+      <div class="faq-grupos" id="lista-preguntas"></div>
     </div>
   </section>
 </main>
@@ -212,6 +206,7 @@
 </div>
 
 <script src="peliculas.js"></script>
+<script src="preguntas.js"></script>
 <script src="main.js"></script>
 </body>
 </html>
