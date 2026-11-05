@@ -14,8 +14,8 @@ const PREGUNTAS = [
   {
     titulo: "Ubicación y contacto",
     boton: "Ubicación y contacto",
-    claves: ["direccion*", "ubicacion*", "donde*", "calle*", "llegar*", "mapa*", "contacto*", "telefono*", "correo*", "redes*"],
-    respuesta: "📍 Estamos en la C/ Ermita, nº 36, Bonares (Huelva). 📞 969 50 65 80 · ✉️ Bonacines@gmail.com · 📱 Instagram @BonaCines, Facebook @Bonacines_Bonares y TikTok @Bonacines_"
+    claves: ["direccion*", "ubicacion*", "donde*", "calle*", "llegar*", "mapa*", "contacto*", "telefono*", "correo*", "redes*", "teatro*"],
+    respuesta: "📍 Estamos en el Teatro Cine Colón, C/ Cervantes, 2, Bonares (Huelva). 📞 969 50 65 80 · ✉️ Bonacine@gmail.com · 📱 Instagram @BonaCines, Facebook @Bonacines_Bonares y TikTok @Bonacines_"
   },
   {
     titulo: "Horario del cine",
@@ -38,8 +38,8 @@ const PREGUNTAS = [
   {
     titulo: "Entradas y descuentos",
     boton: "Entradas y descuentos",
-    claves: ["entrada*", "ticket*", "espectador*", "miercoles*", "descuento*", "oferta*", "promocion*"],
-    respuesta: "🎟️ La entrada cuesta 6 €. Los miércoles, Día del Espectador, solo 4 €."
+    claves: ["entrada*", "ticket*", "espectador*", "miercoles*", "descuento*", "oferta*", "promocion*", "tarjeta*", "residente*"],
+    respuesta: "🎟️ La entrada cuesta 6 €. Los miércoles, Día del Espectador, solo 4 €. Si vives en Bonares, con la tarjeta de residente pagas 2 € menos en cada entrada. Pídela gratis con el botón «Quiero mi tarjeta»."
   },
   {
     titulo: "Palomitas",
@@ -56,8 +56,8 @@ const PREGUNTAS = [
   {
     titulo: "Normas del cine",
     boton: "Normas del cine",
-    claves: ["norma*", "devolución*", "reembolso*", "cancelar*", "traer*", "fuera*", "accesible*", "silla*", "movilidad*", "adaptado*", "silla de ruedas", "invalido", "no puede andar"],
-    respuesta: "📋 Normas de BonaCine: no se admiten devoluciones · no se permite comida de fuera · la cerveza solo se vende a mayores de 18 · el cine está adaptado para personas con movilidad reducida ♿"
+    claves: ["norma*", "devolución*", "reembolso*", "cancel*", "traer*", "fuera*", "accesible*", "silla*", "movilidad*", "adaptado*", "silla de ruedas", "invalido", "no puede andar"],
+    respuesta: "📋 Normas de BonaCine: no se admiten devoluciones, salvo si se cancela una sesión: entonces te devolvemos el importe o te cambiamos la entrada · no se permite comida de fuera · la cerveza solo se vende a mayores de 18 · el cine está adaptado para personas con movilidad reducida ♿"
   },
   {
     titulo: "Comida y bebida",
