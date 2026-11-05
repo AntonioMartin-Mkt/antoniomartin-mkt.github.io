@@ -2,9 +2,6 @@
    Lo compartido con la landing está en comun.js. */
 
 /* ---------- Preguntas frecuentes ---------- */
-const nombres = PELICULAS.map((p) => p.titulo);
-const cartelera = nombres.length > 1 ? `${nombres.slice(0, -1).join(", ")} y ${nombres[nombres.length - 1]}` : nombres[0];
-const respuesta = (i) => i.respuesta.replace("{cartelera}", cartelera);
 
 document.getElementById("lista-preguntas").innerHTML = PREGUNTAS.map((g) => `
   <div class="faq-grupo">

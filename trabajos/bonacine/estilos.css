@@ -343,11 +343,32 @@ h2 {
 }
 #cb-abrir:active { transform: scale(.95); }
 #cb-marco {
-  position: fixed; right: 20px; bottom: 90px; z-index: 16;
+  position: fixed; right: 20px; bottom: 90px; z-index: 16; display: flex; flex-direction: column;
   width: 360px; max-width: calc(100vw - 40px); height: 520px; max-height: calc(100dvh - 110px);
-  border: 0; border-radius: 12px; background: var(--blanco); box-shadow: 0 4px 20px rgb(0 0 0 / .3);
+  overflow: hidden; border-radius: 12px; background: var(--blanco); color: var(--negro); box-shadow: 0 4px 20px rgb(0 0 0 / .3);
 }
 #cb-marco[hidden] { display: none; }
+.cb-cabeza { display: flex; align-items: center; justify-content: space-between; padding: 8px 8px 8px 16px; background: var(--negro); color: var(--blanco); }
+.cb-cabeza span { font-family: "Cormorant Garamond", Georgia, serif; font-weight: 600; font-size: 1.5rem; line-height: 1; }
+.cb-cerrar { width: 40px; height: 40px; border: 0; background: none; color: inherit; font-size: 1.75rem; line-height: 1; cursor: pointer; }
+.cb-mensajes { flex: 1; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 14px; overflow-y: auto; overscroll-behavior: contain; }
+.cb-burbuja { max-width: 86%; padding: 9px 12px; border-radius: 12px; font-size: .9688rem; line-height: 1.35; overflow-wrap: anywhere; }
+.cb-bot { background: var(--suave); border-bottom-left-radius: 3px; }
+.cb-yo { align-self: flex-end; background: var(--verde-marca); border-bottom-right-radius: 3px; }
+.cb-opciones { display: flex; flex-wrap: wrap; gap: 6px; }
+.cb-opciones button {
+  padding: 7px 11px; border: 1.5px solid var(--negro); border-radius: 999px; background: var(--blanco); color: var(--negro);
+  font: 600 .875rem/1.2 "Archivo", Arial, sans-serif; text-align: left; cursor: pointer;
+}
+.cb-opciones button:hover { background: var(--negro); color: var(--blanco); }
+.cb-enlace { font-weight: 800; color: var(--negro); }
+.cb-escribir { display: flex; gap: 6px; padding: 10px; border-top: 1px solid var(--linea); }
+.cb-escribir input {
+  flex: 1; min-width: 0; min-height: 44px; padding: 0 12px; border: 2px solid var(--negro); border-radius: var(--radio);
+  background: var(--blanco); color: var(--negro); font: 400 1rem "Archivo", Arial, sans-serif;
+}
+.cb-escribir input::placeholder { color: var(--gris); }
+.cb-escribir button { display: grid; place-items: center; width: 44px; border: 0; border-radius: var(--radio); background: var(--verde-marca); color: var(--negro); cursor: pointer; }
 
 /* ---------- Adaptación ---------- */
 @media (max-width: 1000px) {
