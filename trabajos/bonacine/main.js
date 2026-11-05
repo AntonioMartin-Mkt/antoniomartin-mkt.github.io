@@ -4,67 +4,26 @@
 // Pega aquí la URL de Apps Script (ver Codigo.gs). Vacía = modo demostración.
 const SHEETS_URL = "";
 
-const MESES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
-const hoy = new Date();
-hoy.setHours(0, 0, 0, 0);
-
 const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-const fechaDe = (p) => new Date(p.fecha + "T00:00:00");
-const diaMes = (p) => { const f = fechaDe(p); return `${f.getDate()} ${MESES[f.getMonth()]}`; };
-const enCartel = (p) => fechaDe(p) <= hoy;
+const REGEX_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-/* ---------- Carteles ---------- */
-function cartel(p) {
-  const titulo = p.cartel.map((l) => `<span class="linea">${esc(l)}</span>`).join("");
-  const capa = (extra) => `<div class="capa ${extra}"><p class="firma">BonaCine presenta</p><div class="titulo">${titulo}</div>${extra === "capa-bloque" ? `<span class="ovalo"></span><p class="fecha-cartel">${esc(diaMes(p))}</p>` : ""}</div>`;
-  return `<div class="cartel tono-${esc(p.tono)}" style="--corte:${Number(p.corte) || 40}%" aria-hidden="true">${capa("capa-base")}${capa("capa-bloque")}</div>`;
-}
+/* ---------- Cartelera ---------- */
+const cartel = (p, carga) => `<img src="${esc(p.imagen)}" alt="Cartel de ${esc(p.titulo)}" width="${p.ancho}" height="${p.alto}" loading="${carga}">`;
 
-const proximo = PELICULAS.find((p) => !enCartel(p)) || PELICULAS[PELICULAS.length - 1];
-document.getElementById("cartel-heroe").innerHTML = cartel(proximo);
-document.getElementById("pie-heroe").textContent = `${enCartel(proximo) ? "En cartel" : "Próximo estreno, " + diaMes(proximo)}: ${proximo.titulo}`;
+const principal = PELICULAS.find((p) => p.principal) || PELICULAS[0];
+document.getElementById("cartel-heroe").innerHTML = cartel(principal, "eager");
+document.getElementById("pie-heroe").textContent = `Ahora en cartel: ${principal.titulo}`;
 
-document.getElementById("lista-estrenos").innerHTML = PELICULAS.map((p) => `
-  <li class="peli">
-    ${cartel(p)}
-    <p class="cuando">${enCartel(p) ? "En cartel" : "Estreno " + esc(diaMes(p))}</p>
+const resto = PELICULAS.filter((p) => p !== principal);
+document.getElementById("lista-estrenos").innerHTML = resto.map((p) => `
+  <li class="peli" style="--proporcion:${(p.ancho / p.alto).toFixed(3)}">
+    ${cartel(p, "lazy")}
     <h3>${esc(p.titulo)}</h3>
-    <p class="ficha">${esc(p.genero)}. Dirige ${esc(p.direccion)}.</p>
+    <p class="ficha">${esc(p.genero)}, ${p.ano}. Dirige ${esc(p.direccion)}.</p>
     <p class="sinopsis">${esc(p.sinopsis)}</p>
   </li>`).join("");
 
-/* Ajusta cada línea al ancho del cartel y coloca el bloque rojo sobre la última.
-   Todo va en unidades de contenedor, así que el cartel escala sin recalcular. */
-function ajustarCarteles() {
-  document.querySelectorAll(".cartel").forEach((c) => {
-    const base = c.querySelector(".capa-base");
-    const lineas = [...base.querySelectorAll(".linea")];
-    const medidas = lineas.map((l) => {
-      l.style.fontSize = "100px";
-      const ancho = l.getBoundingClientRect().width;
-      return 8800 / ancho; // tamaño en cqw para ocupar el 88 % del ancho
-    });
-    c.style.setProperty("--pisa", `${(medidas[medidas.length - 1] * 0.92 + 0.8).toFixed(2)}cqw`);
-    c.querySelectorAll(".titulo").forEach((t) => {
-      t.querySelectorAll(".linea").forEach((l, i) => {
-        l.style.fontSize = "";
-        l.style.setProperty("--k", medidas[i].toFixed(2));
-      });
-    });
-    c.classList.add("listo");
-  });
-}
-(document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(ajustarCarteles);
-
-/* ---------- Aparición de los carteles: el bloque entra al llegar al cartel ---------- */
-const vigia = new IntersectionObserver((entradas) => {
-  entradas.forEach((e) => {
-    if (e.isIntersecting) { e.target.classList.add("visto"); vigia.unobserve(e.target); }
-  });
-}, { threshold: 0.3 });
-document.querySelectorAll(".cartel").forEach((c) => vigia.observe(c));
-
-/* ---------- CTA fija en móvil: se esconde en la portada y junto al formulario ---------- */
+/* ---------- CTA fija en móvil: se esconde donde ya hay otro botón a la vista ---------- */
 const barra = document.getElementById("barra-cta");
 const ocultan = new Set();
 const vigiaBarra = new IntersectionObserver((entradas) => {
@@ -72,6 +31,7 @@ const vigiaBarra = new IntersectionObserver((entradas) => {
   barra.classList.toggle("activa", ocultan.size === 0);
 }, { rootMargin: "-90px 0px 0px 0px" }); // descuenta la cabecera fija
 vigiaBarra.observe(document.getElementById("portada"));
+vigiaBarra.observe(document.getElementById("franja"));
 vigiaBarra.observe(document.getElementById("registro"));
 
 /* ---------- Formulario ---------- */
@@ -80,7 +40,7 @@ const boton = document.getElementById("enviar");
 const errorGeneral = document.getElementById("error-general");
 const CAMPOS = {
   nombre: { el: form.nombre, msg: () => (form.nombre.value.trim() ? "" : "Escribe tu nombre.") },
-  email: { el: form.email, msg: () => (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.value.trim()) ? "" : "Revisa tu correo: falta algo, por ejemplo la @.") },
+  email: { el: form.email, msg: () => (REGEX_EMAIL.test(form.email.value.trim()) ? "" : "Revisa tu correo: falta algo, por ejemplo la @.") },
   privacidad: { el: form.privacidad, msg: () => (form.privacidad.checked ? "" : "Necesitamos que aceptes la privacidad para darte el descuento.") }
 };
 
@@ -135,6 +95,7 @@ form.addEventListener("submit", async (e) => {
   boton.querySelector("span").textContent = "Enviando...";
   try {
     const res = await registrar({
+      tipo: "registro",
       nombre: form.nombre.value.trim(),
       email: form.email.value.trim(),
       privacidad: true,
@@ -158,4 +119,54 @@ document.getElementById("copiar").addEventListener("click", async (e) => {
     texto.textContent = "Selecciónalo y cópialo";
   }
   setTimeout(() => { texto.textContent = "Copiar código"; }, 2200);
+});
+
+/* ---------- Newsletter del pie ---------- */
+const news = document.getElementById("form-news");
+const estadoNews = document.getElementById("estado-news");
+news.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const email = news.elements["news-email"], acepta = news.elements["news-acepta"];
+  const errEmail = document.getElementById("error-news-email"), errAcepta = document.getElementById("error-news-acepta");
+  errEmail.textContent = REGEX_EMAIL.test(email.value.trim()) ? "" : "Revisa tu correo: falta algo, por ejemplo la @.";
+  errAcepta.textContent = acepta.checked ? "" : "Necesitamos tu permiso para escribirte.";
+  email.setAttribute("aria-invalid", errEmail.textContent ? "true" : "false");
+  acepta.setAttribute("aria-invalid", errAcepta.textContent ? "true" : "false");
+  if (errEmail.textContent) { email.focus(); return; }
+  if (errAcepta.textContent) { acepta.focus(); return; }
+
+  const boton = news.querySelector("button");
+  boton.disabled = true;
+  boton.textContent = "Enviando...";
+  estadoNews.textContent = "";
+  try {
+    const res = SHEETS_URL
+      ? await registrar({ tipo: "newsletter", email: email.value.trim(), ofertas: true })
+      : { ok: true, demo: true };
+    if (!res.ok) throw new Error(res.error);
+    news.hidden = true;
+    estadoNews.textContent = res.demo
+      ? "Modo demostración: la suscripción no se guarda."
+      : "Listo. Ya estás en la newsletter de BonaCine.";
+  } catch (err) {
+    estadoNews.textContent = "No hemos podido apuntarte. Vuelve a intentarlo.";
+    boton.disabled = false;
+    boton.textContent = "Suscribirme";
+  }
+});
+
+/* ---------- Redes: enlace real si está en peliculas.js; si no, aviso ---------- */
+const avisoRedes = document.getElementById("aviso-redes");
+document.querySelectorAll("[data-red]").forEach((a) => {
+  const url = REDES[a.dataset.red];
+  if (url) {
+    a.href = url;
+    a.target = "_blank";
+    a.rel = "noopener";
+  } else {
+    a.addEventListener("click", (e) => {
+      e.preventDefault();
+      avisoRedes.textContent = "Perfil de ejemplo: BonaCine es un cine ficticio.";
+    });
+  }
 });

@@ -2,8 +2,9 @@
  * BONACINE | Backend del registro (Google Apps Script)
  * Proyecto académico, CFGS Marketing y Publicidad
  *
- * Recibe el formulario de la landing, guarda el alta en Google Sheets,
- * crea un código de descuento único y lo envía por correo.
+ * Registro: guarda el alta en Google Sheets, crea un código de descuento
+ * único y lo envía por correo.
+ * Newsletter: guarda el correo en su propia pestaña.
  *
  * CÓMO CONECTARLO
  * 1. Crea una hoja de Google Sheets y copia su ID (lo que va entre /d/ y /edit en la URL).
@@ -20,14 +21,21 @@ const CONFIG = {
 
 const CABECERA = ['Fecha', 'Nombre', 'Email', 'Código', 'Privacidad', 'Estrenos por email'];
 
-function hoja_() {
+function hoja_(nombre, cabecera) {
   const ss = SpreadsheetApp.openById(CONFIG.SHEET_ID);
-  const sh = ss.getSheetByName(CONFIG.PESTANA) || ss.insertSheet(CONFIG.PESTANA);
+  const sh = ss.getSheetByName(nombre) || ss.insertSheet(nombre);
   if (sh.getLastRow() === 0) {
-    sh.appendRow(CABECERA);
-    sh.getRange(1, 1, 1, CABECERA.length).setFontWeight('bold');
+    sh.appendRow(cabecera);
+    sh.getRange(1, 1, 1, cabecera.length).setFontWeight('bold');
   }
   return sh;
+}
+
+function suscribir_(email) {
+  const sh = hoja_('Newsletter', ['Fecha', 'Email']);
+  const ya = sh.getDataRange().getValues().some((f) => f[1] === email);
+  if (!ya) sh.appendRow([new Date(), email]);
+  return respuesta_({ ok: true });
 }
 
 function doPost(e) {
@@ -37,11 +45,13 @@ function doPost(e) {
     // Quita los signos que Sheets interpretaría como fórmula.
     const nombre = String(d.nombre || '').trim().replace(/^[=+\-@]+/, '').slice(0, 80);
 
-    if (!nombre) return respuesta_({ ok: false, error: 'nombre' });
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return respuesta_({ ok: false, error: 'email' });
+    if (d.tipo === 'newsletter') return suscribir_(email);
+
+    if (!nombre) return respuesta_({ ok: false, error: 'nombre' });
     if (d.privacidad !== true) return respuesta_({ ok: false, error: 'privacidad' });
 
-    const sh = hoja_();
+    const sh = hoja_(CONFIG.PESTANA, CABECERA);
     // Un correo, un código: si ya está registrado, se le devuelve el suyo.
     const filas = sh.getDataRange().getValues();
     const previa = filas.find((f) => f[2] === email);

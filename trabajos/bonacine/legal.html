@@ -10,44 +10,105 @@
   @font-face{font-family:"Archivo";src:url("fuentes/archivo-variable.woff2") format("woff2");font-weight:100 900;font-stretch:62% 125%;font-display:swap}
   :root{--ink:#111113;--muted:#4b4b52;--rojo:#E11B3D;--linea:#e4e4e7;color-scheme:light}
   *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
   body{margin:0;background:#fff;color:var(--ink);font:400 17px/1.6 "Archivo",Arial,sans-serif}
-  main{max-width:68ch;margin:0 auto;padding:32px 16px 80px}
+  main{max-width:72ch;margin:0 auto;padding:32px 16px 80px}
   .volver{color:var(--ink);font-weight:700}
   .aviso{border-left:4px solid var(--rojo);padding:4px 0 4px 14px;color:var(--muted)}
   h1{font-size:40px;line-height:1.1;margin:28px 0 8px;font-weight:900;font-stretch:75%;text-transform:uppercase}
-  h2{font-size:23px;line-height:1.2;margin:40px 0 8px;padding-top:24px;border-top:1px solid var(--linea)}
-  p,li{color:var(--muted)}
+  h2{font-size:24px;line-height:1.2;margin:44px 0 8px;padding-top:24px;border-top:1px solid var(--linea);scroll-margin-top:12px}
+  h3{font-size:18px;margin:22px 0 4px}
+  nav{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:16px}
+  nav a{color:var(--ink);font-weight:700}
+  p,li,td{color:var(--muted)}
   a{color:#B4122F}
+  table{width:100%;border-collapse:collapse;margin:8px 0}
+  th,td{text-align:left;vertical-align:top;padding:8px 10px 8px 0;border-top:1px solid var(--linea)}
+  th{color:var(--ink);width:38%}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 </style>
 </head>
 <body>
 <main>
   <a class="volver" href="./">Volver a BonaCine</a>
   <h1>Información legal</h1>
-  <p class="aviso">BonaCine es un cine ficticio creado para un trabajo de clase del Grado Superior de Marketing y Publicidad. Este texto es un ejemplo con fines educativos y no sustituye a un documento legal real.</p>
+  <p class="aviso">BonaCine es un cine ficticio creado para un trabajo de clase del Grado Superior de Marketing y Publicidad. Los datos de la empresa son de ejemplo y este texto no sustituye al asesoramiento de un profesional.</p>
+  <nav aria-label="Secciones">
+    <a href="#aviso-legal">Aviso legal</a>
+    <a href="#privacidad">Privacidad</a>
+    <a href="#cookies">Cookies</a>
+    <a href="#terminos">Términos y condiciones</a>
+    <a href="#bases">Bases del descuento</a>
+    <a href="#reclamaciones">Reclamaciones</a>
+    <a href="#baja">Darse de baja</a>
+  </nav>
 
-  <h2 id="responsable">Responsable</h2>
-  <p>Proyecto académico de Antonio José Martín. Contacto: <a href="mailto:antoniomartin.mkt@gmail.com">antoniomartin.mkt@gmail.com</a>.</p>
+  <h2 id="aviso-legal">Aviso legal</h2>
+  <p>En cumplimiento del artículo 10 de la Ley 34/2002, de Servicios de la Sociedad de la Información y de Comercio Electrónico (LSSI-CE), estos son los datos del titular de esta web:</p>
+  <table>
+    <tr><th>Denominación social</th><td>BonaCine, S.L. (empresa ficticia)</td></tr>
+    <tr><th>NIF</th><td>B00000000</td></tr>
+    <tr><th>Domicilio</th><td>Calle Ejemplo, 1, 21830 Bonares (Huelva)</td></tr>
+    <tr><th>Datos registrales</th><td>Registro Mercantil de Huelva, tomo 0000, folio 00, hoja H-00000</td></tr>
+    <tr><th>Contacto</th><td>hola@bonacine.example</td></tr>
+  </table>
+  <h3>Propiedad intelectual</h3>
+  <p>Los textos, el diseño y la marca BonaCine pertenecen a su titular. Los títulos y carteles de las películas pertenecen a sus productoras y distribuidoras.</p>
 
   <h2 id="privacidad">Política de privacidad</h2>
-  <p><strong>Datos:</strong> tu nombre y tu correo electrónico.</p>
-  <p><strong>Finalidad:</strong> crear y enviarte tu código de descuento. Si marcas la casilla de estrenos, también enviarte la cartelera y las ofertas por correo.</p>
-  <p><strong>Base legal:</strong> tu consentimiento (art. 6.1.a del RGPD). Las dos casillas son independientes: el descuento no depende de aceptar los correos comerciales.</p>
-  <p><strong>Destinatarios:</strong> los datos se guardan en Google Sheets y el correo se envía con Google. No se ceden a terceros salvo obligación legal.</p>
-  <p><strong>Conservación:</strong> hasta que pidas su borrado o termine el proyecto.</p>
-  <p><strong>Derechos:</strong> puedes acceder a tus datos, rectificarlos, suprimirlos, oponerte y retirar tu consentimiento escribiendo al contacto anterior. También puedes reclamar ante la <a href="https://www.aepd.es">Agencia Española de Protección de Datos</a>.</p>
+  <p>Tratamos tus datos conforme al Reglamento (UE) 2016/679 (RGPD) y a la Ley Orgánica 3/2018 de Protección de Datos Personales y garantía de los derechos digitales (LOPDGDD).</p>
+  <h3>Responsable</h3>
+  <p>BonaCine, S.L. (datos en el Aviso legal).</p>
+  <h3>Qué datos tratamos</h3>
+  <p>En el registro, tu nombre y tu correo electrónico. En la newsletter, solo tu correo electrónico.</p>
+  <h3>Para qué los usamos</h3>
+  <ul>
+    <li>Crear tu código de descuento y enviártelo.</li>
+    <li>Enviarte la cartelera y las ofertas, si nos das tu permiso marcando la casilla correspondiente.</li>
+  </ul>
+  <p>No elaboramos perfiles ni tomamos decisiones automatizadas que te afecten.</p>
+  <h3>Base legal</h3>
+  <p>Tu consentimiento (art. 6.1.a del RGPD y art. 21 de la LSSI-CE). Puedes retirarlo cuando quieras, sin que afecte a lo anterior. Las casillas son independientes: el descuento no depende de aceptar los correos comerciales.</p>
+  <h3>Edad</h3>
+  <p>El registro es para mayores de 14 años, edad mínima para consentir en España según el art. 7 de la LOPDGDD.</p>
+  <h3>Destinatarios</h3>
+  <p>Google actúa como encargado del tratamiento, porque guardamos los datos en Google Sheets y enviamos los correos con su servicio. Si trata datos fuera del Espacio Económico Europeo, lo hace con garantías adecuadas, como las cláusulas contractuales tipo de la Comisión Europea. No cedemos tus datos a terceros salvo obligación legal.</p>
+  <h3>Cuánto tiempo los conservamos</h3>
+  <p>Mientras sigas registrado. Cuando pidas la baja, bloquearemos tus datos durante los plazos en que pudieran exigirse responsabilidades y después los suprimiremos.</p>
+  <h3>Tus derechos</h3>
+  <p>Puedes pedir el acceso, la rectificación, la supresión, la oposición, la limitación del tratamiento y la portabilidad de tus datos, y retirar tu consentimiento, escribiendo a hola@bonacine.example. También puedes reclamar ante la <a href="https://www.aepd.es">Agencia Española de Protección de Datos</a>.</p>
 
-  <h2 id="cookies">Cookies</h2>
-  <p>Esta página no instala cookies de análisis ni de publicidad, y sus tipografías se cargan desde la propia web.</p>
+  <h2 id="cookies">Política de cookies</h2>
+  <p>Esta web no instala cookies de análisis, de publicidad ni de redes sociales, y sus tipografías se cargan desde la propia web. Por eso no muestra un banner de cookies. Si esto cambiara, te pediríamos permiso antes de instalarlas.</p>
+
+  <h2 id="terminos">Términos y condiciones</h2>
+  <h3>Uso de la web</h3>
+  <p>Al navegar por esta web aceptas usarla de forma lícita. No debes dañarla ni introducir datos falsos o de otras personas.</p>
+  <h3>Cartelera</h3>
+  <p>La programación y los horarios pueden cambiar por causas ajenas a BonaCine. Te recomendamos confirmarlos en taquilla.</p>
+  <h3>Entradas y acceso a la sala</h3>
+  <ul>
+    <li>Los precios se muestran en euros, con IVA incluido.</li>
+    <li>Cada película tiene su calificación por edades. Consúltala antes de comprar tu entrada.</li>
+    <li>Si una sesión se cancela, te devolvemos el importe de la entrada o te la cambiamos por otra.</li>
+  </ul>
+  <h3>Legislación aplicable</h3>
+  <p>Estas condiciones se rigen por la ley española. Si actúas como consumidor, los conflictos se resolverán en los juzgados de tu domicilio.</p>
 
   <h2 id="bases">Bases del descuento</h2>
   <ul>
     <li>Registro gratuito para mayores de 14 años.</li>
     <li>2 € de descuento en una entrada, con un código por correo electrónico.</li>
-    <li>Se presenta en taquilla, en papel o en el móvil, y es válido hasta el 31 de enero de 2027.</li>
-    <li>El miércoles del espectador da 1 € de descuento a las personas registradas.</li>
-    <li>No acumulable a otras promociones.</li>
+    <li>El código se presenta en taquilla, en papel o en el móvil, y es válido hasta el 31 de enero de 2027.</li>
+    <li>Las personas registradas tienen 1 € de descuento en las sesiones de los miércoles.</li>
+    <li>No acumulable a otras promociones. Sin valor en efectivo.</li>
   </ul>
+
+  <h2 id="reclamaciones">Quejas y reclamaciones</h2>
+  <p>Tienes a tu disposición hojas oficiales de quejas y reclamaciones de la Junta de Andalucía en la taquilla del cine. También puedes escribirnos a hola@bonacine.example.</p>
+
+  <h2 id="baja">Darse de baja</h2>
+  <p>Puedes dejar de recibir la newsletter en cualquier momento y gratis: usa el enlace de baja que incluye cada correo o escribe a hola@bonacine.example con el asunto «BAJA».</p>
 </main>
 </body>
 </html>

@@ -19,7 +19,7 @@ trabajos/
   cruzcampo/        → dossier de marca (aún no publicado en la web)
   miflshakes/       → campaña «Shake Week»: landing (index.html), días 1, 3, 4 y 5 (diaN.html + diaN.js),
                       día 2 en juegos.js, comun.js (sonido y efectos), lib/ (física), _archivo/ (versiones antiguas, oculto)
-  bonacine/         → landing de estrenos del cine BonaCine (index.html, estilos.css, main.js,
+  bonacine/         → landing de cartelera del cine BonaCine (index.html, estilos.css, main.js,
                       peliculas.js con la cartelera, Codigo.gs para el registro, legal.html)
   <nuevo-trabajo>/  → una carpeta por trabajo, con todo lo que necesita dentro
 
