@@ -3,8 +3,8 @@
    nada a ningún servidor. */
 
 const TEXTOS_CHAT = {
-  saludo: "Hola, soy el asistente de BonaCine. ¿En qué puedo ayudarte?",
-  noEntiendo: "No te he entendido bien. Prueba con otras palabras o elige una opción."
+  saludo: "Bienvenido a tu asistente de confianza, ¿te ayudo en algo?",
+  noEntiendo: "Upss..., no he entendido tu mensaje, ¿me lo repites porfi?? ;)"
 };
 
 // Sin mayúsculas ni tildes, para que «Dirección» y «direccion» sean lo mismo
