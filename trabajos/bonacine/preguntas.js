@@ -56,7 +56,7 @@ const PREGUNTAS = [
   {
     titulo: "Normas del cine",
     boton: "Normas del cine",
-    claves: ["norma*", "devolución*", "reembolso*", "cancel*", "traer*", "fuera*", "accesible*", "silla*", "movilidad*", "adaptado*", "silla de ruedas", "invalido", "no puede andar"],
+    claves: ["norma*", "devolución*", "reembolso*", "cancel*", "cancela", "cancelada*", "cancelado*", "traer*", "fuera*", "accesible*", "silla*", "movilidad*", "adaptado*", "silla de ruedas", "invalido", "no puede andar"],
     respuesta: "📋 Normas de BonaCine: no se admiten devoluciones, salvo si se cancela una sesión: entonces te devolvemos el importe o te cambiamos la entrada · no se permite comida de fuera · la cerveza solo se vende a mayores de 18 · el cine está adaptado para personas con movilidad reducida ♿"
   },
   {
