@@ -44,6 +44,58 @@ const PELICULAS = [
   }
 ];
 
+/* PRÓXIMAS PELÍCULAS DEL CARRUSEL
+   titulo: nombre completo. corto: texto grande si aún no hay cartel.
+   imagen: ruta del cartel, por ejemplo "img/cisne-negro.jpg".
+   Mientras esté vacía, sale un cartel con el título en los colores del cine. */
+const PROXIMAS = [
+  {
+    titulo: "The Last: Naruto the Movie",
+    corto: "Naruto The Last",
+    imagen: "",
+    ano: 2014,
+    genero: "Animación, acción",
+    direccion: "Tsuneo Kobayashi",
+    sinopsis: "La Luna se acerca a la Tierra y Naruto debe rescatar a Hanabi mientras descubre lo que siente por Hinata."
+  },
+  {
+    titulo: "Guardianes de la noche: Kimetsu no Yaiba - La fortaleza infinita",
+    corto: "Demon Slayer",
+    imagen: "",
+    ano: 2025,
+    genero: "Animación, acción",
+    direccion: "Haruo Sotozaki",
+    sinopsis: "Tanjiro y los cazadores de demonios caen en la fortaleza de Muzan. Empieza la batalla final."
+  },
+  {
+    titulo: "El sexto sentido",
+    corto: "El sexto sentido",
+    imagen: "",
+    ano: 1999,
+    genero: "Suspense, drama",
+    direccion: "M. Night Shyamalan",
+    sinopsis: "Un psicólogo infantil intenta ayudar a un niño que asegura ver a personas muertas."
+  },
+  {
+    titulo: "Cisne negro",
+    corto: "Cisne negro",
+    imagen: "",
+    ano: 2010,
+    genero: "Drama, suspense",
+    direccion: "Darren Aronofsky",
+    sinopsis: "Una bailarina obsesionada con la perfección se rompe por dentro al preparar El lago de los cisnes."
+  },
+  {
+    titulo: "A todo gas",
+    corto: "A todo gas",
+    imagen: "",
+    ano: 2001,
+    genero: "Acción",
+    direccion: "Rob Cohen",
+    sinopsis: "Un policía se infiltra en las carreras ilegales de Los Ángeles y acaba dudando de qué lado está."
+  }
+];
+
 /* REDES DEL CINE: pega aquí cada enlace. Mientras esté vacío, el icono
    avisa de que es un perfil de ejemplo en vez de llevar a una web ajena. */
 const REDES = {
@@ -58,8 +110,8 @@ const REDES = {
    Cada sesión se repite todos los días de apertura.
    "pelicula" debe coincidir con un "titulo" de arriba. */
 const SALAS = [
-  { nombre: "Sala 1", filas: 8, columnas: 12 },
-  { nombre: "Sala 2", filas: 6, columnas: 8 }
+  { nombre: "Sala 1", filas: 5, columnas: 8 },
+  { nombre: "Sala 2", filas: 5, columnas: 8 }
 ];
 
 const SESIONES = [

@@ -37,7 +37,7 @@
       <span>BonaCine</span>
     </a>
     <nav class="menu" aria-label="Principal">
-      <a href="#estrenos">Estrenos</a>
+      <a href="#proximamente">Próximamente</a>
       <a href="#sesiones">Sesiones</a>
       <a href="#preguntas">Preguntas</a>
     </nav>
@@ -67,11 +67,17 @@
     </div>
   </section>
 
-  <section class="estrenos" id="estrenos" aria-labelledby="titulo-estrenos">
+  <section class="proximas" id="proximamente" aria-labelledby="titulo-proximas">
     <div class="envoltura">
-      <h2 id="titulo-estrenos">También en nuestra pantalla</h2>
+      <div class="prox-cabeza">
+        <h2 id="titulo-proximas">Próximamente en BonaCine</h2>
+        <div class="prox-flechas">
+          <button class="flecha flecha-atras" id="prox-atras" type="button" aria-label="Películas anteriores" disabled><svg class="icono" aria-hidden="true"><use href="#i-flecha"/></svg></button>
+          <button class="flecha" id="prox-adelante" type="button" aria-label="Más películas"><svg class="icono" aria-hidden="true"><use href="#i-flecha"/></svg></button>
+        </div>
+      </div>
       <!-- Se rellena desde peliculas.js -->
-      <ul class="lista" id="lista-estrenos"></ul>
+      <ul class="carrusel" id="lista-proximas" tabindex="0" aria-label="Próximas películas"></ul>
     </div>
   </section>
 

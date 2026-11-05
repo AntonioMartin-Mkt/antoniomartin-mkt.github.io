@@ -14,14 +14,39 @@ const principal = PELICULAS.find((p) => p.principal) || PELICULAS[0];
 document.getElementById("cartel-heroe").innerHTML = cartel(principal, "eager");
 document.getElementById("pie-heroe").textContent = `Ahora en cartel: ${principal.titulo}`;
 
-const resto = PELICULAS.filter((p) => p !== principal);
-document.getElementById("lista-estrenos").innerHTML = resto.map((p) => `
-  <li class="peli" style="--proporcion:${(p.ancho / p.alto).toFixed(3)}">
-    ${cartel(p, "lazy")}
+/* ---------- Carrusel de próximas películas ---------- */
+const TONOS = ["oscuro", "rojo", "claro"];
+const carrusel = document.getElementById("lista-proximas");
+carrusel.innerHTML = PROXIMAS.map((p, i) => `
+  <li class="prox">
+    <div class="prox-cartel tono-${TONOS[i % TONOS.length]}">
+      ${p.imagen
+        ? `<img src="${esc(p.imagen)}" alt="Cartel de ${esc(p.titulo)}" loading="lazy">`
+        : `<span class="prox-aviso" aria-hidden="true">Próximamente</span><span class="prox-ovalo"></span><span class="prox-nombre" aria-hidden="true">${esc(p.corto)}</span>`}
+    </div>
     <h3>${esc(p.titulo)}</h3>
     <p class="ficha">${esc(p.genero)}, ${p.ano}. Dirige ${esc(p.direccion)}.</p>
     <p class="sinopsis">${esc(p.sinopsis)}</p>
   </li>`).join("");
+
+const flechaAtras = document.getElementById("prox-atras");
+const flechaAdelante = document.getElementById("prox-adelante");
+const avanzar = (sentido) => {
+  const paso = carrusel.querySelector(".prox").getBoundingClientRect().width + parseFloat(getComputedStyle(carrusel).columnGap);
+  const suave = matchMedia("(prefers-reduced-motion: no-preference)").matches;
+  carrusel.scrollBy({ left: sentido * paso, behavior: suave ? "smooth" : "auto" });
+};
+flechaAtras.addEventListener("click", () => avanzar(-1));
+flechaAdelante.addEventListener("click", () => avanzar(1));
+
+// Las flechas se apagan al llegar a cada extremo
+const vigiaExtremos = new IntersectionObserver((entradas) => {
+  entradas.forEach((e) => {
+    (e.target === carrusel.firstElementChild ? flechaAtras : flechaAdelante).disabled = e.isIntersecting;
+  });
+}, { root: carrusel, threshold: 0.9 });
+vigiaExtremos.observe(carrusel.firstElementChild);
+vigiaExtremos.observe(carrusel.lastElementChild);
 
 /* ---------- Preguntas frecuentes ---------- */
 const nombres = PELICULAS.map((p) => p.titulo);
