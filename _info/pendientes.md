@@ -17,6 +17,8 @@
 
 ## Trabajos
 - [ ] Cruzcampo: añadir `trabajos/cruzcampo/portada.jpg` y su bloque en `proyectos.js`.
+- [ ] BonaCine: conectar el registro (Codigo.gs + SHEETS_URL en main.js). Sin eso funciona en modo demostración.
+- [ ] BonaCine: revisar `peliculas.js` cuando pasen los estrenos (las fechas se comprobaron el 5/11/2026).
 
 ## Repositorio
 - [ ] Revisar y fusionar o borrar las ramas sueltas `claude/…`.

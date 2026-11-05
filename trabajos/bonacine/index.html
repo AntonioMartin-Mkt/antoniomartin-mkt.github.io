@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BonaCine | Estrenos en Bonares, Huelva</title>
+<meta name="description" content="Los grandes estrenos, sin salir de Bonares. Regístrate gratis en BonaCine y llévate 2 € de descuento en tu primera entrada.">
+<meta name="theme-color" content="#E11B3D">
+<meta property="og:title" content="BonaCine | Estrenos en Bonares, Huelva">
+<meta property="og:description" content="Regístrate gratis y llévate 2 € de descuento en tu primera entrada.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="portada.jpg">
+<link rel="icon" href="img/favicon.png">
+<link rel="preload" href="fuentes/archivo-variable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+
+<!-- Iconos: Phosphor Icons (MIT) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-flecha" viewBox="0 0 256 256"><path d="M224.49,136.49l-72,72a12,12,0,0,1-17-17L187,140H40a12,12,0,0,1,0-24H187L135.51,64.48a12,12,0,0,1,17-17l72,72A12,12,0,0,1,224.49,136.49Z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 256 256"><path d="M232.49,80.49l-128,128a12,12,0,0,1-17,0l-56-56a12,12,0,1,1,17-17L96,183,215.51,63.51a12,12,0,0,1,17,17Z"/></symbol>
+  <symbol id="i-copiar" viewBox="0 0 256 256"><path d="M216,28H88A12,12,0,0,0,76,40V76H40A12,12,0,0,0,28,88V216a12,12,0,0,0,12,12H168a12,12,0,0,0,12-12V180h36a12,12,0,0,0,12-12V40A12,12,0,0,0,216,28ZM156,204H52V100H156Zm48-48H180V88a12,12,0,0,0-12-12H100V52H204Z"/></symbol>
+  <symbol id="i-lugar" viewBox="0 0 256 256"><path d="M128,60a44,44,0,1,0,44,44A44.05,44.05,0,0,0,128,60Zm0,64a20,20,0,1,1,20-20A20,20,0,0,1,128,124Zm0-112a92.1,92.1,0,0,0-92,92c0,77.36,81.64,135.4,85.12,137.83a12,12,0,0,0,13.76,0,259,259,0,0,0,42.18-39C205.15,170.57,220,136.37,220,104A92.1,92.1,0,0,0,128,12Zm31.3,174.71A249.35,249.35,0,0,1,128,216.89a249.35,249.35,0,0,1-31.3-30.18C80,167.37,60,137.31,60,104a68,68,0,0,1,136,0C196,137.31,176,167.37,159.3,186.71Z"/></symbol>
+</svg>
+
+<a class="salto" href="#contenido">Saltar al contenido</a>
+
+<header class="cabecera">
+  <div class="envoltura">
+    <a class="marca" href="#portada" aria-label="BonaCine, inicio">
+      <img src="img/logo-bonacine.png" alt="" width="338" height="400">
+      <span>BonaCine</span>
+    </a>
+    <nav class="menu" aria-label="Principal">
+      <a href="#estrenos">Estrenos</a>
+      <a href="#preguntas">Preguntas</a>
+    </nav>
+    <a class="boton boton-rojo" href="#registro">Quiero mi descuento</a>
+  </div>
+</header>
+
+<main id="contenido">
+
+  <section class="portada" id="portada">
+    <div class="envoltura">
+      <div class="texto">
+        <h1 class="entra"><span>Los estrenos,</span> <span>sin salir</span> <span>de Bonares</span></h1>
+        <p class="entradilla entra" style="--i:1">Regístrate gratis y llévate 2 € de descuento en tu primera entrada de BonaCine.</p>
+        <div class="acciones entra" style="--i:2">
+          <a class="boton boton-rojo" href="#registro">Quiero mi descuento <svg class="icono" aria-hidden="true"><use href="#i-flecha"/></svg></a>
+          <a class="boton boton-hueco" href="#estrenos">Ver estrenos</a>
+        </div>
+      </div>
+      <figure class="heroe-cartel entra" style="--i:2">
+        <div id="cartel-heroe"></div>
+        <figcaption id="pie-heroe"></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="estrenos" id="estrenos" aria-labelledby="titulo-estrenos">
+    <div class="envoltura">
+      <h2 id="titulo-estrenos">Lo que llega a nuestra pantalla</h2>
+      <!-- Se rellena desde peliculas.js -->
+      <ol class="lista" id="lista-estrenos"></ol>
+    </div>
+  </section>
+
+  <section class="registro" id="registro" aria-labelledby="titulo-registro">
+    <div class="envoltura">
+      <div class="entrada">
+        <div class="talon">
+          <h2 id="titulo-registro">Tu entrada, más barata</h2>
+          <p class="importe">-2 €</p>
+          <p class="importe-nota">en tu primera entrada</p>
+          <ul class="ventajas">
+            <li><svg class="icono" aria-hidden="true"><use href="#i-check"/></svg>1 € menos todos los miércoles</li>
+            <li><svg class="icono" aria-hidden="true"><use href="#i-check"/></svg>Reserva de butaca antes que nadie en los grandes estrenos</li>
+            <li><svg class="icono" aria-hidden="true"><use href="#i-check"/></svg>Gratis y sin tarjeta</li>
+          </ul>
+        </div>
+
+        <div class="matriz">
+          <form id="form-registro" novalidate>
+            <div class="campo">
+              <label for="nombre">Nombre</label>
+              <input id="nombre" name="nombre" type="text" autocomplete="given-name" required aria-describedby="error-nombre">
+              <p class="error" id="error-nombre"></p>
+            </div>
+            <div class="campo">
+              <label for="email">Correo electrónico</label>
+              <input id="email" name="email" type="email" inputmode="email" autocomplete="email" required aria-describedby="error-email">
+              <p class="error" id="error-email"></p>
+            </div>
+            <label class="casilla">
+              <input id="privacidad" name="privacidad" type="checkbox" required aria-describedby="error-privacidad">
+              <span>Tengo más de 14 años y acepto la <a href="legal.html#privacidad" target="_blank">política de privacidad</a> y las <a href="legal.html#bases" target="_blank">bases del descuento</a>.</span>
+              <p class="error" id="error-privacidad"></p>
+            </label>
+            <label class="casilla">
+              <input id="ofertas" name="ofertas" type="checkbox">
+              <span>Quiero recibir la cartelera y las ofertas por correo (opcional).</span>
+            </label>
+            <button class="boton boton-rojo" id="enviar" type="submit"><span>Quiero mi descuento</span></button>
+            <p class="error" id="error-general" role="alert"></p>
+          </form>
+
+          <div class="exito" id="exito" hidden>
+            <h3 tabindex="-1">Ya tienes tu descuento</h3>
+            <p>Enséñalo en taquilla y te descontamos 2 € en tu primera entrada.</p>
+            <p class="codigo" id="codigo"></p>
+            <button class="boton boton-hueco" id="copiar" type="button"><svg class="icono" aria-hidden="true"><use href="#i-copiar"/></svg><span>Copiar código</span></button>
+            <p class="nota" id="nota-exito"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="final" id="preguntas" aria-label="Información práctica">
+    <div class="envoltura">
+      <div class="donde">
+        <h2>Tu cine está aquí al lado</h2>
+        <p>Una sala de pueblo con los estrenos de la ciudad. Sin coche, sin aparcar y sin ir hasta Huelva.</p>
+        <p class="lugar"><svg class="icono" aria-hidden="true"><use href="#i-lugar"/></svg>Bonares, Huelva. Sesiones de miércoles a domingo.</p>
+      </div>
+      <div class="preguntas">
+        <details open>
+          <summary>¿Cómo uso el descuento?</summary>
+          <p>Al registrarte recibes un código. Enséñalo en taquilla, en papel o en el móvil, y te descontamos 2 € de la entrada.</p>
+        </details>
+        <details>
+          <summary>¿Cuándo caduca?</summary>
+          <p>El código vale hasta el 31 de enero de 2027. El descuento de los miércoles sigue activo mientras estés registrado.</p>
+        </details>
+        <details>
+          <summary>¿Me vais a llenar el correo?</summary>
+          <p>No. Solo te escribimos con la cartelera si marcas esa casilla, y puedes darte de baja cuando quieras. El descuento es tuyo la marques o no.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="pie">
+  <div class="envoltura">
+    <img src="img/logo-bonacine.png" alt="BonaCine" width="338" height="400" loading="lazy">
+    <p>BonaCine es un cine ficticio creado para un trabajo de clase de Marketing y Publicidad. Las películas y sus fechas de estreno en España son reales; sus títulos pertenecen a sus distribuidoras y los carteles son diseños propios del proyecto.</p>
+    <a href="legal.html">Información legal</a>
+  </div>
+</footer>
+
+<div class="barra-cta" id="barra-cta">
+  <a class="boton boton-rojo" href="#registro">Quiero mi descuento</a>
+</div>
+
+<script src="peliculas.js"></script>
+<script src="main.js"></script>
+</body>
+</html>

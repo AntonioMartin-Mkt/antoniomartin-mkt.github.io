@@ -78,6 +78,23 @@ const PERFIL = {
 
 const PROYECTOS = [
   {
+    titulo: "Landing de estrenos para BonaCine, el cine de Bonares",
+    corto: "BonaCine",
+    categoria: "Web",
+    contexto: "Clase",
+    fecha: "2026-11",
+    destacado: false,
+    colores: ["#E11B3D", "#FFFFFF", "#111113"],
+    resumen: "Landing page para un cine de pueblo ficticio: anuncia los estrenos reales de la temporada y capta registros con un descuento de 2 €. Programada desde cero. Concepto académico.",
+    reto: "Dar a un cine pequeño de Bonares (Huelva) una página que anuncie sus estrenos y convierta visitas en contactos a los que avisar, compitiendo con ir al cine en la ciudad.",
+    solucion: "Planteé el mensaje en torno a la ventaja local: el estreno, sin salir de Bonares. Convertí el logo en un sistema gráfico, con carteles propios en los que un bloque rojo invierte el color del título. La cartelera se actualiza desde un solo archivo, la página detecta sola el próximo estreno y el formulario, con forma de entrada, separa el consentimiento obligatorio del comercial y entrega un código de descuento. Dejé preparado el envío a Google Sheets y por correo con Apps Script.",
+    resultado: "Embudo completo de la visita al código de descuento, adaptado a móvil y con un único CTA en toda la página. Al ser un concepto de clase aún no tiene datos; los KPI previstos son la tasa de registro, el opt-in comercial y el canje en taquilla.",
+    herramientas: ["HTML", "CSS", "JavaScript", "Google Apps Script", "Google Sheets"],
+    imagen: "trabajos/bonacine/portada.jpg",
+    vista: "web",
+    enlace: "trabajos/bonacine/"
+  },
+  {
     titulo: "«Shake Week»: campaña de gamificación con 5 minijuegos para Miflshakes",
     corto: "Shake Week",
     categoria: "Web",
