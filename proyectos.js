@@ -78,7 +78,24 @@ const PERFIL = {
 
 const PROYECTOS = [
   {
-    titulo: "Landing de cartelera para BonaCine, el cine de Bonares",
+    titulo: "Landing de la tarjeta de residente de BonaCine",
+    corto: "Tarjeta BonaCine",
+    categoria: "Web",
+    contexto: "Clase",
+    fecha: "2026-11",
+    destacado: false,
+    colores: ["#111215", "#FFD21F", "#E11B3D"],
+    resumen: "Landing page de captación para los vecinos de Bonares: una tarjeta de residente con 2 € de descuento en cada entrada. Programada desde cero. Concepto académico.",
+    reto: "Conseguir que los vecinos de un pueblo pidan la tarjeta del cine, con una página de un solo objetivo y un formulario que cumpla el RGPD.",
+    solucion: "Planteé la oferta y el formulario en el primer vistazo: nombre y apellidos, correo y dos opt-in separados para los términos y la privacidad. La tarjeta muestra el nombre mientras se escribe, para que la persona la sienta suya. Debajo, un carrusel de carteles aporta emoción y una sección de reseñas abre la participación, con cada texto de ejemplo marcado como tal.",
+    resultado: "Landing lista para entregar, adaptada a móvil y con envío a Google Sheets preparado con Apps Script. Al ser un concepto de clase aún no tiene datos; los KPI previstos son la tasa de conversión del formulario y las tarjetas recogidas en taquilla.",
+    herramientas: ["HTML", "CSS", "JavaScript", "Google Apps Script", "Google Sheets"],
+    imagen: "trabajos/bonacine/portada-tarjeta.jpg",
+    vista: "web",
+    enlace: "trabajos/bonacine/tarjeta.html"
+  },
+  {
+    titulo: "Web de BonaCine, el cine de Bonares",
     corto: "BonaCine",
     categoria: "Web",
     contexto: "Clase",

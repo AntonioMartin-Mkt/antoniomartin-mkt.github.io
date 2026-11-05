@@ -1,0 +1,88 @@
+/* BonaCine, landing de la tarjeta de residente. Se carga después de estilos.css. */
+
+/* ---------- Oferta ---------- */
+.oferta .envoltura {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(340px, 440px);
+  gap: clamp(32px, 6vw, 88px); align-items: center;
+  padding-block: clamp(32px, 6vh, 64px); color: var(--blanco);
+}
+h1 {
+  font-size: clamp(3rem, 7.2vw, 6.25rem); font-weight: 900; font-stretch: 66%;
+  line-height: .94; text-transform: uppercase;
+}
+.oferta-sub { max-width: 34ch; margin-top: 18px; font-size: clamp(1.125rem, 1.7vw, 1.375rem); line-height: 1.4; }
+
+/* La tarjeta: nombre en vivo y el bloque rojo del logo */
+.tarjeta-visual {
+  position: relative; overflow: hidden; container-type: inline-size;
+  width: min(100%, 420px); aspect-ratio: 1.586; margin-top: clamp(24px, 4vh, 36px);
+  border-radius: 14px; background: var(--blanco); color: var(--negro);
+  box-shadow: 0 22px 44px -16px rgb(0 0 0 / .7);
+}
+.tv-cabeza { position: absolute; top: 6cqw; left: 6cqw; display: flex; align-items: center; gap: 2.5cqw; }
+.tv-cabeza img { width: auto; height: 13cqw; }
+.tv-marca { font-family: "Cormorant Garamond", Georgia, serif; font-weight: 600; font-size: 7.5cqw; line-height: 1; }
+.tv-tipo { position: absolute; left: 6cqw; bottom: 16cqw; font-size: 3.6cqw; font-weight: 700; color: var(--gris); }
+.tv-nombre {
+  position: absolute; left: 6cqw; bottom: 6cqw; max-width: 58cqw; overflow: hidden;
+  font-size: 6cqw; font-weight: 800; line-height: 1.25; white-space: nowrap; text-overflow: ellipsis;
+}
+.tv-bloque { position: absolute; right: 0; bottom: 0; width: 30cqw; height: 34cqw; background: var(--rojo); color: var(--blanco); }
+.tv-ovalo { position: absolute; top: 4cqw; right: 4cqw; width: 8.5cqw; height: 7cqw; border-radius: 50%; background: var(--blanco); }
+.tv-importe { position: absolute; left: 3.5cqw; bottom: 3cqw; font-size: 11cqw; font-weight: 900; font-stretch: 62%; line-height: 1; }
+
+/* Formulario */
+.panel-form { background: var(--blanco); color: var(--negro); border-radius: 8px; padding: clamp(22px, 3vw, 32px); }
+.panel-form h2 { margin-bottom: 16px; font-size: clamp(2rem, 3.4vw, 2.75rem); }
+.panel-form .campo { margin-bottom: 14px; }
+.panel-form .boton { width: 100%; margin-top: 8px; }
+#error-general { margin-top: 8px; }
+
+/* El carrusel entra justo debajo de la oferta */
+.carteles { padding-top: 8px; }
+
+/* ---------- Reseñas ---------- */
+.resenas { padding-block: clamp(56px, 8vw, 104px); }
+.resenas-intro { max-width: 60ch; margin-top: 12px; font-size: 1.1875rem; }
+.resenas-cuerpo { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(32px, 5vw, 72px); margin-top: clamp(28px, 4vw, 44px); align-items: start; }
+.lista-resenas { display: grid; gap: 22px; }
+.resena { display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 18px; padding-bottom: 22px; border-bottom: 1px solid var(--linea); }
+.resena img { width: 100%; height: auto; aspect-ratio: 2 / 3; object-fit: cover; border-radius: var(--radio); }
+.resena h3 { font-size: 1.3125rem; font-weight: 800; font-stretch: 85%; line-height: 1.15; }
+.nota { display: block; margin: 4px 0 6px; color: var(--rojo); font-size: 1.125rem; letter-spacing: .08em; line-height: 1; }
+.nota-vacia { color: var(--linea); }
+.resena-autor { margin-top: 8px; color: var(--gris); font-size: .875rem; font-weight: 600; }
+
+.form-resena { background: var(--suave); border-radius: 8px; padding: clamp(20px, 3vw, 28px); }
+.form-resena h3 { margin-bottom: 14px; font-size: 1.5rem; font-weight: 800; font-stretch: 85%; }
+.form-resena .campo { margin-bottom: 14px; }
+.campo select, .campo textarea {
+  width: 100%; padding: 12px 14px; border: 2px solid var(--negro); border-radius: var(--radio);
+  background: var(--blanco); color: var(--negro); font: 400 1.0625rem/1.4 "Archivo", Arial, sans-serif;
+}
+.campo select { min-height: 52px; }
+.campo textarea { resize: vertical; }
+.campo select:focus-visible, .campo textarea:focus-visible { outline: 3px solid var(--rojo); outline-offset: 2px; }
+.estrellas { margin: 0 0 14px; padding: 0; border: 0; }
+.estrellas legend { padding: 0; margin-bottom: 4px; font-weight: 700; }
+.estrellas-fila { display: flex; gap: 2px; }
+.estrellas-fila label { position: relative; display: grid; place-items: center; width: 44px; height: 44px; color: #8E8E96; font-size: 1.875rem; cursor: pointer; }
+.estrellas-fila label.activa { color: var(--rojo); }
+.estrellas-fila input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
+.estrellas-fila label:has(input:focus-visible) { outline: 3px solid var(--rojo); outline-offset: 1px; border-radius: var(--radio); }
+.form-resena .boton { width: 100%; margin-top: 6px; }
+.estado-resena { margin-top: 10px; font-weight: 700; font-size: .9375rem; }
+.estado-resena:empty { display: none; }
+
+/* ---------- Adaptación ---------- */
+@media (max-width: 1000px) {
+  .resenas-cuerpo { grid-template-columns: 1fr; }
+}
+@media (max-width: 860px) {
+  .oferta .envoltura { grid-template-columns: 1fr; }
+  .tarjeta-visual { width: min(100%, 340px); }
+}
+@media (max-width: 767px) {
+  h1 { font-size: min(calc((100vw - 32px) / 5.2), 4.5rem); }
+  .pie { padding-bottom: 28px; }
+}

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tarjeta de residente | BonaCine</title>
+<meta name="description" content="Si vives en Bonares, pide gratis tu tarjeta de residente de BonaCine y ahorra 2 € en cada entrada.">
+<meta name="theme-color" content="#111215">
+<meta property="og:title" content="Tarjeta de residente | BonaCine">
+<meta property="og:description" content="Si vives en Bonares, ahorra 2 € en cada entrada.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="portada-tarjeta.jpg">
+<link rel="icon" href="img/favicon.png">
+<link rel="preload" href="fuentes/archivo-variable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="estilos.css">
+<link rel="stylesheet" href="tarjeta.css">
+</head>
+<body>
+
+<!-- Iconos: Phosphor Icons (MIT) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-flecha" viewBox="0 0 256 256"><path d="M224.49,136.49l-72,72a12,12,0,0,1-17-17L187,140H40a12,12,0,0,1,0-24H187L135.51,64.48a12,12,0,0,1,17-17l72,72A12,12,0,0,1,224.49,136.49Z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 256 256"><path d="M232.49,80.49l-128,128a12,12,0,0,1-17,0l-56-56a12,12,0,1,1,17-17L96,183,215.51,63.51a12,12,0,0,1,17,17Z"/></symbol>
+  <symbol id="i-copiar" viewBox="0 0 256 256"><path d="M216,28H88A12,12,0,0,0,76,40V76H40A12,12,0,0,0,28,88V216a12,12,0,0,0,12,12H168a12,12,0,0,0,12-12V180h36a12,12,0,0,0,12-12V40A12,12,0,0,0,216,28ZM156,204H52V100H156Zm48-48H180V88a12,12,0,0,0-12-12H100V52H204Z"/></symbol>
+  <symbol id="i-lugar" viewBox="0 0 256 256"><path d="M128,60a44,44,0,1,0,44,44A44.05,44.05,0,0,0,128,60Zm0,64a20,20,0,1,1,20-20A20,20,0,0,1,128,124Zm0-112a92.1,92.1,0,0,0-92,92c0,77.36,81.64,135.4,85.12,137.83a12,12,0,0,0,13.76,0,259,259,0,0,0,42.18-39C205.15,170.57,220,136.37,220,104A92.1,92.1,0,0,0,128,12Zm31.3,174.71A249.35,249.35,0,0,1,128,216.89a249.35,249.35,0,0,1-31.3-30.18C80,167.37,60,137.31,60,104a68,68,0,0,1,136,0C196,137.31,176,167.37,159.3,186.71Z"/></symbol>
+  <symbol id="i-instagram" viewBox="0 0 256 256"><path d="M176,24H80A56.06,56.06,0,0,0,24,80v96a56.06,56.06,0,0,0,56,56h96a56.06,56.06,0,0,0,56-56V80A56.06,56.06,0,0,0,176,24ZM128,176a48,48,0,1,1,48-48A48.05,48.05,0,0,1,128,176Zm60-96a12,12,0,1,1,12-12A12,12,0,0,1,188,80Zm-28,48a32,32,0,1,1-32-32A32,32,0,0,1,160,128Z"/></symbol>
+  <symbol id="i-tiktok" viewBox="0 0 256 256"><path d="M232,80v40a8,8,0,0,1-8,8,103.25,103.25,0,0,1-48-11.71V156a76,76,0,0,1-152,0c0-36.9,26.91-69.52,62.6-75.88A8,8,0,0,1,96,88v42.69a8,8,0,0,1-4.57,7.23A20,20,0,1,0,120,156V24a8,8,0,0,1,8-8h40a8,8,0,0,1,8,8,48.05,48.05,0,0,0,48,48A8,8,0,0,1,232,80Z"/></symbol>
+  <symbol id="i-facebook" viewBox="0 0 256 256"><path d="M232,128a104.16,104.16,0,0,1-91.55,103.26,4,4,0,0,1-4.45-4V152h24a8,8,0,0,0,8-8.53,8.17,8.17,0,0,0-8.25-7.47H136V112a16,16,0,0,1,16-16h16a8,8,0,0,0,8-8.53A8.17,8.17,0,0,0,167.73,80H152a32,32,0,0,0-32,32v24H96a8,8,0,0,0-8,8.53A8.17,8.17,0,0,0,96.27,152H120v75.28a4,4,0,0,1-4.44,4A104.15,104.15,0,0,1,24.07,124.09c2-54,45.74-97.9,99.78-100A104.12,104.12,0,0,1,232,128Z"/></symbol>
+  <symbol id="i-youtube" viewBox="0 0 256 256"><path d="M234.33,69.52a24,24,0,0,0-14.49-16.4C185.56,39.88,131,40,128,40s-57.56-.12-91.84,13.12a24,24,0,0,0-14.49,16.4C19.08,79.5,16,97.74,16,128s3.08,48.5,5.67,58.48a24,24,0,0,0,14.49,16.41C69,215.56,120.4,216,127.34,216h1.32c6.94,0,58.37-.44,91.18-13.11a24,24,0,0,0,14.49-16.41c2.59-10,5.67-28.22,5.67-58.48S236.92,79.5,234.33,69.52Zm-73.74,65-40,28A8,8,0,0,1,108,156V100a8,8,0,0,1,12.59-6.55l40,28a8,8,0,0,1,0,13.1Z"/></symbol>
+</svg>
+
+<a class="salto" href="#contenido">Saltar al contenido</a>
+
+<header class="cabecera">
+  <div class="envoltura">
+    <span class="logo"><img src="img/logo-bonacine.png" alt="" width="338" height="400"></span>
+    <span class="nombre">BonaCine</span>
+    <span></span>
+  </div>
+</header>
+
+<main id="contenido">
+  <div class="escenario">
+    <section class="oferta" id="oferta" aria-labelledby="titulo-oferta">
+      <div class="envoltura">
+        <div class="oferta-texto">
+          <h1 id="titulo-oferta">Tarjeta de residente</h1>
+          <p class="oferta-sub">Si vives en Bonares, ahorras 2 € en cada entrada. Todo el año y gratis.</p>
+          <div class="tarjeta-visual" aria-hidden="true">
+            <div class="tv-cabeza">
+              <img src="img/logo-bonacine.png" alt="" width="338" height="400">
+              <span class="tv-marca">BonaCine</span>
+            </div>
+            <p class="tv-tipo">Tarjeta de residente</p>
+            <p class="tv-nombre" id="tv-nombre">Tu nombre aquí</p>
+            <span class="tv-bloque"><span class="tv-ovalo"></span><span class="tv-importe">-2 €</span></span>
+          </div>
+        </div>
+
+        <div class="panel-form">
+          <form id="form-tarjeta" novalidate>
+            <h2>Pide tu tarjeta</h2>
+            <div class="campo">
+              <label for="nombre">Nombre y apellidos</label>
+              <input id="nombre" name="nombre" type="text" autocomplete="name" required aria-describedby="error-nombre">
+              <p class="error" id="error-nombre"></p>
+            </div>
+            <div class="campo">
+              <label for="email">Correo electrónico</label>
+              <input id="email" name="email" type="email" inputmode="email" autocomplete="email" required aria-describedby="error-email">
+              <p class="error" id="error-email"></p>
+            </div>
+            <label class="casilla">
+              <input id="terminos" name="terminos" type="checkbox" required aria-describedby="error-terminos">
+              <span>He leído y acepto los <a href="legal.html#tarjeta" target="_blank">términos y condiciones</a>.</span>
+              <p class="error" id="error-terminos"></p>
+            </label>
+            <label class="casilla">
+              <input id="privacidad" name="privacidad" type="checkbox" required aria-describedby="error-privacidad">
+              <span>He leído y acepto la <a href="legal.html#privacidad" target="_blank">política de privacidad</a>.</span>
+              <p class="error" id="error-privacidad"></p>
+            </label>
+            <button class="boton boton-3d" id="enviar" type="submit"><span>Quiero mi tarjeta</span></button>
+            <p class="error" id="error-general" role="alert"></p>
+          </form>
+
+          <div class="exito" id="exito" hidden>
+            <h3 tabindex="-1">Tarjeta solicitada</h3>
+            <p>Enseña este código en taquilla con un justificante de que vives en Bonares y te damos tu tarjeta.</p>
+            <p class="codigo" id="codigo"></p>
+            <p class="nota" id="nota-exito"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="carteles" id="carteles" aria-label="Carteles de películas">
+      <!-- Se rellena desde peliculas.js -->
+      <div class="carrusel-vertical" id="carrusel-carteles"></div>
+    </section>
+  </div>
+
+  <section class="resenas" id="resenas" aria-labelledby="titulo-resenas">
+    <div class="envoltura">
+      <h2 id="titulo-resenas">Reseñas de las películas</h2>
+      <p class="resenas-intro">Las reseñas que ves aquí son ejemplos. Cuéntanos qué te ha parecido tu última película.</p>
+      <div class="resenas-cuerpo">
+        <ul class="lista-resenas" id="lista-resenas"></ul>
+
+        <form class="form-resena" id="form-resena" novalidate>
+          <h3>Deja tu reseña</h3>
+          <div class="campo">
+            <label for="r-nombre">Tu nombre</label>
+            <input id="r-nombre" name="r-nombre" type="text" autocomplete="given-name" required aria-describedby="error-r-nombre">
+            <p class="error" id="error-r-nombre"></p>
+          </div>
+          <div class="campo">
+            <label for="r-pelicula">Película</label>
+            <select id="r-pelicula" name="r-pelicula"></select>
+          </div>
+          <fieldset class="estrellas" id="estrellas">
+            <legend>Tu nota</legend>
+            <div class="estrellas-fila"></div>
+            <p class="error" id="error-r-nota"></p>
+          </fieldset>
+          <div class="campo">
+            <label for="r-texto">Tu opinión</label>
+            <textarea id="r-texto" name="r-texto" rows="3" maxlength="280" required aria-describedby="error-r-texto"></textarea>
+            <p class="error" id="error-r-texto"></p>
+          </div>
+          <label class="casilla">
+            <input id="r-acepta" name="r-acepta" type="checkbox" required aria-describedby="error-r-acepta">
+            <span>Acepto la <a href="legal.html#privacidad" target="_blank">política de privacidad</a> y que se publique mi reseña con mi nombre.</span>
+            <p class="error" id="error-r-acepta"></p>
+          </label>
+          <button class="boton" type="submit">Publicar reseña</button>
+          <p class="estado-resena" id="estado-resena" role="status"></p>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="pie">
+  <div class="envoltura pie-rejilla">
+    <div class="pie-marca">
+      <img src="img/logo-bonacine.png" alt="BonaCine" width="338" height="400" loading="lazy">
+      <p><strong>BonaCine</strong><br>Calle Ejemplo, 1<br>21830 Bonares (Huelva)<br><a href="mailto:hola@bonacine.example">hola@bonacine.example</a></p>
+    </div>
+
+    <nav aria-label="Información legal">
+      <h3>Legal</h3>
+      <ul>
+        <li><a href="legal.html#aviso-legal">Aviso legal</a></li>
+        <li><a href="legal.html#privacidad">Política de privacidad</a></li>
+        <li><a href="legal.html#cookies">Política de cookies</a></li>
+        <li><a href="legal.html#terminos">Términos y condiciones</a></li>
+        <li><a href="legal.html#bases">Bases del descuento</a></li>
+        <li><a href="legal.html#reclamaciones">Quejas y reclamaciones</a></li>
+        <li><a href="legal.html#baja">Darse de baja</a></li>
+      </ul>
+    </nav>
+
+    <div>
+      <h3>Síguenos</h3>
+      <ul class="redes">
+        <li><a href="#" data-red="instagram" aria-label="Instagram de BonaCine"><svg class="icono" aria-hidden="true"><use href="#i-instagram"/></svg></a></li>
+        <li><a href="#" data-red="tiktok" aria-label="TikTok de BonaCine"><svg class="icono" aria-hidden="true"><use href="#i-tiktok"/></svg></a></li>
+        <li><a href="#" data-red="facebook" aria-label="Facebook de BonaCine"><svg class="icono" aria-hidden="true"><use href="#i-facebook"/></svg></a></li>
+        <li><a href="#" data-red="youtube" aria-label="YouTube de BonaCine"><svg class="icono" aria-hidden="true"><use href="#i-youtube"/></svg></a></li>
+      </ul>
+      <p class="aviso-redes" id="aviso-redes" role="status"></p>
+    </div>
+
+    <div class="pie-news">
+      <h3>Newsletter</h3>
+      <p>La cartelera y las ofertas de BonaCine, en tu correo.</p>
+      <form id="form-news" novalidate>
+        <label for="news-email">Correo electrónico</label>
+        <div class="news-fila">
+          <input id="news-email" name="news-email" type="email" inputmode="email" autocomplete="email" required aria-describedby="error-news-email">
+          <button class="boton" type="submit">Suscribirme</button>
+        </div>
+        <p class="error" id="error-news-email"></p>
+        <label class="casilla">
+          <input id="news-acepta" name="news-acepta" type="checkbox" required aria-describedby="error-news-acepta">
+          <span>Acepto recibir la newsletter y la <a href="legal.html#privacidad" target="_blank">política de privacidad</a>.</span>
+          <p class="error" id="error-news-acepta"></p>
+        </label>
+      </form>
+      <p class="estado-news" id="estado-news" role="status"></p>
+    </div>
+  </div>
+
+  <div class="envoltura pie-base">
+    <p>© 2026 BonaCine. Este sitio no usa cookies de análisis ni de publicidad.</p>
+    <p>BonaCine es un cine ficticio creado para un trabajo de clase de Marketing y Publicidad. Los títulos y carteles pertenecen a sus titulares y se usan solo con fines educativos.</p>
+  </div>
+</footer>
+
+<script src="peliculas.js"></script>
+<script src="comun.js"></script>
+<script src="tarjeta.js"></script>
+</body>
+</html>

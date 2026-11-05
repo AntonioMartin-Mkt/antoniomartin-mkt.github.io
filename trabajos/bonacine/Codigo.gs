@@ -5,13 +5,15 @@
  * Registro: guarda el alta en Google Sheets, crea un código de descuento
  * único y lo envía por correo.
  * Newsletter: guarda el correo en su propia pestaña.
+ * Tarjeta de residente: guarda la solicitud y envía su código.
+ * Reseñas: se guardan para revisarlas antes de publicarlas.
  *
  * CÓMO CONECTARLO
  * 1. Crea una hoja de Google Sheets y copia su ID (lo que va entre /d/ y /edit en la URL).
  * 2. En la hoja: Extensiones → Apps Script. Pega este archivo y rellena SHEET_ID.
  * 3. Implementar → Nueva implementación → Aplicación web.
  *    Ejecutar como: Yo. Quién tiene acceso: Cualquier usuario.
- * 4. Copia la URL que te da y pégala en SHEETS_URL, arriba del todo en main.js.
+ * 4. Copia la URL que te da y pégala en SHEETS_URL, arriba del todo en comun.js.
  */
 const CONFIG = {
   SHEET_ID: 'PEGA_AQUI_EL_ID_DE_TU_HOJA',
@@ -38,6 +40,40 @@ function suscribir_(email) {
   return respuesta_({ ok: true });
 }
 
+function guardarResena_(d, nombre) {
+  const limpio = (t, n) => String(t || '').trim().replace(/^[=+\-@]+/, '').slice(0, n);
+  const nota = Number(d.nota);
+  if (!nombre || !(nota >= 1 && nota <= 5) || !limpio(d.texto, 280) || d.acepta !== true) {
+    return respuesta_({ ok: false, error: 'resena' });
+  }
+  hoja_('Reseñas', ['Fecha', 'Nombre', 'Película', 'Nota', 'Opinión', 'Publicada'])
+    .appendRow([new Date(), nombre, limpio(d.pelicula, 80), nota, limpio(d.texto, 280), 'Pendiente']);
+  return respuesta_({ ok: true });
+}
+
+function pedirTarjeta_(d, nombre, email) {
+  if (d.terminos !== true) return respuesta_({ ok: false, error: 'terminos' });
+  if (d.privacidad !== true) return respuesta_({ ok: false, error: 'privacidad' });
+  const sh = hoja_('Tarjetas', ['Fecha', 'Nombre y apellidos', 'Email', 'Código', 'Términos', 'Privacidad']);
+  const filas = sh.getDataRange().getValues();
+  const previa = filas.find((f) => f[2] === email);
+  if (previa) return respuesta_({ ok: true, codigo: previa[3], repetido: true });
+
+  const codigo = crearCodigo_(filas).replace('BONA-', 'RES-');
+  sh.appendRow([new Date(), nombre, email, codigo, 'Sí', 'Sí']);
+  MailApp.sendEmail({
+    to: email,
+    subject: 'Tu tarjeta de residente de ' + CONFIG.MARCA,
+    name: CONFIG.MARCA,
+    body:
+      'Hola, ' + nombre + ':\n\n' +
+      'Tu código es ' + codigo + '.\n' +
+      'Enséñalo en taquilla con un justificante de que vives en Bonares y te damos tu tarjeta.\n\n' +
+      CONFIG.MARCA + ', Bonares (Huelva)',
+  });
+  return respuesta_({ ok: true, codigo: codigo });
+}
+
 function doPost(e) {
   try {
     const d = JSON.parse(e.postData.contents || '{}');
@@ -45,10 +81,13 @@ function doPost(e) {
     // Quita los signos que Sheets interpretaría como fórmula.
     const nombre = String(d.nombre || '').trim().replace(/^[=+\-@]+/, '').slice(0, 80);
 
+    if (d.tipo === 'resena') return guardarResena_(d, nombre);
+
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return respuesta_({ ok: false, error: 'email' });
     if (d.tipo === 'newsletter') return suscribir_(email);
 
     if (!nombre) return respuesta_({ ok: false, error: 'nombre' });
+    if (d.tipo === 'tarjeta') return pedirTarjeta_(d, nombre, email);
     if (d.privacidad !== true) return respuesta_({ ok: false, error: 'privacidad' });
 
     const sh = hoja_(CONFIG.PESTANA, CABECERA);
