@@ -18,13 +18,6 @@ const CARTELES = [
   { titulo: "Tenet", imagen: "img/carteles/tenet.jpg" }
 ];
 
-/* PELÍCULAS EN CARTEL: las que nombra la pregunta «¿Qué películas hay?». */
-const PELICULAS = [
-  { titulo: "Interstellar" },
-  { titulo: "Torrente Presidente" },
-  { titulo: "Scary Movie 2" }
-];
-
 /* REDES DEL CINE: pega aquí cada enlace. Mientras esté vacío, el icono
    avisa de que es un perfil de ejemplo en vez de llevar a una web ajena. */
 const REDES = {

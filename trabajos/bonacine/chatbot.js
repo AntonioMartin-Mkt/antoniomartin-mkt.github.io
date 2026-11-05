@@ -1,24 +1,28 @@
-/* BonaCine: chatbot propio, compartido por la web y la landing.
-   Funciona en el navegador: no envía nada a ningún servidor.
-   Las preguntas, respuestas y palabras clave están en preguntas.js. */
+/* BonaCine: chatbot por palabras clave, sin IA, compartido por la web y la landing.
+   Las intenciones están en preguntas.js. Funciona en el navegador: no envía
+   nada a ningún servidor. */
 
 const TEXTOS_CHAT = {
-  saludo: "Hola, soy el asistente de BonaCine. ¿Sobre qué tienes dudas?",
-  gracias: "De nada. Si necesitas algo más, aquí estoy.",
-  noEntiendo: "No te he entendido bien. Prueba con otras palabras o elige un tema. También puedes escribirnos a Bonacine@gmail.com."
+  saludo: "Hola, soy el asistente de BonaCine. ¿En qué puedo ayudarte?",
+  noEntiendo: "No te he entendido bien. Prueba con otras palabras o elige una opción."
 };
 
-const sinTildes = (t) => t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
-const palabrasDe = (t) => sinTildes(t).match(/[a-z0-9ñ]+/g) || [];
-const INTENCIONES = PREGUNTAS.flatMap((g) => g.intenciones);
+// Sin mayúsculas ni tildes, para que «Dirección» y «direccion» sean lo mismo
+const normalizar = (t) => t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9 ]+/g, " ").replace(/\s+/g, " ").trim();
 
-// Elige la intención con más palabras clave en el mensaje. Una clave acepta variantes: «sesion» vale para «sesiones».
-function buscarIntencion(mensaje) {
-  const palabras = palabrasDe(mensaje);
+function coincide(clave, mensaje) {
+  const prefijo = clave.endsWith("*");
+  const limpia = normalizar(clave);
+  return (` ${mensaje} `).includes(` ${limpia}${prefijo ? "" : " "}`);
+}
+
+// Gana la intención con más palabras clave en el mensaje; si empatan, la primera de la lista.
+function buscarIntencion(texto) {
+  const mensaje = normalizar(texto);
   let mejor = null, nota = 0;
-  INTENCIONES.forEach((i) => {
-    const puntos = (i.claves || []).filter((c) => palabras.some((p) => p.startsWith(sinTildes(c)))).length;
-    if (puntos > nota) { mejor = i; nota = puntos; }
+  PREGUNTAS.forEach((p) => {
+    const puntos = p.claves.filter((c) => coincide(c, mensaje)).length;
+    if (puntos > nota) { mejor = p; nota = puntos; }
   });
   return mejor;
 }
@@ -46,72 +50,40 @@ document.body.append(botonChat, panelChat);
 const mensajes = document.getElementById("cb-mensajes");
 const textoChat = document.getElementById("cb-texto");
 
-const alFinal = () => { mensajes.scrollTop = mensajes.scrollHeight; };
-
 function burbuja(texto, quien) {
   const p = document.createElement("p");
   p.className = `cb-burbuja cb-${quien}`;
   p.textContent = texto;
   mensajes.append(p);
-  alFinal();
-  return p;
+  mensajes.scrollTop = mensajes.scrollHeight;
 }
 
-function opciones(lista) {
-  mensajes.querySelectorAll(".cb-opciones").forEach((o) => o.remove());
+const quitarBotones = () => mensajes.querySelectorAll(".cb-opciones").forEach((o) => o.remove());
+
+function botones() {
+  quitarBotones();
   const caja = document.createElement("div");
   caja.className = "cb-opciones";
-  lista.forEach(([texto, accion]) => {
+  PREGUNTAS.filter((p) => p.boton).forEach((p) => {
     const b = document.createElement("button");
     b.type = "button";
-    b.textContent = texto;
-    b.addEventListener("click", accion);
+    b.textContent = p.boton;
+    b.addEventListener("click", () => { burbuja(p.boton, "yo"); contestar(p.respuesta); });
     caja.append(b);
   });
   mensajes.append(caja);
-  alFinal();
+  mensajes.scrollTop = mensajes.scrollHeight;
 }
 
-const temas = () => opciones(PREGUNTAS.map((g) => [g.grupo, () => verTema(g)]));
-
-function verTema(g) {
-  burbuja(g.grupo, "yo");
-  opciones([...g.intenciones.map((i) => [i.pregunta, () => { burbuja(i.pregunta, "yo"); contestar(i); }]), ["Otros temas", temas]]);
-}
-
-function contestar(i) {
-  mensajes.querySelectorAll(".cb-opciones").forEach((o) => o.remove());
-  setTimeout(() => {
-    burbuja(respuesta(i), "bot");
-    if (i.enlace) {
-      const a = document.createElement("a");
-      a.className = "cb-enlace";
-      a.href = i.enlace;
-      a.textContent = i.textoEnlace;
-      mensajes.append(a);
-    }
-    opciones([["Otros temas", temas]]);
-  }, 350);
-}
-
-function responderTexto(texto) {
-  burbuja(texto, "yo");
-  const i = buscarIntencion(texto);
-  if (i) { contestar(i); return; }
-  const palabras = palabrasDe(texto);
-  mensajes.querySelectorAll(".cb-opciones").forEach((o) => o.remove());
-  setTimeout(() => {
-    burbuja(palabras.some((p) => p.startsWith("gracias")) ? TEXTOS_CHAT.gracias
-      : palabras.some((p) => ["hola", "buenas", "buenos"].includes(p)) ? TEXTOS_CHAT.saludo
-      : TEXTOS_CHAT.noEntiendo, "bot");
-    temas();
-  }, 350);
+function contestar(texto) {
+  quitarBotones();
+  setTimeout(() => { burbuja(texto, "bot"); botones(); }, 350);
 }
 
 function alternarChat(abrir) {
   if (abrir && !mensajes.childElementCount) {
     burbuja(TEXTOS_CHAT.saludo, "bot");
-    temas();
+    botones();
   }
   panelChat.hidden = !abrir;
   botonChat.setAttribute("aria-expanded", String(abrir));
@@ -132,5 +104,7 @@ document.getElementById("cb-escribir").addEventListener("submit", (e) => {
   const texto = textoChat.value.trim();
   if (!texto) return;
   textoChat.value = "";
-  responderTexto(texto);
+  burbuja(texto, "yo");
+  const intencion = buscarIntencion(texto);
+  contestar(intencion ? intencion.respuesta : TEXTOS_CHAT.noEntiendo);
 });

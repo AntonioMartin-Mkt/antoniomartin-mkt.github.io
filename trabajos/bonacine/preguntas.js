@@ -1,51 +1,70 @@
 /* =========================================================
-   PREGUNTAS FRECUENTES
-   Salen de las intenciones del chatbot de BonaCine.
-   Cada bloque es una intención: "intencion" es su nombre interno,
-   "pregunta" y "respuesta" son lo que se ve en la web y en el chat,
-   y "claves" son las palabras con las que el chat la reconoce.
-   {cartelera} se sustituye por las películas de peliculas.js.
+   INTENCIONES DEL CHATBOT DE BONACINE
+   Alimentan el chat y las preguntas frecuentes. No usa IA: responde con
+   textos ya definidos cuando reconoce una palabra clave.
+
+   titulo:    nombre de la intención (y pregunta en el FAQ).
+   boton:     texto del botón del chat.
+   claves:    con * vale cualquier final («peli*» acepta «pelis»);
+              sin * tiene que coincidir entera («abre», «silla de ruedas»).
+   respuesta: lo que contesta. Para varias líneas, usa \n.
    ========================================================= */
 
 const PREGUNTAS = [
   {
-    grupo: "Cartelera y sesiones",
-    intenciones: [
-      { intencion: "ver_cartelera", claves: ["pelicula", "peli", "cartelera", "cartel", "ponen", "proyectais", "echan"], pregunta: "¿Qué películas hay en cartel?", respuesta: "Ahora proyectamos {cartelera}." },
-      { intencion: "consultar_horarios", claves: ["horario", "hora", "sesion", "dia", "abris", "abierto", "cuando"], pregunta: "¿Qué días hay sesiones?", respuesta: "De miércoles a domingo. Tienes los horarios en el calendario de esta página, en taquilla y en la cartelera que enviamos por correo." },
-      { intencion: "ver_disponibilidad", claves: ["butaca", "asiento", "sitio", "lleno", "llena", "libre", "ocupacion", "quedan"], pregunta: "¿Cómo sé si quedan butacas?", respuesta: "En el calendario de esta página. Verde es libre, amarillo es una reserva sin confirmar y rojo es ocupado." },
-      { intencion: "edad_minima", claves: ["menor", "nino", "edad", "hijo", "calificacion"], pregunta: "¿Pueden entrar menores?", respuesta: "Depende de la película, porque cada una tiene su calificación por edades. Consúltala antes de comprar tu entrada." }
-    ]
+    titulo: "Ubicación y contacto",
+    boton: "Ubicación y contacto",
+    claves: ["direccion*", "ubicacion*", "donde*", "calle*", "llegar*", "mapa*", "contacto*", "telefono*", "correo*", "redes*"],
+    respuesta: "📍 Estamos en la C/ Ermita, nº 36, Bonares (Huelva). 📞 969 50 65 80 · ✉️ Bonacines@gmail.com · 📱 Instagram @BonaCines, Facebook @Bonacines_Bonares y TikTok @Bonacines_"
   },
   {
-    grupo: "Entradas",
-    intenciones: [
-      { intencion: "comprar_entrada", claves: ["compr", "taquilla", "adquirir"], pregunta: "¿Dónde compro la entrada?", respuesta: "En la taquilla del cine, los días que hay sesión." },
-      { intencion: "consultar_precio", claves: ["precio", "cuesta", "cuanto", "vale", "pagar", "euro"], pregunta: "¿Cuánto cuesta la entrada?", respuesta: "Tienes el precio de cada sesión en taquilla, con IVA incluido. Con la tarjeta de residente pagas 2 € menos en cada entrada." },
-      { intencion: "reservar_butaca", claves: ["reserv"], pregunta: "¿Puedo reservar butaca?", respuesta: "Sí, en taquilla. En el calendario de esta página ves qué butacas quedan libres." },
-      { intencion: "cancelacion", claves: ["cancela", "devolucion", "devolv", "devuelv", "reembolso", "cambiar", "dinero"], pregunta: "¿Qué pasa si se cancela una sesión?", respuesta: "Te devolvemos el importe de la entrada o te la cambiamos por otra." }
-    ]
+    titulo: "Horario del cine",
+    boton: "Horario del cine",
+    claves: ["abierto*", "apertura*", "cierra*", "cerrado*", "lunes*", "martes*", "festivo*", "abris*", "abre"],
+    respuesta: "De miércoles a viernes abrimos de 17:00 a 24:00, y sábados y domingos de 14:00 a 24:00. Lunes y martes cerramos."
   },
   {
-    grupo: "Descuentos",
-    intenciones: [
-      { intencion: "conseguir_descuento", enlace: "tarjeta.html", textoEnlace: "Quiero mi tarjeta", claves: ["tarjeta", "residente", "descuento", "conseguir", "pedir", "apuntar", "oferta"], pregunta: "¿Cómo consigo el descuento?", respuesta: "Si vives en Bonares, pide gratis la tarjeta de residente desde el botón «Quiero mi tarjeta» y recógela en taquilla con un justificante de residencia." },
-      { intencion: "usar_descuento", claves: ["usar", "uso", "aplicar", "enseñar", "canjear"], pregunta: "¿Cómo uso el descuento?", respuesta: "Enseña tu tarjeta de residente en taquilla y te descontamos 2 € de cada entrada." },
-      { intencion: "caducidad_descuento", claves: ["caduca", "caducidad", "validez", "dura"], pregunta: "¿Cuándo caduca la tarjeta?", respuesta: "Vale durante todo el año natural." }
-    ]
+    titulo: "Cartelera",
+    boton: "Cartelera",
+    claves: ["cartelera*", "pelicula*", "peli*", "estreno*", "echan*", "dura*", "edad*", "niño*", "menor*"],
+    respuesta: "🎬 En cartelera: Interstellar (+12, 169 min), Torrente Presidente (+16, 103 min) y Scary Movie 2 (+16, 83 min). ¿Quieres ver los horarios?"
   },
   {
-    grupo: "El cine y tu cuenta",
-    intenciones: [
-      { intencion: "ubicacion", claves: ["donde", "direccion", "ubicacion", "ubicado", "llegar", "calle", "mapa", "teatro"], pregunta: "¿Dónde está BonaCine?", respuesta: "En el Teatro Cine Colón, Calle Cervantes, 2, 21830 Bonares (Huelva)." },
-      { intencion: "contactar", claves: ["contacto", "contactar", "telefono", "correo", "email", "hablar", "persona", "llamar"], pregunta: "¿Cómo hablo con el cine?", respuesta: "Pregúntanos en taquilla o escríbenos a Bonacine@gmail.com." },
-      { intencion: "correos_comerciales", claves: ["newsletter", "spam", "publicidad", "boletin"], pregunta: "¿Me vais a llenar el correo?", respuesta: "No. Solo te escribimos con la cartelera si te apuntas a la newsletter." },
-      { intencion: "darse_de_baja", claves: ["baja", "cancelar", "borrar", "eliminar"], pregunta: "¿Cómo me doy de baja?", respuesta: "Usa el enlace de baja de cualquier correo o escríbenos a Bonacine@gmail.com con el asunto «BAJA»." }
-    ]
+    titulo: "Horarios de sesiones",
+    boton: "Horarios de sesiones",
+    claves: ["sesion*", "pase*", "funcion*", "empieza*", "interstellar*", "torrente*", "scary*"],
+    // PENDIENTE: la captura corta el resto de esta respuesta. Falta completarla.
+    respuesta: "🎞️ Miércoles a viernes:\nSala 1, Interstellar: 17:15 / 20:45\nSala 2, Scary Movie 2: 17:00 / 20:40"
+  },
+  {
+    titulo: "Entradas y descuentos",
+    boton: "Entradas y descuentos",
+    claves: ["entrada*", "ticket*", "espectador*", "miercoles*", "descuento*", "oferta*", "promocion*"],
+    respuesta: "🎟️ La entrada cuesta 6 €. Los miércoles, Día del Espectador, solo 4 €."
+  },
+  {
+    titulo: "Palomitas",
+    boton: "Palomitas",
+    claves: ["palomita*", "topping*", "caramelo*", "chocolate*"],
+    respuesta: "🍿 Palomitas: pequeñas 5 €, medianas 8 € y grandes 10 €. Topping de caramelo o chocolate: +2 €."
+  },
+  {
+    titulo: "Alquilar una sala",
+    boton: "Alquilar una sala",
+    claves: ["alquil*", "reserva*", "privada*", "cumpleaños*", "evento*", "fiesta*", "grupo*", "butaca*"],
+    respuesta: "🎉 Puedes alquilar una sala completa (40 butacas) por 220 €, o 200 € los miércoles. Ideal para cumpleaños y grupos."
+  },
+  {
+    titulo: "Normas del cine",
+    boton: "Normas del cine",
+    claves: ["norma*", "devolución*", "reembolso*", "cancelar*", "traer*", "fuera*", "accesible*", "silla*", "movilidad*", "adaptado*", "silla de ruedas", "invalido", "no puede andar"],
+    respuesta: "📋 Normas de BonaCine: no se admiten devoluciones · no se permite comida de fuera · la cerveza solo se vende a mayores de 18 · el cine está adaptado para personas con movilidad reducida ♿"
+  },
+  {
+    titulo: "Comida y bebida",
+    boton: "Comida y bebida",
+    claves: ["comida*", "comer*", "carta*", "menu*", "vende*", "bebida*", "refresco*", "agua*", "cerveza*", "alcohol*", "beber*"],
+    // PENDIENTE: la captura corta el resto de esta respuesta. Falta completarla.
+    respuesta: "🍽️ En nuestro bar tienes:\n🍿 Palomitas: 5 / 8 / 10 € (+2 € con topping de caramelo o chocolate)\n🥤 Refrescos: 4 / 6 / 7 €"
   }
 ];
-
-/* Respuesta final de cada intención, con la cartelera actual ya puesta */
-const nombres = PELICULAS.map((p) => p.titulo);
-const cartelera = nombres.length > 1 ? `${nombres.slice(0, -1).join(", ")} y ${nombres[nombres.length - 1]}` : nombres[0];
-const respuesta = (i) => i.respuesta.replace("{cartelera}", cartelera);

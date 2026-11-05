@@ -3,15 +3,11 @@
 
 /* ---------- Preguntas frecuentes ---------- */
 
-document.getElementById("lista-preguntas").innerHTML = PREGUNTAS.map((g) => `
-  <div class="faq-grupo">
-    <h3>${esc(g.grupo)}</h3>
-    ${g.intenciones.map((i) => `
-      <details>
-        <summary>${esc(i.pregunta)}</summary>
-        <p>${esc(respuesta(i))}</p>
-      </details>`).join("")}
-  </div>`).join("");
+document.getElementById("lista-preguntas").innerHTML = PREGUNTAS.map((p) => `
+  <details>
+    <summary>${esc(p.titulo)}</summary>
+    <p>${esc(p.respuesta)}</p>
+  </details>`).join("");
 
 // Datos estructurados para que Google entienda las preguntas
 const datosFaq = document.createElement("script");
@@ -19,10 +15,10 @@ datosFaq.type = "application/ld+json";
 datosFaq.textContent = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "FAQPage",
-  mainEntity: PREGUNTAS.flatMap((g) => g.intenciones).map((i) => ({
+  mainEntity: PREGUNTAS.map((p) => ({
     "@type": "Question",
-    name: i.pregunta,
-    acceptedAnswer: { "@type": "Answer", text: respuesta(i) }
+    name: p.titulo,
+    acceptedAnswer: { "@type": "Answer", text: p.respuesta }
   }))
 });
 document.head.appendChild(datosFaq);
