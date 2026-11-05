@@ -33,8 +33,7 @@ const PREGUNTAS = [
     titulo: "Horarios de sesiones",
     boton: "Horarios de sesiones",
     claves: ["sesion*", "pase*", "funcion*", "empieza*", "interstellar*", "torrente*", "scary*"],
-    // PENDIENTE: la captura corta el resto de esta respuesta. Falta completarla.
-    respuesta: "🎞️ Miércoles a viernes:\nSala 1, Interstellar: 17:15 / 20:45\nSala 2, Scary Movie 2: 17:00 / 20:40"
+    respuesta: "🎞️ Miércoles a viernes:\nSala 1, Interstellar: 17:15 / 20:45\nSala 2, Scary Movie 2: 17:00 / 20:40\nSala 2, Torrente Presidente: 18:40 / 22:15\nSábados y domingos:\nSala 1, Interstellar: 14:30 / 17:45 / 21:00\nSala 2, Torrente Presidente: 14:00 / 17:45 / 21:30\nSala 2, Scary Movie 2: 16:00 / 19:45"
   },
   {
     titulo: "Entradas y descuentos",
@@ -64,7 +63,6 @@ const PREGUNTAS = [
     titulo: "Comida y bebida",
     boton: "Comida y bebida",
     claves: ["comida*", "comer*", "carta*", "menu*", "vende*", "bebida*", "refresco*", "agua*", "cerveza*", "alcohol*", "beber*"],
-    // PENDIENTE: la captura corta el resto de esta respuesta. Falta completarla.
-    respuesta: "🍽️ En nuestro bar tienes:\n🍿 Palomitas: 5 / 8 / 10 € (+2 € con topping de caramelo o chocolate)\n🥤 Refrescos: 4 / 6 / 7 €"
+    respuesta: "🍽️ En nuestro bar tienes:\n🍿 Palomitas: 5 / 8 / 10 € (+2 € con topping de caramelo o chocolate)\n🥤 Refrescos: 4 / 6 / 7 €\n🍺 Cerveza en vaso: 2 / 3 / 4 € · en bote: 3 / 4 / 6 € (solo mayores de 18)"
   }
 ];

@@ -29,18 +29,28 @@ const REDES = {
 
 /* SALAS Y SESIONES DEL CALENDARIO
    Cada sala: nombre, filas y butacas por fila.
-   Cada sesión se repite todos los días de apertura.
-   "pelicula" debe coincidir con un "titulo" de arriba. */
+   Cada sesión lleva sus días: "semana" (miércoles a viernes) o "finde" (sábado y domingo).
+   "pelicula" debe coincidir con un "titulo" de CARTELES. */
 const SALAS = [
   { nombre: "Sala 1", filas: 5, columnas: 8 },
   { nombre: "Sala 2", filas: 5, columnas: 8 }
 ];
 
 const SESIONES = [
-  { pelicula: "Torrente Presidente", sala: "Sala 2", hora: "17:30" },
-  { pelicula: "Interstellar", sala: "Sala 1", hora: "18:00" },
-  { pelicula: "Scary Movie 2", sala: "Sala 2", hora: "20:00" },
-  { pelicula: "Torrente Presidente", sala: "Sala 1", hora: "21:30" }
+  { dias: "semana", pelicula: "Interstellar", sala: "Sala 1", hora: "17:15" },
+  { dias: "semana", pelicula: "Interstellar", sala: "Sala 1", hora: "20:45" },
+  { dias: "semana", pelicula: "Scary Movie 2", sala: "Sala 2", hora: "17:00" },
+  { dias: "semana", pelicula: "Scary Movie 2", sala: "Sala 2", hora: "20:40" },
+  { dias: "semana", pelicula: "Torrente Presidente", sala: "Sala 2", hora: "18:40" },
+  { dias: "semana", pelicula: "Torrente Presidente", sala: "Sala 2", hora: "22:15" },
+  { dias: "finde", pelicula: "Interstellar", sala: "Sala 1", hora: "14:30" },
+  { dias: "finde", pelicula: "Interstellar", sala: "Sala 1", hora: "17:45" },
+  { dias: "finde", pelicula: "Interstellar", sala: "Sala 1", hora: "21:00" },
+  { dias: "finde", pelicula: "Torrente Presidente", sala: "Sala 2", hora: "14:00" },
+  { dias: "finde", pelicula: "Torrente Presidente", sala: "Sala 2", hora: "17:45" },
+  { dias: "finde", pelicula: "Torrente Presidente", sala: "Sala 2", hora: "21:30" },
+  { dias: "finde", pelicula: "Scary Movie 2", sala: "Sala 2", hora: "16:00" },
+  { dias: "finde", pelicula: "Scary Movie 2", sala: "Sala 2", hora: "19:45" }
 ];
 
 // Días con sesión: 0 domingo, 1 lunes... 6 sábado

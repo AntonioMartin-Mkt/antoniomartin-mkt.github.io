@@ -21,7 +21,10 @@ const yaPaso = (fecha, hora) => {
   inicio.setHours(h, m, 0, 0);
   return inicio <= new Date();
 };
-const sesionesDe = (fecha) => SESIONES.filter((s) => !yaPaso(fecha, s.hora));
+const tipoDia = (fecha) => ([0, 6].includes(fecha.getDay()) ? "finde" : "semana");
+const sesionesDe = (fecha) => SESIONES
+  .filter((s) => s.dias === tipoDia(fecha) && !yaPaso(fecha, s.hora))
+  .sort((a, b) => a.hora.localeCompare(b.hora));
 
 function proximosDias() {
   const dias = [];
