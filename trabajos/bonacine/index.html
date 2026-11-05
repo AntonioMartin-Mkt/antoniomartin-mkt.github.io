@@ -38,6 +38,7 @@
     </a>
     <nav class="menu" aria-label="Principal">
       <a href="#estrenos">Estrenos</a>
+      <a href="#sesiones">Sesiones</a>
       <a href="#preguntas">Preguntas</a>
     </nav>
     <a class="boton boton-3d" href="#registro">Quiero mi descuento</a>
@@ -71,6 +72,20 @@
       <h2 id="titulo-estrenos">También en nuestra pantalla</h2>
       <!-- Se rellena desde peliculas.js -->
       <ul class="lista" id="lista-estrenos"></ul>
+    </div>
+  </section>
+
+  <section class="calendario" id="sesiones" aria-labelledby="titulo-sesiones">
+    <div class="envoltura">
+      <h2 id="titulo-sesiones">Cómo van las salas</h2>
+      <p class="cal-intro">Elige día y sesión para ver qué butacas quedan libres.</p>
+      <!-- Se rellena desde calendario.js -->
+      <div class="cal-dias" id="cal-dias" role="group" aria-label="Elige un día"></div>
+      <div class="cal-cuerpo">
+        <ul class="cal-sesiones" id="cal-sesiones" aria-label="Sesiones del día"></ul>
+        <div class="cal-mapa" id="cal-mapa" aria-live="polite"></div>
+      </div>
+      <p class="cal-nota">Datos de ejemplo: la ocupación de las salas está simulada.</p>
     </div>
   </section>
 
@@ -129,7 +144,7 @@
     <div class="envoltura">
       <h2 id="titulo-donde">Tu cine está aquí al lado</h2>
       <div class="donde">
-        <p>Una sala de pueblo con los estrenos de la ciudad. Sin coche, sin aparcar y sin ir hasta Huelva.</p>
+        <p>Un cine de pueblo con los estrenos de la ciudad. Sin coche, sin aparcar y sin ir hasta Huelva.</p>
         <p class="lugar"><svg class="icono" aria-hidden="true"><use href="#i-lugar"/></svg>Bonares, Huelva. Sesiones de miércoles a domingo.</p>
       </div>
     </div>
@@ -208,5 +223,6 @@
 <script src="peliculas.js"></script>
 <script src="preguntas.js"></script>
 <script src="main.js"></script>
+<script src="calendario.js"></script>
 </body>
 </html>

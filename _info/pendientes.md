@@ -19,6 +19,7 @@
 - [ ] Cruzcampo: añadir `trabajos/cruzcampo/portada.jpg` y su bloque en `proyectos.js`.
 - [ ] BonaCine: conectar el registro (Codigo.gs + SHEETS_URL en main.js). Sin eso funciona en modo demostración.
 - [ ] BonaCine: sustituir `preguntas.js` por las intenciones reales del chatbot (hoja de datos).
+- [ ] BonaCine: el calendario usa ocupación simulada; conectar `estadoButacas()` en calendario.js si hay reservas reales.
 - [ ] BonaCine: pegar los enlaces de redes en `REDES` (peliculas.js) si se crean perfiles.
 - [ ] BonaCine: sustituir el cartel de Torrente por uno de más resolución (el actual mide 399 × 501).
 

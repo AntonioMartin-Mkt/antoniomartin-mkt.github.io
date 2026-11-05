@@ -11,7 +11,8 @@ const PREGUNTAS = [
     grupo: "Cartelera y sesiones",
     intenciones: [
       { intencion: "ver_cartelera", pregunta: "¿Qué películas hay en cartel?", respuesta: "Ahora proyectamos {cartelera}." },
-      { intencion: "consultar_horarios", pregunta: "¿Qué días hay sesiones?", respuesta: "De miércoles a domingo. Los horarios de cada película están en taquilla y en la cartelera que enviamos por correo." },
+      { intencion: "consultar_horarios", pregunta: "¿Qué días hay sesiones?", respuesta: "De miércoles a domingo. Tienes los horarios en el calendario de esta página, en taquilla y en la cartelera que enviamos por correo." },
+      { intencion: "ver_disponibilidad", pregunta: "¿Cómo sé si quedan butacas?", respuesta: "En el calendario de esta página. Verde es libre, amarillo es una reserva sin confirmar y rojo es ocupado." },
       { intencion: "edad_minima", pregunta: "¿Pueden entrar menores?", respuesta: "Depende de la película, porque cada una tiene su calificación por edades. Consúltala antes de comprar tu entrada." }
     ]
   },
