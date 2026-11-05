@@ -164,9 +164,9 @@ h2 {
 .cinta img { width: 100%; height: auto; aspect-ratio: 2 / 3; object-fit: cover; border-radius: var(--radio); }
 @media (prefers-reduced-motion: no-preference) {
   /* La cinta lleva la lista dos veces: al subir la mitad, el bucle cierra sin salto */
-  .columna:nth-child(odd) .cinta { animation: subir 42s linear infinite; }
-  .columna:nth-child(2) .cinta { animation: bajar 36s linear infinite; }
-  .columna:nth-child(3) .cinta { animation-duration: 50s; }
+  .columna:nth-child(odd) .cinta { animation: subir 84s linear infinite; }
+  .columna:nth-child(2) .cinta { animation: bajar 72s linear infinite; }
+  .columna:nth-child(3) .cinta { animation-duration: 100s; }
   .carrusel-vertical:hover .cinta { animation-play-state: paused; }
   @keyframes subir { to { transform: translateY(-50%); } }
   @keyframes bajar { from { transform: translateY(-50%); } }

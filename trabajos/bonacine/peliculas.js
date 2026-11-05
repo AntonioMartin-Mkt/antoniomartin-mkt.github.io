@@ -15,7 +15,16 @@ const CARTELES = [
   { titulo: "Cisne negro", imagen: "img/carteles/cisne-negro.jpg" },
   { titulo: "Breaking Bad", imagen: "img/carteles/breaking-bad.jpg" },
   { titulo: "El caballero oscuro", imagen: "img/carteles/el-caballero-oscuro.jpg" },
-  { titulo: "Tenet", imagen: "img/carteles/tenet.jpg" }
+  { titulo: "Tenet", imagen: "img/carteles/tenet.jpg" },
+  { titulo: "Precious", imagen: "img/carteles/precious.jpg" },
+  { titulo: "Rocky", imagen: "img/carteles/rocky.jpg" },
+  { titulo: "El señor de la guerra", imagen: "img/carteles/el-senor-de-la-guerra.jpg" },
+  { titulo: "La bola negra", imagen: "img/carteles/la-bola-negra.jpg" },
+  { titulo: "Pulp Fiction", imagen: "img/carteles/pulp-fiction.jpg" },
+  { titulo: "El club de la lucha", imagen: "img/carteles/el-club-de-la-lucha.jpg" },
+  { titulo: "Voices Unheard", imagen: "img/carteles/voices-unheard.jpg" },
+  { titulo: "Shrek", imagen: "img/carteles/shrek.jpg" },
+  { titulo: "El corredor del laberinto: La cura mortal", imagen: "img/carteles/el-corredor-del-laberinto.jpg" }
 ];
 
 /* REDES DEL CINE: pega aquí cada enlace. Mientras esté vacío, el icono
