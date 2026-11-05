@@ -16,7 +16,7 @@ h1 {
 .tarjeta-visual {
   position: relative; overflow: hidden; container-type: inline-size;
   width: min(100%, 420px); aspect-ratio: 1.586; margin-top: clamp(24px, 4vh, 36px);
-  border-radius: 14px; background: var(--blanco); color: var(--negro);
+  border-radius: 14px; background: var(--fondo); color: var(--negro);
   box-shadow: 0 22px 44px -16px rgb(0 0 0 / .7);
 }
 .tv-cabeza { position: absolute; top: 6cqw; left: 6cqw; display: flex; align-items: center; gap: 2.5cqw; }
@@ -32,7 +32,7 @@ h1 {
 .tv-importe { position: absolute; left: 3.5cqw; bottom: 3cqw; font-size: 11cqw; font-weight: 900; font-stretch: 62%; line-height: 1; }
 
 /* Formulario */
-.panel-form { background: var(--blanco); color: var(--negro); border-radius: 8px; padding: clamp(22px, 3vw, 32px); }
+.panel-form { background: var(--fondo); color: var(--negro); border-radius: 8px; padding: clamp(22px, 3vw, 32px); }
 .panel-form h2 { margin-bottom: 16px; font-size: clamp(2rem, 3.4vw, 2.75rem); }
 .panel-form .campo { margin-bottom: 14px; }
 .panel-form .boton { width: 100%; margin-top: 8px; }
@@ -49,7 +49,7 @@ h1 {
 .resena { display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 18px; padding-bottom: 22px; border-bottom: 1px solid var(--linea); }
 .resena img { width: 100%; height: auto; aspect-ratio: 2 / 3; object-fit: cover; border-radius: var(--radio); }
 .resena h3 { font-size: 1.3125rem; font-weight: 800; font-stretch: 85%; line-height: 1.15; }
-.nota { display: block; margin: 4px 0 6px; color: var(--rojo); font-size: 1.125rem; letter-spacing: .08em; line-height: 1; }
+.nota { display: block; margin: 4px 0 6px; color: var(--rojo-oscuro); font-size: 1.125rem; letter-spacing: .08em; line-height: 1; }
 .nota-vacia { color: var(--linea); }
 .resena-autor { margin-top: 8px; color: var(--gris); font-size: .875rem; font-weight: 600; }
 
@@ -58,7 +58,7 @@ h1 {
 .form-resena .campo { margin-bottom: 14px; }
 .campo select, .campo textarea {
   width: 100%; padding: 12px 14px; border: 2px solid var(--negro); border-radius: var(--radio);
-  background: var(--blanco); color: var(--negro); font: 400 1.0625rem/1.4 "Archivo", Arial, sans-serif;
+  background: var(--fondo); color: var(--negro); font: 400 1.0625rem/1.4 "Archivo", Arial, sans-serif;
 }
 .campo select { min-height: 52px; }
 .campo textarea { resize: vertical; }
@@ -66,8 +66,8 @@ h1 {
 .estrellas { margin: 0 0 14px; padding: 0; border: 0; }
 .estrellas legend { padding: 0; margin-bottom: 4px; font-weight: 700; }
 .estrellas-fila { display: flex; gap: 2px; }
-.estrellas-fila label { position: relative; display: grid; place-items: center; width: 44px; height: 44px; color: #8E8E96; font-size: 1.875rem; cursor: pointer; }
-.estrellas-fila label.activa { color: var(--rojo); }
+.estrellas-fila label { position: relative; display: grid; place-items: center; width: 44px; height: 44px; color: rgb(17 17 19 / .38); font-size: 1.875rem; cursor: pointer; }
+.estrellas-fila label.activa { color: var(--rojo-oscuro); }
 .estrellas-fila input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
 .estrellas-fila label:has(input:focus-visible) { outline: 3px solid var(--rojo); outline-offset: 1px; border-radius: var(--radio); }
 .form-resena .boton { width: 100%; margin-top: 6px; }

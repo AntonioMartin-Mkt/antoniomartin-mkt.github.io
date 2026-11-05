@@ -36,10 +36,10 @@ const PREGUNTAS = [
   {
     grupo: "El cine y tu cuenta",
     intenciones: [
-      { intencion: "ubicacion", pregunta: "¿Dónde está BonaCine?", respuesta: "En Calle Ejemplo, 1, 21830 Bonares (Huelva)." },
-      { intencion: "contactar", pregunta: "¿Cómo hablo con el cine?", respuesta: "Pregúntanos en taquilla o escríbenos a hola@bonacine.example." },
+      { intencion: "ubicacion", pregunta: "¿Dónde está BonaCine?", respuesta: "En el Teatro Cine Colón, Calle Cervantes, 2, 21830 Bonares (Huelva)." },
+      { intencion: "contactar", pregunta: "¿Cómo hablo con el cine?", respuesta: "Pregúntanos en taquilla o escríbenos a Bonacine@gmail.com." },
       { intencion: "correos_comerciales", pregunta: "¿Me vais a llenar el correo?", respuesta: "No. Solo te escribimos con la cartelera si marcas esa casilla. El descuento es tuyo la marques o no." },
-      { intencion: "darse_de_baja", pregunta: "¿Cómo me doy de baja?", respuesta: "Usa el enlace de baja de cualquier correo o escríbenos a hola@bonacine.example con el asunto «BAJA»." }
+      { intencion: "darse_de_baja", pregunta: "¿Cómo me doy de baja?", respuesta: "Usa el enlace de baja de cualquier correo o escríbenos a Bonacine@gmail.com con el asunto «BAJA»." }
     ]
   }
 ];
