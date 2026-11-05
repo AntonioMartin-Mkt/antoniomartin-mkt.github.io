@@ -1,99 +1,28 @@
 /* =========================================================
-   CARTELERA DE BONACINE
-   Es el único archivo que hay que tocar para cambiar películas.
-   Copia un bloque { ... }, cambia los textos y guarda.
+   DATOS DE BONACINE
+   Es el único archivo que hay que tocar para cambiar la cartelera.
 
-   titulo:    nombre de la película.
-   imagen:    cartel dentro de la carpeta img/.
-   ancho/alto: tamaño del cartel en píxeles, para que no salte al cargar.
-   ano:       año de la película.
-   genero:    uno o dos géneros.
-   direccion: quien dirige.
-   sinopsis:  máximo 25 palabras.
-   principal: true en la película de la portada (solo una).
+   CARTELES: pósteres del carrusel vertical. Se reparten solos en las
+   3 columnas. "titulo" no se ve en la web: describe la imagen.
    ========================================================= */
 
-const PELICULAS = [
-  {
-    titulo: "Interstellar",
-    imagen: "img/interstellar.jpg",
-    ancho: 600, alto: 900,
-    ano: 2014,
-    genero: "Ciencia ficción",
-    direccion: "Christopher Nolan",
-    sinopsis: "Un grupo de exploradores cruza un agujero de gusano para buscar un nuevo hogar a la humanidad.",
-    principal: true
-  },
-  {
-    titulo: "Torrente Presidente",
-    imagen: "img/torrente-presidente.jpg",
-    ancho: 399, alto: 501,
-    ano: 2026,
-    genero: "Comedia",
-    direccion: "Santiago Segura",
-    sinopsis: "Sexta entrega de la saga. El brazo tonto de la ley vuelve, y esta vez apunta a la presidencia."
-  },
-  {
-    titulo: "Scary Movie 2",
-    imagen: "img/scary-movie-2.jpg",
-    ancho: 705, alto: 1000,
-    ano: 2001,
-    genero: "Comedia, parodia de terror",
-    direccion: "Keenen Ivory Wayans",
-    sinopsis: "Un profesor excéntrico reúne a Cindy y a sus amigos para un supuesto experimento. Nada sale como estaba previsto."
-  }
+const CARTELES = [
+  { titulo: "Interstellar", imagen: "img/carteles/interstellar.jpg" },
+  { titulo: "Torrente Presidente", imagen: "img/carteles/torrente-presidente.jpg" },
+  { titulo: "The Last: Naruto the Movie", imagen: "img/carteles/naruto-the-last.jpg" },
+  { titulo: "Scary Movie 2", imagen: "img/carteles/scary-movie-2.jpg" },
+  { titulo: "El sexto sentido", imagen: "img/carteles/el-sexto-sentido.jpg" },
+  { titulo: "Cisne negro", imagen: "img/carteles/cisne-negro.jpg" },
+  { titulo: "Breaking Bad", imagen: "img/carteles/breaking-bad.jpg" },
+  { titulo: "El caballero oscuro", imagen: "img/carteles/el-caballero-oscuro.jpg" },
+  { titulo: "Tenet", imagen: "img/carteles/tenet.jpg" }
 ];
 
-/* PRÓXIMAS PELÍCULAS DEL CARRUSEL
-   titulo: nombre completo. corto: texto grande si aún no hay cartel.
-   imagen: ruta del cartel, por ejemplo "img/cisne-negro.jpg".
-   Mientras esté vacía, sale un cartel con el título en los colores del cine. */
-const PROXIMAS = [
-  {
-    titulo: "The Last: Naruto the Movie",
-    corto: "Naruto The Last",
-    imagen: "",
-    ano: 2014,
-    genero: "Animación, acción",
-    direccion: "Tsuneo Kobayashi",
-    sinopsis: "La Luna se acerca a la Tierra y Naruto debe rescatar a Hanabi mientras descubre lo que siente por Hinata."
-  },
-  {
-    titulo: "Guardianes de la noche: Kimetsu no Yaiba - La fortaleza infinita",
-    corto: "Demon Slayer",
-    imagen: "",
-    ano: 2025,
-    genero: "Animación, acción",
-    direccion: "Haruo Sotozaki",
-    sinopsis: "Tanjiro y los cazadores de demonios caen en la fortaleza de Muzan. Empieza la batalla final."
-  },
-  {
-    titulo: "El sexto sentido",
-    corto: "El sexto sentido",
-    imagen: "",
-    ano: 1999,
-    genero: "Suspense, drama",
-    direccion: "M. Night Shyamalan",
-    sinopsis: "Un psicólogo infantil intenta ayudar a un niño que asegura ver a personas muertas."
-  },
-  {
-    titulo: "Cisne negro",
-    corto: "Cisne negro",
-    imagen: "",
-    ano: 2010,
-    genero: "Drama, suspense",
-    direccion: "Darren Aronofsky",
-    sinopsis: "Una bailarina obsesionada con la perfección se rompe por dentro al preparar El lago de los cisnes."
-  },
-  {
-    titulo: "A todo gas",
-    corto: "A todo gas",
-    imagen: "",
-    ano: 2001,
-    genero: "Acción",
-    direccion: "Rob Cohen",
-    sinopsis: "Un policía se infiltra en las carreras ilegales de Los Ángeles y acaba dudando de qué lado está."
-  }
+/* PELÍCULAS EN CARTEL: las que nombra la pregunta «¿Qué películas hay?». */
+const PELICULAS = [
+  { titulo: "Interstellar" },
+  { titulo: "Torrente Presidente" },
+  { titulo: "Scary Movie 2" }
 ];
 
 /* REDES DEL CINE: pega aquí cada enlace. Mientras esté vacío, el icono

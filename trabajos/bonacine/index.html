@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>BonaCine | Estrenos en Bonares, Huelva</title>
-<meta name="description" content="El taquillazo llega a Bonares. Regístrate gratis en BonaCine y llévate 2 € de descuento en tu primera entrada.">
+<meta name="description" content="El Peliculón llega a Bonares. Regístrate gratis en BonaCine y llévate 2 € de descuento en tu primera entrada.">
 <meta name="theme-color" content="#E11B3D">
 <meta property="og:title" content="BonaCine | Estrenos en Bonares, Huelva">
 <meta property="og:description" content="Regístrate gratis y llévate 2 € de descuento en tu primera entrada.">
@@ -12,6 +12,7 @@
 <meta property="og:image" content="portada.jpg">
 <link rel="icon" href="img/favicon.png">
 <link rel="preload" href="fuentes/archivo-variable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="img/interstellar-horizontal.jpg" as="image">
 <link rel="stylesheet" href="estilos.css">
 </head>
 <body>
@@ -32,32 +33,25 @@
 
 <header class="cabecera">
   <div class="envoltura">
-    <a class="marca" href="#portada" aria-label="BonaCine, inicio">
-      <img src="img/logo-bonacine.png" alt="" width="338" height="400">
-      <span>BonaCine</span>
-    </a>
-    <nav class="menu" aria-label="Principal">
-      <a href="#proximamente">Próximamente</a>
-      <a href="#sesiones">Sesiones</a>
-      <a href="#preguntas">Preguntas</a>
-    </nav>
+    <div class="cabecera-izq">
+      <a class="logo" href="#portada" aria-label="Volver al inicio"><img src="img/logo-bonacine.png" alt="" width="338" height="400"></a>
+      <nav class="menu" aria-label="Principal">
+        <a href="#sesiones">Sesiones</a>
+        <a href="#preguntas">Preguntas</a>
+      </nav>
+    </div>
+    <a class="nombre" href="#portada">BonaCine</a>
     <a class="boton boton-3d" href="#registro">Quiero mi descuento</a>
   </div>
 </header>
 
 <main id="contenido">
 
+  <div class="escenario">
+  <!-- El Peliculón: para cambiarlo, sustituye la foto horizontal y su texto alternativo -->
   <section class="portada" id="portada">
-    <div class="envoltura">
-      <div class="texto">
-        <h1 class="entra"><span>El</span> <span>taquillazo</span></h1>
-        <p class="entradilla entra" style="--i:1">Regístrate gratis y llévate 2 € de descuento en tu primera entrada de BonaCine.</p>
-      </div>
-      <figure class="heroe-cartel entra" style="--i:2">
-        <div id="cartel-heroe"></div>
-        <figcaption id="pie-heroe"></figcaption>
-      </figure>
-    </div>
+    <h1 class="oculto">El Peliculón de BonaCine: Interstellar</h1>
+    <img class="peliculon" src="img/interstellar-horizontal.jpg" alt="Cartel horizontal de Interstellar: tres astronautas sobre un planeta helado" width="1280" height="591" fetchpriority="high">
   </section>
 
   <section class="franja" id="franja" aria-label="Descuento">
@@ -67,19 +61,12 @@
     </div>
   </section>
 
-  <section class="proximas" id="proximamente" aria-labelledby="titulo-proximas">
-    <div class="envoltura">
-      <div class="prox-cabeza">
-        <h2 id="titulo-proximas">Próximamente en BonaCine</h2>
-        <div class="prox-flechas">
-          <button class="flecha flecha-atras" id="prox-atras" type="button" aria-label="Películas anteriores" disabled><svg class="icono" aria-hidden="true"><use href="#i-flecha"/></svg></button>
-          <button class="flecha" id="prox-adelante" type="button" aria-label="Más películas"><svg class="icono" aria-hidden="true"><use href="#i-flecha"/></svg></button>
-        </div>
-      </div>
-      <!-- Se rellena desde peliculas.js -->
-      <ul class="carrusel" id="lista-proximas" tabindex="0" aria-label="Próximas películas"></ul>
-    </div>
+  <section class="carteles" id="carteles" aria-label="Carteles de películas">
+    <!-- Se rellena desde peliculas.js -->
+    <div class="carrusel-vertical" id="carrusel-carteles"></div>
   </section>
+
+  </div>
 
   <section class="calendario" id="sesiones" aria-labelledby="titulo-sesiones">
     <div class="envoltura">

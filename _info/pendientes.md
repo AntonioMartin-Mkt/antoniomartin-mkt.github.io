@@ -21,7 +21,6 @@
 - [ ] BonaCine: sustituir `preguntas.js` por las intenciones reales del chatbot (hoja de datos).
 - [ ] BonaCine: el calendario usa ocupación simulada; conectar `estadoButacas()` en calendario.js si hay reservas reales.
 - [ ] BonaCine: pegar los enlaces de redes en `REDES` (peliculas.js) si se crean perfiles.
-- [ ] BonaCine: añadir los 5 carteles reales del carrusel (campo `imagen` de PROXIMAS en peliculas.js).
 
 ## Repositorio
 - [ ] Revisar y fusionar o borrar las ramas sueltas `claude/…`.
