@@ -1,7 +1,7 @@
 /* BonaCine: chatbot, compartido por la web y la landing.
    Para cambiarlo, sustituye CHATBOT_URL por la URL de tu aplicación web. */
 
-const CHATBOT_URL = "https://script.google.com/a/lassalinassf.es/macros/s/AKfycbxti7MHnhAAF6JPsLhgpGILJUq_7toml1NE-fr_T-tQK8mOMbvl4OwqqIeE59CT_NPe/exec?vista=chat";
+const CHATBOT_URL = "https://script.google.com/macros/s/AKfycbxti7MHnhAAF6JPsLhgpGILJUq_7toml1NE-fr_T-tQK8mOMbvl4OwqqIeE59CT_NPe/exec?vista=chat";
 
 const botonChat = document.createElement("button");
 botonChat.id = "cb-abrir";
