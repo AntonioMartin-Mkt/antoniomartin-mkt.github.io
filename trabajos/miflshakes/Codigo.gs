@@ -5,7 +5,7 @@
  * Recibe dos tipos de evento desde la landing (index.html):
  *  - "registro": nombre, email y consentimientos  → pestaña "Registros"
  *  - "victoria": email, día superado y puntos     → pestaña "Victorias"
- * Cuando un email suma los 5 días, le envía su código 2x1.
+ * Cuando un email suma los 5 días, le envía su código del 25% de descuento.
  *
  * CÓMO CONECTARLO
  * 1. Crea una hoja de Google Sheets y copia su ID (lo que va entre /d/ y /edit en la URL).
@@ -52,7 +52,7 @@ function doPost(e) {
   }
 }
 
-/** Comprueba que tiene los 5 días y envía el código 2x1 */
+/** Comprueba que tiene los 5 días y envía el código del 25% */
 function enviarCodigo_(email) {
   const filas = hoja_('Victorias', ['Fecha', 'Email', 'Día', 'Puntos']).getDataRange().getValues().slice(1);
   const dias = new Set(filas.filter(f => f[1] === email).map(f => f[2]));
@@ -60,9 +60,9 @@ function enviarCodigo_(email) {
   const codigo = 'SHAKE-' + Utilities.getUuid().slice(0, 5).toUpperCase();
   MailApp.sendEmail({
     to: email,
-    subject: '🥤 ¡Has completado la Shake Week! Aquí tienes tu 2x1',
+    subject: '🥤 ¡Has completado la Shake Week! Aquí tienes tu 25% de descuento',
     htmlBody: '<p>¡Lo has conseguido! Has vencido al Alter Ego los 5 días seguidos.</p>' +
-              '<p>Tu código 2x1 en batidos: <b style="font-size:20px">' + codigo + '</b></p>' +
+              '<p>Tu código del 25% de descuento en cualquier producto: <b style="font-size:20px">' + codigo + '</b></p>' +
               '<p>Enséñalo en caja en cualquier tienda ' + CONFIG.MARCA + '. Válido 15 días.</p>'
   });
 }

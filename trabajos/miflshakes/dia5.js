@@ -81,10 +81,10 @@
     return {
       ia: esIA, nombre: esIA ? "ALTER EGO" : "MIFLSHAKES", x: esIA ? 460 : 180, y: SUELO, vx: 0, vy: 0, lado: esIA ? -1 : 1,
       hp: 100, hpVis: 100, meter: 0, estado: "quieto", t: 0, golpe: null, stun: 0, inv: 0, flash: 0, agachado: false,
-      bloqueando: false, golpeYaDado: false, combo: 0, comboMax: 0, decision: 0, plan: null, anim: Math.random() * 5, enAire: false
+      bloqueando: false, golpeYaDado: false, estela: [], fantasmas: [], ultFantasma: 0, combo: 0, comboMax: 0, decision: 0, plan: null, anim: Math.random() * 5, enAire: false
     };
   }
-  let jug, ia, proys = [], parts = [], chispas = [], textos = [], banner = null, rayo = null;
+  let jug, ia, proys = [], parts = [], chispas = [], textos = [], ondas = [], banner = null, rayo = null;
   let estado = "cargando", reloj = 0, tiempo = TIEMPO_RONDA, ronda = 1, victorias = [0, 0], hitstop = 0, temblor = 0, flash = 0, oscuro = 0;
   let stats = { perfectos: 0, comboMax: 0, golpes: 0, tiempoTotal: 0 }, transicion = 0;
   let post;
@@ -192,6 +192,7 @@
       const chip = g.tipo === "proyectil" || g.tipo === "super" ? g.dmg * 0.18 * multDif : 0;
       op.hp = Math.max(1, op.hp - chip); op.estado = "bloqueo"; op.stun = 0.18; op.vx = f.lado * g.emp * 0.6 || f.lado * 120;
       hitstop = 0.05; sfx.bloqueo(); chispas.push({ x: op.x - f.lado * 22, y: yImpacto, t: 0.18, c: PAL.cian, bloqueo: true });
+      ondas.push({ x: op.x - f.lado * 22, y: yImpacto, t: reloj, dur: 0.2, r0: 6, r1: 26, g: 4, c: PAL.cian });
       f.meter = Math.min(100, f.meter + 3); op.meter = Math.min(100, op.meter + 4);
       return;
     }
@@ -206,7 +207,10 @@
     const fuerte = g.derriba || dmg >= 9;
     hitstop = fuerte ? 0.13 : 0.07; temblor = fuerte ? 8 : 4;
     fuerte ? sfx.fuerte() : sfx.golpe(dmg / 10);
-    chispas.push({ x: op.x - f.lado * 18, y: g.tipo === "barrida" ? op.y - 12 : yImpacto, t: 0.2, c: f.ia ? PAL.magenta : PAL.oro });
+    const yGolpe = g.tipo === "barrida" ? op.y - 12 : yImpacto;
+    chispas.push({ x: op.x - f.lado * 18, y: yGolpe, t: 0.2, c: f.ia ? PAL.magenta : PAL.oro });
+    ondas.push({ x: op.x - f.lado * 18, y: yGolpe, t: reloj, dur: fuerte ? 0.32 : 0.22, r0: 8, r1: fuerte ? 64 : 38, g: fuerte ? 8 : 5, c: f.ia ? PAL.magenta : PAL.oro, rayos: fuerte, giro: Math.random() });
+    if (fuerte) { flash = Math.max(flash, 0.05); if (enSuelo(op)) particulas(op.x, SUELO - 2, [PAL.crema, "#ffb8a8"], 8, 120); }
     particulas(op.x - f.lado * 14, yImpacto, f.ia ? [PAL.cian, PAL.magenta, PAL.blanco] : [PAL.rosa, PAL.blanco, PAL.rojo], 10, 220);
     if (op.hp <= 0) { op.estado = "ko"; op.vy = -420; op.vx = f.lado * 260; op.agachado = false; noquear(f, op); return; }
     if (g.derriba || !enSuelo(op)) { op.estado = "caido"; op.stun = 1.0; op.vy = -380; op.agachado = false; op.golpe = null; }
@@ -289,7 +293,7 @@
   }
   function empezarRonda() {
     jug = nuevoLuchador(false); ia = nuevoLuchador(true);
-    proys = []; parts = []; chispas = []; textos = []; rayo = null; tiempo = TIEMPO_RONDA;
+    proys = []; parts = []; chispas = []; textos = []; ondas = []; rayo = null; tiempo = TIEMPO_RONDA;
     estado = "presentacion"; transicion = 0; ocultarMenu();
     banner = { texto: ronda === 3 ? "RONDA FINAL" : `RONDA ${ronda}`, t: 0, dur: 1.3, alAcabar: () => { banner = { texto: "¡LUCHA!", t: 0, dur: 0.9, color: PAL.rosa }; sfx.anuncio(); estado = "pelea"; } };
     sfx.anuncio();
@@ -366,20 +370,18 @@
   }
 
   /* ---------------- Dibujo ---------------- */
-  /* ---------------- Escenario: cima de la Montaña Roja ----------------
-     El cielo se pinta en perspectiva (techo de nubes y mar de nubes, estilo
-     «modo 7») en un búfer a media resolución. La cámara sigue a los dos
-     luchadores, así que el cielo, las cordilleras y las rocas del primer
-     plano se desplazan a distinta velocidad (paralaje) y dan sensación de 3D. */
+  /* ---------------- Escenario: roca en mitad de un mar rojo revuelto ----------------
+     Estilo de grabado japonés: cielo de tormenta en perspectiva (techo de nubes
+     «modo 7»), franjas de niebla, mar rojo en perspectiva y olas en tres
+     profundidades con crestas de espuma en forma de garra. La cámara sigue a los
+     luchadores y cada capa se mueve a distinta velocidad (paralaje). */
   const ESC = (() => {
     const BW = 320, BH = 180, TX = 256;
     const buf = document.createElement("canvas"); buf.width = BW; buf.height = BH;
     const bx = buf.getContext("2d"), img = bx.createImageData(BW, BH), px = new Uint32Array(img.data.buffer);
-    // textura de nubes que se repite (ruido fractal con bordes enlazados)
     const tex = new Float32Array(TX * TX);
     const semilla = (x, y, f) => { let h = (x % f) * 374761393 + (y % f) * 668265263 + f * 982451653; h = (h ^ (h >>> 13)) * 1274126177; return ((h ^ (h >>> 16)) >>> 0) / 4294967295; };
-    for (let o = 0, amp = 1, f = 4, tot = 0; o < 5; o++, amp *= 0.5, f *= 2) {
-      tot += amp;
+    for (let o = 0, amp = 1, f = 4; o < 5; o++, amp *= 0.5, f *= 2) {
       for (let y = 0; y < TX; y++) for (let x = 0; x < TX; x++) {
         const gx = x / TX * f, gy = y / TX * f, x0 = Math.floor(gx), y0 = Math.floor(gy), fx = gx - x0, fy = gy - y0;
         const sx = fx * fx * (3 - 2 * fx), sy = fy * fy * (3 - 2 * fy);
@@ -391,70 +393,68 @@
     const rgb = h => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
     const mezcla = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
     const pack = c => (255 << 24) | (Math.round(c[2]) << 16) | (Math.round(c[1]) << 8) | Math.round(c[0]);
-    // cielo de atardecer en altura: índigo arriba, violeta, oro en el horizonte
-    const CIELO = [[0, rgb("#120d38")], [0.45, rgb("#3b2a85")], [0.75, rgb("#9b4f9e")], [0.92, rgb("#ff9a6a")], [1, rgb("#ffe2a8")]];
+    // cielo de tormenta: añil profundo arriba, crema de papel en el horizonte
+    const CIELO = [[0, rgb("#0f1430")], [0.5, rgb("#26305a")], [0.8, rgb("#6a5878")], [1, rgb("#e9d6b4")]];
     const colorCielo = t => { for (let i = 1; i < CIELO.length; i++) if (t <= CIELO[i][0]) return mezcla(CIELO[i - 1][1], CIELO[i][1], (t - CIELO[i - 1][0]) / (CIELO[i][0] - CIELO[i - 1][0])); return CIELO[CIELO.length - 1][1]; };
-    const NUBE_LUZ = rgb("#ffd6c2"), NUBE_SOMBRA = rgb("#6b3f8f"), MAR_LUZ = rgb("#fff1e0"), MAR_SOMBRA = rgb("#b07ab8"), NIEBLA = rgb("#ffd9a8");
+    const NUBE_LUZ = rgb("#efe0c4"), NUBE_SOMBRA = rgb("#3a3a64"), RELAMPAGO = rgb("#fff8e6");
+    const MAR_HONDO = rgb("#4a0610"), MAR = rgb("#a3121f"), MAR_LUZ = rgb("#e0303a"), ESPUMA = rgb("#f6ead2"), BRUMA = rgb("#d9b8a6");
 
-    // cordilleras: tres capas, cuanto más lejos, más claras por la neblina
-    function perfil(seed, ancho, base, alto, picos) {
-      const p = []; let r = seed;
-      const rnd = () => (r = (r * 16807) % 2147483647) / 2147483647;
-      const ctrl = []; for (let i = 0; i < picos; i++) ctrl.push(base - alto * (0.35 + rnd() * 0.65));
-      for (let x = 0; x < ancho; x += 4) {
-        const t = x / ancho * picos, i = Math.floor(t), f = t - i, a = ctrl[i % picos], b = ctrl[(i + 1) % picos];
-        const tri = 1 - Math.abs(f * 2 - 1); // laderas rectas con un pico en medio
-        const sf = f * f * (3 - 2 * f); p.push(Math.round(a + (b - a) * sf - tri * alto * 0.45 + (rnd() - 0.5) * 6));
-      }
-      return p;
-    }
-    const CAPAS = [
-      { p: perfil(11, 1280, 228, 58, 9), vel: 0.14, col: "#d98a9b", nieve: "#ffe9e4", base: 226 },
-      { p: perfil(29, 1280, 262, 74, 6), vel: 0.32, col: "#a8394f", nieve: "#ffd0cf", base: 258 },
-      { p: perfil(53, 1280, 300, 64, 5), vel: 0.6, col: "#6f1a2c", nieve: null, base: 296 }
+    // olas: [nivel, amplitud, longitud, velocidad, paralaje, color, color de línea, espuma]
+    const OLAS = [
+      { y: 236, a: 12, l: 44, v: 1.0, p: 0.18, col: "#7a0a17", lin: "#5a0711", esp: "#e6d3b8", garra: 5 },
+      { y: 266, a: 22, l: 80, v: 0.8, p: 0.38, col: "#9e1220", lin: "#6f0a16", esp: "#f3e4cb", garra: 8 },
+      { y: 304, a: 36, l: 128, v: 0.6, p: 0.7, col: "#b8182a", lin: "#7f0c19", esp: "#fbf1de", garra: 12 }
     ];
-    // rocas del primer plano (delante del suelo, se mueven más rápido que la cámara)
+    // franjas de niebla (kasumi) que cruzan el cielo
+    const NIEBLAS = [{ x: 40, y: 64, w: 220, p: 0.1 }, { x: 420, y: 92, w: 260, p: 0.16 }, { x: 760, y: 52, w: 180, p: 0.08 }, { x: 1040, y: 120, w: 240, p: 0.22 }];
     const ROCAS = [{ x: -40, w: 120, h: 44 }, { x: 260, w: 90, h: 30 }, { x: 560, w: 140, h: 50 }, { x: 900, w: 110, h: 38 }];
-    // viento: rayas finas que cruzan el cielo
-    const viento = Array.from({ length: 26 }, (_, i) => ({ x: Math.random() * W, y: 30 + Math.random() * 230, v: 220 + Math.random() * 260, l: 10 + Math.random() * 24 }));
+    const lluvia = Array.from({ length: 70 }, () => ({ x: Math.random() * W, y: Math.random() * H, v: 520 + Math.random() * 260, l: 8 + Math.random() * 12 }));
+    let spray = [], rayoCielo = 0, proxRayo = 4, camX = 0, camY = 0, previo = 0;
 
-    let camX = 0, camY = 0, previo = 0;
     function camara() {
       const dt = Math.min(0.05, Math.max(0, reloj - previo)); previo = reloj;
       let objX = 0, objY = 0;
       if (jug && ia) {
-        objX = ((jug.x + ia.x) / 2 - W / 2) * 1.6;           // el cielo gira hacia donde va la pelea
-        objY = Math.min(40, Math.max(0, (SUELO - Math.min(jug.y, ia.y)) * 0.22)); // al saltar, la cámara sube
-      } else objX = Math.sin(reloj * 0.25) * 60;              // en el menú, un barrido suave
+        objX = ((jug.x + ia.x) / 2 - W / 2) * 1.6;
+        objY = Math.min(40, Math.max(0, (SUELO - Math.min(jug.y, ia.y)) * 0.22));
+      } else objX = Math.sin(reloj * 0.25) * 60;
       const k = 1 - Math.exp(-dt * 4);
       camX += (objX - camX) * k; camY += (objY - camY) * k;
+      // relámpagos de vez en cuando
+      proxRayo -= dt; rayoCielo = Math.max(0, rayoCielo - dt * 3);
+      if (proxRayo <= 0) { rayoCielo = 1; proxRayo = 5 + Math.random() * 7; }
       return dt;
     }
 
-    function cieloEn3D() {
-      const hz = Math.round((104 + camY) / 2);                 // horizonte en el búfer (media resolución)
-      const giro = camX * 0.9 + reloj * 6, avance = reloj * 0.06;
+    function cieloYMar() {
+      const hz = Math.round((104 + camY) / 2), giro = camX * 0.9 + reloj * 5, avance = reloj * 0.05;
+      const destello = rayoCielo > 0.6 || (rayoCielo > 0.2 && rayoCielo < 0.35) ? rayoCielo : 0;
       for (let y = 0; y < BH; y++) {
         const fila = y * BW;
-        if (y < hz) {                                          // techo de nubes en perspectiva
+        if (y < hz) {                                          // nubes de tormenta en perspectiva
           const d = hz - y, z = 46 / d, base = colorCielo(y / hz);
           const fog = Math.min(1, 1.2 / (d * 0.22 + 0.3)) * 0.8;
           const vy = (((z * 34 + avance * 60) | 0) % TX + TX) % TX;
           for (let x = 0; x < BW; x++) {
-            const u = ((((x - BW / 2) * z * 0.9 + giro) | 0) % TX + TX) % TX;
-            const n = tex[vy * TX + u];
-            const dens = Math.max(0, (n - 0.46) * 3);
-            let c = dens > 0 ? mezcla(base, mezcla(NUBE_SOMBRA, NUBE_LUZ, Math.min(1, Math.max(0, (n - 0.45) * 2.4 + (1 - y / hz) * -0.3 + 0.3))), Math.min(0.95, dens) * (1 - fog)) : base;
+            const u = ((((x - BW / 2) * z * 0.9 + giro) | 0) % TX + TX) % TX, n = tex[vy * TX + u];
+            const dens = Math.max(0, (n - 0.42) * 3);
+            // tonos planos, como en un grabado: la luz de la nube va por escalones
+            const luz = Math.floor(Math.min(1, Math.max(0, (n - 0.45) * 2.6)) * 3) / 3;
+            let c = dens > 0 ? mezcla(base, mezcla(NUBE_SOMBRA, NUBE_LUZ, luz), Math.min(0.92, dens) * (1 - fog)) : base;
+            if (destello) c = mezcla(c, RELAMPAGO, destello * 0.45 * (1 - y / hz * 0.5));
             px[fila + x] = pack(c);
           }
-        } else {                                               // mar de nubes bajo la montaña
-          const d = y - hz + 1, z = 30 / d;
-          const fog = Math.min(1, 2.2 / (d * 0.25 + 0.4));
-          const vy = (((z * 40 - avance * 90) | 0) % TX + TX) % TX;
+        } else {                                               // mar rojo en perspectiva
+          const d = y - hz + 1, z = 30 / d, fog = Math.min(1, 2.4 / (d * 0.3 + 0.4));
+          const vw = z * 40 - reloj * 1.4;
           for (let x = 0; x < BW; x++) {
             const u = ((((x - BW / 2) * z * 0.9 + giro * 1.4) | 0) % TX + TX) % TX;
-            const n = tex[vy * TX + u];
-            const c = mezcla(mezcla(MAR_SOMBRA, MAR_LUZ, Math.min(1, Math.max(0, (n - 0.3) * 2))), NIEBLA, fog * 0.8);
+            const n = tex[((((vw * 3) | 0) % TX + TX) % TX) * TX + u];
+            const onda = Math.sin(vw * 1.7 + n * 7 + Math.sin(u * 0.05) * 1.5);
+            let c = onda > 0.55 ? MAR_LUZ : onda > -0.2 ? MAR : MAR_HONDO;
+            if (onda > 0.9 && n > 0.55) c = ESPUMA;
+            c = mezcla(c, BRUMA, fog * 0.85);
+            if (destello) c = mezcla(c, RELAMPAGO, destello * 0.2);
             px[fila + x] = pack(c);
           }
         }
@@ -462,72 +462,101 @@
       bx.putImageData(img, 0, 0);
       ctx.imageSmoothingEnabled = false;
       ctx.drawImage(buf, 0, 0, W, H);
-      // sol de altura, pegado al horizonte, con un leve paralaje
-      const sx = 470 - camX * 0.06, sy = hz * 2 - 18;
-      const halo = ctx.createRadialGradient(sx, sy, 10, sx, sy, 150);
-      halo.addColorStop(0, "rgba(255,236,190,.55)"); halo.addColorStop(1, "rgba(255,180,120,0)");
-      ctx.fillStyle = halo; ctx.fillRect(sx - 150, sy - 150, 300, 300);
-      ctx.fillStyle = "#fff4d6";
-      for (let r = 30, yy = -30; yy <= 30; yy += 2) { const w = Math.round(Math.sqrt(r * r - yy * yy)); if ((yy > 6 && (yy / 2) % 3 === 0)) continue; ctx.fillRect(Math.round(sx - w), Math.round(sy + yy), w * 2, 2); }
+      // luna pálida tras las nubes
+      const lx = 500 - camX * 0.05, ly = hz * 2 - 70;
+      ctx.globalAlpha = 0.85; ctx.fillStyle = "#f1e2c2";
+      for (let yy = -26; yy <= 26; yy += 2) { const w = Math.round(Math.sqrt(26 * 26 - yy * yy)); ctx.fillRect(Math.round(lx - w), Math.round(ly + yy), w * 2, 2); }
+      ctx.globalAlpha = 1;
+      // franjas de niebla de grabado japonés
+      NIEBLAS.forEach(n => {
+        const x = ((((n.x - camX * n.p - reloj * 6) % 1400) + 1400) % 1400) - 300, y = Math.round(n.y + camY * 0.3);
+        ctx.fillStyle = "#3c2f52"; ctx.fillRect(x + 6, y + 3, n.w, 12);
+        ctx.fillStyle = "#e9d8b8"; ctx.fillRect(x, y, n.w, 12);
+        ctx.fillRect(x - 6, y + 2, 6, 8); ctx.fillRect(x + n.w, y + 2, 6, 8);
+        ctx.fillStyle = "#cdb894"; ctx.fillRect(x + 10, y + 8, n.w - 20, 2);
+      });
+      // rayo
+      if (rayoCielo > 0.75) {
+        ctx.fillStyle = "#fff8e6"; let rx = 120 + ((proxRayo * 97) % 400), ry = 0;
+        while (ry < hz * 2 - 4) { const nx = rx + (Math.random() - 0.5) * 22; ctx.fillRect(Math.round(Math.min(rx, nx)), ry, Math.max(3, Math.abs(nx - rx)), 3); ctx.fillRect(Math.round(nx), ry, 3, 12); rx = nx; ry += 12; }
+      }
       return hz * 2;
     }
 
-    function cordilleras(horizonte) {
-      CAPAS.forEach((c, i) => {
-        const off = ((camX * c.vel) % 1280 + 1280) % 1280, dy = camY * (0.4 + i * 0.25) + (horizonte - 208) * 0.2;
-        ctx.fillStyle = c.col;
-        for (let k = 0; k < W; k += 4) {
-          const idx = Math.floor(((k + off) % 1280) / 4), top = Math.round(c.p[idx] + dy);
-          ctx.fillRect(k, top, 4, Math.max(0, c.base + dy - top + 12));
-          if (c.nieve && top < c.p.reduce((a, b) => Math.min(a, b), 999) + dy + 22) { ctx.fillStyle = c.nieve; ctx.fillRect(k, top, 4, 4); ctx.fillStyle = c.col; }
-        }
-        // la base de cada cordillera se hunde en el mar de nubes
-        const by = Math.round(c.base + dy), niebla = ctx.createLinearGradient(0, by - 26, 0, by + 12);
-        niebla.addColorStop(0, "rgba(255,226,200,0)"); niebla.addColorStop(0.7, "rgba(255,226,206,.85)"); niebla.addColorStop(1, "rgba(250,214,214,1)");
-        ctx.fillStyle = niebla; ctx.fillRect(0, by - 26, W, 38);
-        // luz del sol en las laderas de la capa cercana
-        if (i === 2) {
-          ctx.fillStyle = "#8f2238";
-          for (let k = 0; k < W; k += 4) {
-            const idx = Math.floor(((k + off) % 1280) / 4), sig = c.p[(idx + 1) % c.p.length];
-            if (sig > c.p[idx]) ctx.fillRect(k, Math.round(c.p[idx] + dy), 4, 10);
+    // Olas japonesas: crestas redondas (como el patrón seigaiha) con anillos
+    // concéntricos dentro, borde de espuma y una garra de espuma en cada cresta.
+    function olas(dt, hz) {
+      OLAS.forEach((o, i) => {
+        const L = o.l, dy = camY * (0.35 + i * 0.25) + (hz - 208) * (0.3 - i * 0.08);
+        const corr = camX * o.p + reloj * o.v * 26, base = o.y + dy;
+        const primera = Math.floor(corr / L) - 1;
+        for (let n = primera; n <= primera + Math.ceil(W / L) + 2; n++) {
+          const cx = n * L - corr + L / 2;
+          const a = o.a * (0.78 + 0.32 * Math.sin(reloj * o.v * 2.4 + n * 1.7));   // cada ola sube y baja a su ritmo
+          const fila = []; // altura de la cresta por columna
+          for (let x = Math.floor((cx - L / 2) / 4) * 4; x < cx + L / 2; x += 4) {
+            if (x < -4 || x > W) continue;
+            const t = (x + 2 - cx) / (L / 2); if (Math.abs(t) > 1) continue;
+            const h = Math.sqrt(1 - t * t) * a, top = Math.round(base - h);
+            ctx.fillStyle = o.col; ctx.fillRect(x, top, 4, SUELO + 20 - top);
+            ctx.fillStyle = o.lin;
+            for (let r = 1; r <= 3; r++) {                     // anillos concéntricos
+              const k = 1 - r * 0.24; if (Math.abs(t) > k) continue;
+              const hr = Math.sqrt(1 - (t / k) ** 2) * a * k; ctx.fillRect(x, Math.round(base + r * 3 - hr), 4, 2);
+            }
+            ctx.fillStyle = o.esp; ctx.fillRect(x, top, 4, 2 + i);
+            fila.push([x, top, t]);
           }
+          // garra de espuma: la cresta rompe hacia la izquierda
+          const pico = fila.find(f => f[2] > -0.35);
+          if (!pico || a < o.a * 0.85) continue;
+          const [gx, gy] = pico, g = o.garra;
+          ctx.fillStyle = o.esp;
+          ctx.fillRect(gx - g, gy - 2, g + 6, 3);
+          for (let f = 0; f < 3 + i; f++) {
+            const fx = gx - g - 2 - f * (3 + i), fy = gy + 1 + f * (2 + i) + Math.round(Math.sin(reloj * 7 + f + n) * 1.2);
+            ctx.fillRect(fx, fy, 3 + (i > 0 ? 1 : 0), 3); ctx.fillRect(fx - 2, fy + 3, 2, 2 + (f % 2));
+          }
+          ctx.fillStyle = o.lin; ctx.fillRect(gx - g + 2, gy + 1, g, 2);
+          if (i === 2 && Math.random() < dt * 2.5) for (let k = 0; k < 4; k++) spray.push({ x: gx - g + Math.random() * 12, y: gy, vx: -50 - Math.random() * 90, vy: -110 - Math.random() * 120, t: 0.7 });
         }
       });
+      ctx.fillStyle = "#fbf1de";
+      spray = spray.filter(s => (s.t -= dt) > 0);
+      spray.forEach(s => { s.vy += 420 * dt; s.x += s.vx * dt; s.y += s.vy * dt; ctx.fillRect(Math.round(s.x), Math.round(s.y), 3, 3); });
     }
 
-    function vientoYPolvo(dt) {
-      ctx.fillStyle = "rgba(255,240,225,.35)";
-      viento.forEach(w => {
-        w.x -= (w.v + camX * 0.1) * dt; if (w.x < -w.l) { w.x = W + Math.random() * 60; w.y = 30 + Math.random() * 230; }
-        ctx.fillRect(Math.round(w.x), Math.round(w.y + camY * 0.5), Math.round(w.l), 1);
+    function lluviaYViento(dt) {
+      ctx.fillStyle = "rgba(240,226,205,.35)";
+      lluvia.forEach(g => {
+        g.y += g.v * dt; g.x -= g.v * 0.35 * dt + camX * 0.002;
+        if (g.y > H) { g.y = -g.l; g.x = Math.random() * (W + 120); }
+        for (let i = 0; i < g.l; i += 2) ctx.fillRect(Math.round(g.x - i * 0.35), Math.round(g.y + i), 1, 2);
       });
     }
 
     function cima() {
-      // superficie de la cima (se ve un poco desde arriba)
-      ctx.fillStyle = "#ff5a4d"; ctx.fillRect(0, SUELO - 12, W, 3);
-      ctx.fillStyle = "#e3322f"; ctx.fillRect(0, SUELO - 9, W, 9);
-      for (let x = 0; x < W; x += 16) { ctx.fillStyle = (x / 16) % 3 ? "#c92a2a" : "#f0473f"; ctx.fillRect(x + ((x * 7) % 9), SUELO - 7 + ((x * 3) % 4), 6, 2); }
-      // cara de roca: estratos en pixel art
-      const estratos = ["#b81f26", "#a3171f", "#8c121b", "#741019", "#5c0c14"];
+      // roca roja con contorno oscuro para separarla del mar
+      ctx.fillStyle = "#2a050b"; ctx.fillRect(0, SUELO - 15, W, 3);
+      ctx.fillStyle = "#ff6a52"; ctx.fillRect(0, SUELO - 12, W, 3);
+      ctx.fillStyle = "#ec3b30"; ctx.fillRect(0, SUELO - 9, W, 9);
+      for (let x = 0; x < W; x += 16) { ctx.fillStyle = (x / 16) % 3 ? "#cf2d27" : "#ff5a45"; ctx.fillRect(x + ((x * 7) % 9), SUELO - 7 + ((x * 3) % 4), 6, 2); }
+      const estratos = ["#c4271f", "#a61d18", "#8a1513", "#6e0f10", "#540a0c"];
       for (let y = SUELO, i = 0; y < H; y += 12, i++) {
         ctx.fillStyle = estratos[Math.min(i, estratos.length - 1)]; ctx.fillRect(0, y, W, 12);
-        ctx.fillStyle = "rgba(255,120,100,.18)";
+        ctx.fillStyle = "rgba(255,140,110,.2)";
         for (let x = (i * 37) % 48; x < W; x += 48) ctx.fillRect(x, y, 18 + (x % 3) * 6, 2);
       }
-      // grietas
       ctx.fillStyle = "#3f0710";
       [[60, 6], [178, 18], [300, 4], [420, 14], [538, 8], [610, 20]].forEach(([x, y]) => {
         ctx.fillRect(x, SUELO + y, 2, 10); ctx.fillRect(x + 2, SUELO + y + 10, 2, 8); ctx.fillRect(x - 2, SUELO + y + 18, 2, 10);
       });
-      // borde superior brillante
       ctx.fillStyle = "#ffd0c4"; ctx.fillRect(0, SUELO, W, 2);
     }
 
     function primerPlano() {
       ROCAS.forEach(r => {
-        const x = Math.round((((r.x - camX * 1.25) % 1100) + 1100) % 1100 - 160), base = H + 4, top = base - r.h;
+        const x = Math.round((((r.x - camX * 1.25) % 1100) + 1100) % 1100 - 160), base = H + 4;
         ctx.fillStyle = "#2a050b";
         for (let k = 0; k < r.w; k += 4) {
           const f = k / r.w, alt = Math.round(r.h * (1 - Math.abs(f * 2 - 1) ** 1.6) * (0.8 + ((k * 13) % 7) / 30));
@@ -539,7 +568,7 @@
     }
 
     return {
-      fondo() { const dt = camara(); const hz = cieloEn3D(); cordilleras(hz); vientoYPolvo(dt); cima(); },
+      fondo() { const dt = camara(); const hz = cieloYMar(); olas(dt, hz); lluviaYViento(dt); cima(); },
       frente: primerPlano
     };
   })();
@@ -561,57 +590,189 @@
     if (f.ia) { ctx.fillStyle = PAL.verde; ctx.fillRect(x + 4, y - 5, 4, 2); }
   }
 
+  /* ---------------- Animación de los golpes ----------------
+     Cada golpe tiene tres tiempos: preparación (se carga hacia atrás),
+     impacto (sale disparado con un pequeño rebote) y recuperación
+     (vuelve a la guardia). POSES guarda la postura de preparación (A)
+     y la de impacto (S); dx y rot van en la dirección en la que mira. */
+  const POSES = {
+    puno:     { A: { dx: -7, rot: -0.12, sx: 0.93, sy: 1.05 }, S: { dx: 16, rot: 0.24, sx: 1.12, sy: 0.93 } },
+    patada:   { A: { dx: -5, rot: 0.16, sx: 1.05, sy: 0.92 }, S: { dx: 8, rot: -0.4, sx: 1.04, sy: 1, dy: -5 } },
+    barrida:  { A: { rot: 0.08, sx: 1.12, sy: 0.78 }, S: { dx: 12, rot: -0.2, sx: 1.22, sy: 0.6 } },
+    aerea:    { A: { rot: -0.22, sx: 0.95, sy: 1.05 }, S: { dx: 6, rot: 0.48, sx: 1.06, sy: 0.96 } },
+    gancho:   { A: { dy: 5, rot: -0.12, sx: 1.16, sy: 0.76 }, S: { rot: 0.16, sx: 0.88, sy: 1.2 } },
+    especial: { A: { dx: -9, rot: -0.18, sx: 0.92, sy: 1.04 }, S: { dx: 12, rot: 0.22, sx: 1.12, sy: 0.93 } },
+    super:    { A: { dy: 4, sx: 1.14, sy: 0.84 }, S: { dy: -12, sx: 0.92, sy: 1.12 } }
+  };
+  const suave = t => t * t * (3 - 2 * t);
+  const rebote = t => { const c = 2.2; return 1 + (c + 1) * (t - 1) ** 3 + c * (t - 1) ** 2; };  // se pasa un poco y vuelve
+  const mezclaPose = (a, b, t) => { const r = {}; for (const k of ["dx", "dy", "rot", "sx", "sy"]) { const d = k === "sx" || k === "sy" ? 1 : 0; r[k] = (a[k] ?? d) + ((b[k] ?? d) - (a[k] ?? d)) * t; } return r; };
+  // fase del golpe: 0 → preparación, 1 → impacto, y cuánto ha avanzado cada una
+  function fase(g) {
+    const k = g.t;
+    if (k < g.arr) return { tramo: "arr", t: k / g.arr };
+    if (k < g.arr + g.act) return { tramo: "act", t: (k - g.arr) / g.act };
+    return { tramo: "rec", t: Math.min(1, (k - g.arr - g.act) / g.rec) };
+  }
+  function poseAtaque(f) {
+    const g = f.golpe, P = POSES[g.clave], { tramo, t } = fase(g), cero = {};
+    let p;
+    if (tramo === "arr") p = mezclaPose(cero, P.A, suave(t));
+    else if (tramo === "act") p = mezclaPose(P.A, P.S, rebote(Math.min(1, t * 2.2)));
+    else p = mezclaPose(P.S, cero, suave(t));
+    if (g.clave === "super" && tramo === "arr") { p.dx += (Math.random() - 0.5) * 6; }
+    return { dx: p.dx * f.lado, dy: p.dy, rot: p.rot * f.lado, sx: p.sx, sy: p.sy, tramo, t };
+  }
+  // cuánto sale el puño o la pierna (0 recogido, 1 estirado del todo)
+  function extension(g) {
+    const { tramo, t } = fase(g);
+    if (tramo === "arr") return -0.25 * suave(t);
+    if (tramo === "act") return rebote(Math.min(1, t * 2.4));
+    return 1 - suave(t);
+  }
+
+  function dibujarEstela(f) {
+    const col = f.ia ? [PAL.cian, PAL.magenta] : [PAL.blanco, PAL.rosa];
+    f.estela.forEach((e, i) => {
+      const vida = 1 - (reloj - e.t) / 0.12; if (vida <= 0) return;
+      const s = Math.max(2, Math.round(e.s * vida));
+      ctx.globalAlpha = vida * 0.75; ctx.fillStyle = col[i % 2];
+      ctx.fillRect(Math.round(e.x - s / 2), Math.round(e.y - s / 2), s, s);
+    });
+    ctx.globalAlpha = 1;
+  }
+  function arcoGolpe(cx, cy, r, a0, a1, color, grosor, alfa) {
+    ctx.save(); ctx.globalAlpha = alfa; ctx.strokeStyle = color; ctx.lineCap = "butt";
+    for (let k = 0; k < 3; k++) { ctx.lineWidth = Math.max(1, grosor - k * 2); ctx.beginPath(); ctx.arc(cx, cy, r - k * 4, a0, a1, a1 < a0); ctx.stroke(); }
+    ctx.restore();
+  }
+
   function dibujarLuchador(f) {
     let img = f.ia ? A.villano : A.heroe;
     if (f.flash > 0) img = f.ia ? A.villanoBlanco : A.heroeBlanco;
-    const g = f.golpe, k = g ? g.t : 0;
+    const g = f.golpe;
     let sx = 1, sy = 1, rot = 0, dx = 0, dy = 0;
     const respira = Math.sin(f.anim * 4) * 0.02;
     switch (f.estado) {
-      case "quieto": sy = 1 + respira; sx = 1 - respira; dy = 0; break;
+      case "quieto": sy = 1 + respira; sx = 1 - respira; break;
       case "andar": dy = -Math.abs(Math.sin(f.anim * 12)) * 4; rot = f.vx / 2000; break;
       case "agachado": sy = 0.68; sx = 1.12; break;
-      case "salto": rot = -f.lado * 0.12 + (f.vy > 0 ? f.lado * 0.1 : 0); sy = f.vy < 0 ? 1.08 : 0.96; break;
-      case "golpe": rot = -f.lado * 0.18; dx = (Math.random() - 0.5) * 4; break;
-      case "bloqueo": rot = -f.lado * 0.1; sx = 0.94; break;
+      case "salto": rot = -f.lado * 0.12 + (f.vy > 0 ? f.lado * 0.1 : 0); sy = f.vy < 0 ? 1.1 : 0.95; sx = 2 - sy; break;
+      case "golpe": { // retrocede encogido y tiembla, cada vez menos
+        const q = Math.max(0, Math.min(1, f.stun / 0.4));
+        rot = -f.lado * 0.3 * q; dx = -f.lado * 6 * q + (Math.random() - 0.5) * 6 * q; sx = 1 - 0.08 * q; sy = 1 + 0.06 * q; break;
+      }
+      case "bloqueo": rot = -f.lado * 0.1; sx = 0.92; sy = 0.98; break;
       case "caido": case "ko": rot = -f.lado * (enSuelo(f) ? 1.45 : 0.9); dy = enSuelo(f) ? 14 : 0; break;
       case "victoria": dy = -Math.abs(Math.sin(f.anim * 6)) * 14; sy = 1 + Math.abs(Math.sin(f.anim * 6)) * 0.06; break;
-      case "ataque":
-        if (g.clave === "puno") { rot = f.lado * 0.14; dx = f.lado * 6; }
-        if (g.clave === "patada") { rot = -f.lado * 0.22; }
-        if (g.clave === "barrida") { sy = 0.62; sx = 1.15; rot = -f.lado * 0.12; }
-        if (g.clave === "aerea") { rot = f.lado * 0.35; }
-        if (g.clave === "gancho") { rot = f.lado * 0.1; sy = 1.1; }
-        if (g.clave === "especial") { rot = f.lado * (k < g.arr ? -0.1 : 0.16); dx = f.lado * (k < g.arr ? -4 : 6); }
-        if (g.clave === "super") { dy = -Math.sin(Math.min(1, k / g.arr) * Math.PI) * 10; sy = 1.05; }
-        break;
+      case "ataque": { const p = poseAtaque(f); dx = p.dx; dy = p.dy; rot = p.rot; sx = p.sx; sy = p.sy; break; }
     }
     if (f.agachado && f.estado !== "ataque") { sy = 0.68; sx = 1.12; }
-    // sombra
-    ctx.fillStyle = "rgba(0,0,0,.4)"; ctx.fillRect(Math.round(f.x - 34), SUELO - 2, 68, 4);
+
+    // imágenes residuales en los golpes rápidos
+    const conFantasma = f.estado === "ataque" && ["gancho", "aerea", "super", "especial", "barrida"].includes(g.clave) && fase(g).tramo !== "rec";
+    if (conFantasma && reloj - (f.ultFantasma || 0) > 0.035) { f.fantasmas.push({ x: f.x + dx, y: f.y + dy, rot, sx, sy, t: reloj }); f.ultFantasma = reloj; }
+    f.fantasmas = f.fantasmas.filter(q => reloj - q.t < 0.22);
+    const tinte = f.ia ? A.villanoCian : A.heroeRosa;
+    f.fantasmas.forEach(q => {
+      ctx.save(); ctx.globalAlpha = 0.4 * (1 - (reloj - q.t) / 0.22);
+      ctx.translate(Math.round(q.x), Math.round(q.y)); ctx.rotate(q.rot); ctx.scale(q.sx, q.sy);
+      ctx.drawImage(tinte, -Math.round(tinte.width / 2), -tinte.height + (f.ia ? 0 : 3)); ctx.restore();
+    });
+
+    // sombra (se estira con la postura)
+    ctx.fillStyle = "rgba(0,0,0,.4)"; const so = Math.round(34 * sx); ctx.fillRect(Math.round(f.x - so), SUELO - 2, so * 2, 4);
     ctx.save(); ctx.translate(Math.round(f.x + dx), Math.round(f.y + dy)); ctx.rotate(rot); ctx.scale(sx, sy);
-    if (f.ia) { // efecto glitch del Alter Ego
+    if (f.ia) {
       const off = 2 + (f.glitchT > 0 ? 6 : 0);
       ctx.globalAlpha = 0.45; ctx.drawImage(A.villanoCian, -img.width / 2 - off, -img.height); ctx.drawImage(A.villanoMag, -img.width / 2 + off, -img.height); ctx.globalAlpha = 1;
     }
-    ctx.drawImage(img, -Math.round(img.width / 2), -img.height);
+    ctx.drawImage(img, -Math.round(img.width / 2), -img.height + (f.ia ? 0 : 3));
     if (f.ia && Math.random() < 0.25) { const sy2 = Math.random() * img.height, sh = 3 + Math.random() * 8; ctx.drawImage(img, 0, sy2, img.width, sh, -img.width / 2 + (Math.random() - 0.5) * 16, -img.height + sy2, img.width, sh); }
     ctx.restore();
     if (f.ia && f.glitchT > 0) f.glitchT -= 1 / 60;
-    // brazos y piernas de los golpes
+
+    // brazos, piernas y efectos de cada golpe
     if (f.estado === "ataque") {
-      const activo = k >= g.arr && k < g.arr + g.act, ext = activo ? 1 : k < g.arr ? k / g.arr * 0.4 : Math.max(0, 1 - (k - g.arr - g.act) / g.rec) * 0.6;
-      if (g.clave === "puno") puño(f.x + f.lado * (28 + ext * 34), f.y - 72, f);
-      if (g.clave === "patada") zapatilla(f.x + f.lado * (26 + ext * 52), f.y - 40, f);
-      if (g.clave === "barrida") zapatilla(f.x + f.lado * (30 + ext * 54), f.y - 8, f);
-      if (g.clave === "aerea") zapatilla(f.x + f.lado * 40, f.y - 30, f);
-      if (g.clave === "gancho") { puño(f.x + f.lado * 22, f.y - 100 - ext * 30, f, 1.15); if (activo) particulas(f.x + f.lado * 22, f.y - 110, f.ia ? [PAL.cian] : [PAL.rosa, PAL.blanco], 2, 80); }
-      if (g.clave === "especial" && k < g.arr) { const r = 6 + k / g.arr * 10; ctx.fillStyle = f.ia ? PAL.cian : PAL.rosa; ctx.globalAlpha = 0.6; ctx.fillRect(f.x + f.lado * 40 - r, f.y - 66 - r, r * 2, r * 2); ctx.globalAlpha = 1; }
+      const ext = extension(g), { tramo, t } = fase(g), activo = tramo === "act";
+      const claro = f.ia ? PAL.cian : PAL.blanco, vivo = f.ia ? PAL.magenta : PAL.rosa;
+      const bx = f.x + dx, by = f.y + dy;
+      let punta = null;
+      if (g.clave === "puno") {
+        const px2 = bx + f.lado * (28 + ext * 38), py2 = by - 72;
+        if (activo) { // líneas de velocidad detrás del puño
+          ctx.fillStyle = claro; ctx.globalAlpha = 0.8;
+          for (let k = 0; k < 3; k++) { const l = 16 + k * 8; ctx.fillRect(Math.round(px2 - f.lado * (14 + l) - (f.lado < 0 ? 0 : 0)), py2 - 8 + k * 7, l, 2); }
+          ctx.globalAlpha = 1;
+        }
+        puño(Math.round(px2), py2, f, activo ? 1.1 : 1); punta = [px2, py2, 18];
+      }
+      if (g.clave === "patada") {
+        const ang = (-0.9 + ext * 1.25), cx = bx, cy = by - 34, r = 30 + ext * 34;
+        const zx = cx + f.lado * Math.cos(ang) * r, zy = cy - Math.sin(ang) * r * 0.6 - 6;
+        if (tramo !== "arr") { // barrido en arco de la pierna
+          const a1 = f.lado > 0 ? -Math.max(-0.9, ang) * 0.6 : Math.PI + Math.max(-0.9, ang) * 0.6;
+          arcoGolpe(cx, cy, r, f.lado > 0 ? 0.9 : Math.PI - 0.9, a1, claro, 7, activo ? 0.85 : 0.35 * (1 - t));
+        }
+        zapatilla(Math.round(zx), Math.round(zy), f); punta = [zx, zy, 16];
+      }
+      if (g.clave === "barrida") {
+        const zx = bx + f.lado * (30 + ext * 58), zy = by - 8;
+        if (activo) {
+          arcoGolpe(bx, by + 4, 34 + ext * 50, f.lado > 0 ? Math.PI * 0.75 : Math.PI * 0.25, f.lado > 0 ? Math.PI * 0.98 : Math.PI * 0.02, claro, 6, 0.7);
+          if (Math.random() < 0.6) particulas(zx, SUELO - 2, [PAL.crema, "#ffb8a8"], 2, 90);
+        }
+        zapatilla(Math.round(zx), zy, f); punta = [zx, zy, 14];
+      }
+      if (g.clave === "aerea") {
+        const zx = bx + f.lado * (30 + ext * 18), zy = by - 30 + ext * 6;
+        zapatilla(Math.round(zx), Math.round(zy), f); punta = [zx, zy, 16];
+      }
+      if (g.clave === "gancho") {
+        const px2 = bx + f.lado * 22, py2 = by - 100 - ext * 34;
+        if (tramo !== "arr") { // estela vertical del pajitazo
+          ctx.globalAlpha = activo ? 0.8 : 0.3 * (1 - t);
+          for (let k = 0; k < 6; k++) { ctx.fillStyle = k % 2 ? vivo : claro; ctx.fillRect(Math.round(px2 - 6 + k), Math.round(py2 + 10 + k * 9), 12 - k * 2, 8); }
+          ctx.globalAlpha = 1;
+        }
+        puño(Math.round(px2), Math.round(py2), f, 1.2); punta = [px2, py2, 20];
+        if (activo) particulas(px2, py2 - 8, f.ia ? [PAL.cian] : [PAL.rosa, PAL.blanco], 1, 70);
+      }
+      if (g.clave === "especial" && tramo === "arr") { // carga una bola de batido que crece y vibra
+        const r2 = 5 + t * 13, cx = bx + f.lado * 42, cy = by - 66;
+        ctx.globalAlpha = 0.35; ctx.fillStyle = vivo; ctx.fillRect(Math.round(cx - r2 - 6), Math.round(cy - r2 - 6), Math.round(r2 * 2 + 12), Math.round(r2 * 2 + 12));
+        ctx.globalAlpha = 0.9; ctx.fillStyle = vivo; ctx.fillRect(Math.round(cx - r2 + (Math.random() - 0.5) * 2), Math.round(cy - r2), Math.round(r2 * 2), Math.round(r2 * 2));
+        ctx.fillStyle = PAL.blanco; ctx.fillRect(Math.round(cx - r2 / 2), Math.round(cy - r2 / 2), 4, 4); ctx.globalAlpha = 1;
+        for (let k = 0; k < 2; k++) { const a = Math.random() * Math.PI * 2, d = 30 + Math.random() * 20; parts.push({ x: cx + Math.cos(a) * d, y: cy + Math.sin(a) * d, vx: -Math.cos(a) * d * 4, vy: -Math.sin(a) * d * 4 + 60, t: 0.2, c: k ? vivo : claro, s: 2 }); }
+      }
+      if (g.clave === "super" && tramo === "arr") { // energía que converge hacia el luchador
+        for (let k = 0; k < 3; k++) { const a = Math.random() * Math.PI * 2, d = 90 + Math.random() * 40; parts.push({ x: bx + Math.cos(a) * d, y: by - 60 + Math.sin(a) * d, vx: -Math.cos(a) * d * 3.2, vy: -Math.sin(a) * d * 3.2 + 60, t: 0.3, c: k % 2 ? vivo : claro, s: 3 }); }
+        ctx.globalAlpha = 0.25 + t * 0.35; ctx.strokeStyle = claro; ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.arc(bx, by - 60, 70 - t * 40, 0, Math.PI * 2); ctx.stroke(); ctx.globalAlpha = 1;
+      }
+      if (punta && tramo !== "arr") f.estela.push({ x: punta[0], y: punta[1], s: punta[2], t: reloj });
     }
+    f.estela = f.estela.filter(e => reloj - e.t < 0.12);
+    dibujarEstela(f);
     if (f.estado === "bloqueo" || (f.bloqueando && libre(f))) {
       ctx.globalAlpha = f.estado === "bloqueo" ? 0.8 : 0.25; ctx.fillStyle = PAL.cian;
       ctx.fillRect(f.x + f.lado * 26 - 2, f.y - (f.agachado ? 70 : 100), 4, f.agachado ? 66 : 96); ctx.globalAlpha = 1;
     }
+  }
+
+  // ondas y destellos de impacto
+  function dibujarOndas() {
+    ondas = ondas.filter(o => reloj - o.t < o.dur);
+    ondas.forEach(o => {
+      const q = (reloj - o.t) / o.dur, r = o.r0 + (o.r1 - o.r0) * (1 - (1 - q) ** 3);
+      ctx.save(); ctx.globalAlpha = 1 - q; ctx.strokeStyle = o.c; ctx.lineWidth = Math.max(1, o.g * (1 - q));
+      ctx.beginPath(); ctx.arc(o.x, o.y, r, 0, Math.PI * 2); ctx.stroke();
+      if (o.rayos) { // estrella de impacto en los golpes fuertes
+        ctx.fillStyle = PAL.blanco;
+        for (let k = 0; k < 8; k++) { const a = k / 8 * Math.PI * 2 + o.giro, l = r * 0.9; ctx.save(); ctx.translate(o.x, o.y); ctx.rotate(a); ctx.fillRect(r * 0.35, -2, l * (1 - q), 4); ctx.restore(); }
+      }
+      ctx.restore();
+    });
   }
 
   function dibujarProyectil(p) {
@@ -689,6 +850,7 @@
         ctx.fillStyle = c.c; ctx.fillRect(c.x - s, c.y - 2, s * 2, 4); ctx.fillRect(c.x - 2, c.y - s, 4, s * 2);
         ctx.fillStyle = PAL.blanco; ctx.fillRect(c.x - s / 2, c.y - s / 2, 4, 4); ctx.fillRect(c.x + s / 2 - 4, c.y + s / 2 - 4, 4, 4); ctx.fillRect(c.x - 3, c.y - 3, 6, 6);
       });
+      dibujarOndas();
       parts.forEach(q => { ctx.globalAlpha = Math.min(1, q.t * 3); ctx.fillStyle = q.c; ctx.fillRect(Math.round(q.x), Math.round(q.y), q.s, q.s); });
       ctx.globalAlpha = 1;
     }
@@ -709,7 +871,7 @@
       menu.innerHTML = `<div class="caja">
         <p class="pre">SHAKE WEEK · DÍA 5 · COMBATE FINAL</p>
         <h1>DUELO<br><span>FINAL</span></h1>
-        <p class="hist">Se acabó esconderse. En la cima de la Montaña Roja, Miflshakes y el Alter Ego se enfrentan cara a cara. Gana 2 rondas y la Shake Week es tuya.</p>
+        <p class="hist">Se acabó esconderse. Sobre una roca en mitad del mar rojo, Miflshakes y el Alter Ego se enfrentan cara a cara. Gana 2 rondas y la Shake Week es tuya.</p>
         <div class="movs">
           <span><b>Z</b> puño</span><span><b>X</b> patada</span><span><b>↓ + X</b> barrida</span><span><b>X</b> en el aire: patada aérea</span>
           <span><b>C</b> Shake-ken (proyectil)</span><span><b>↑ + C</b> Pajitazo (gancho)</span><span><b>V</b> SÚPER: Batido Supremo</span><span><b>← atrás</b> bloquear</span>
@@ -733,7 +895,7 @@
           <li><span>DIFICULTAD</span><b>${D().nombre}</b></li>
         </ul>
         <div class="nota"><small>NOTA</small><b>${datos.nota}</b></div>
-        <p class="sello">${datos.semana ? "¡SEMANA COMPLETADA! Tu 2x1 te espera en la Shake Week 🥤" : "Sello del viernes conseguido ✔"}</p>
+        <p class="sello">${datos.semana ? "¡SEMANA COMPLETADA! Tu 25% de descuento te espera en la Shake Week 🥤" : "Sello del viernes conseguido ✔"}</p>
         <div class="fila"><a class="b principal" href="index.html#registro">VOLVER A SHAKE WEEK</a><button class="b" data-accion="empezar">↻ MEJORAR NOTA</button></div></div>`;
     } else if (tipo === "pausa") {
       menu.innerHTML = `<div class="caja"><h2>PAUSA</h2><div class="fila col">
@@ -775,7 +937,11 @@
   }
 
   Promise.all([cargar("sprites/heroe-112.png"), cargar("sprites/alter-ego-120.png")]).then(([h, v]) => {
-    A.heroe = h; A.villano = v; A.heroeBlanco = tintar(h, PAL.blanco); A.villanoBlanco = tintar(v, PAL.blanco);
+    const contorno = (im, col, g) => { const c = document.createElement("canvas"); c.width = im.width + g * 2; c.height = im.height + g * 2;
+      const x = c.getContext("2d"), t = tintar(im, col); for (const [dx, dy] of [[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[1,-1],[-1,1],[1,1]]) x.drawImage(t, g + dx * g, g + dy * g);
+      x.drawImage(im, g, g); return c; };
+    h = contorno(h, "#ffffff", 3);
+    A.heroe = h; A.villano = v; A.heroeBlanco = tintar(h, PAL.blanco); A.heroeRosa = tintar(h, PAL.rosa); A.villanoBlanco = tintar(v, PAL.blanco);
     A.villanoCian = tintar(v, PAL.cian); A.villanoMag = tintar(v, PAL.magenta);
     post = crearPost();
     jug = nuevoLuchador(false); ia = nuevoLuchador(true);

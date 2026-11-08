@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#DD0B18">
 <title>Shake Week · Miflshakes</title>
-<meta name="description" content="Campaña de gamificación: 5 días, 5 minijuegos. Supera los 5 seguidos y llévate un 2x1 en batidos.">
+<meta name="description" content="Campaña de gamificación: 5 días, 5 minijuegos. Vence al Alter Ego los 5 días seguidos y llévate un 25% de descuento en cualquier producto.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=DM+Sans:opsz,wght@9..40,400;9..40,600;9..40,800&display=swap" rel="stylesheet">
@@ -37,8 +37,9 @@
 
   /* Portada */
   .portada{position:relative;overflow:hidden;background:var(--rojo);color:var(--blanco)}
-  .portada::before{content:"";position:absolute;left:50%;top:62%;width:2600px;height:2600px;margin:-1300px 0 0 -1300px;
-    background:repeating-conic-gradient(var(--rojoRayo) 0 11.25deg,transparent 11.25deg 22.5deg);animation:girar 60s linear infinite}
+  .asterisco{position:absolute;left:73%;top:50%;width:min(860px,100vw);aspect-ratio:1;transform:translate(-50%,-50%);pointer-events:none;
+    filter:drop-shadow(10px 12px 0 var(--rojoOsc)) drop-shadow(18px 22px 0 rgba(120,4,10,.35)) drop-shadow(0 0 40px rgba(90,2,8,.35))}
+  .asterisco svg{width:100%;height:100%;display:block;animation:girar 40s linear infinite}
   @keyframes girar{to{transform:rotate(360deg)}}
   .portada .envolver{display:grid;grid-template-columns:1.05fr 1fr;align-items:center;gap:24px;padding-top:56px;padding-bottom:28px}
   .portada .zigzag{height:clamp(56px,8vw,120px)}
@@ -58,7 +59,7 @@
   .boton.rojo{background:var(--rojo);color:var(--blanco);box-shadow:6px 6px 0 var(--rojoOsc)}
   .portada .boton{border-color:var(--blanco);box-shadow:6px 6px 0 var(--rojoOsc)}
   .portada .boton.rojo{background:var(--blanco);color:var(--rojo)}
-  .portada .boton:not(.rojo){background:transparent;color:var(--blanco)}
+  .portada .boton:not(.rojo){background:var(--rojo);color:var(--blanco)}
   .portada .boton:hover{box-shadow:8px 8px 0 var(--rojoOsc)}
   .boton:disabled{opacity:.5;cursor:not-allowed;transform:none}
   .duelo{position:relative;height:420px}
@@ -66,10 +67,10 @@
   .duelo .h{left:-2%;animation:botar 1.6s ease-in-out infinite;filter:drop-shadow(4px 0 0 #fff) drop-shadow(-4px 0 0 #fff) drop-shadow(0 4px 0 #fff) drop-shadow(0 -4px 0 #fff) drop-shadow(6px 8px 0 rgba(120,4,10,.55))}
   .duelo .v{right:-2%;animation:botar 1.6s ease-in-out .8s infinite}
   @keyframes botar{50%{transform:translateY(-12px) rotate(-2deg)}}
-  .vs{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%) rotate(-8deg);font-size:84px;color:var(--blanco);
-    -webkit-text-stroke:3px var(--rojoOsc);paint-order:stroke fill;text-shadow:5px 5px 0 var(--rojoOsc);z-index:2}
+  .vs{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%) rotate(-8deg);font-size:84px;color:var(--rojo);
+    -webkit-text-stroke:4px var(--blanco);paint-order:stroke fill;text-shadow:6px 6px 0 var(--rojoOsc);z-index:2}
   .nombres{position:absolute;bottom:-6px;left:0;right:0;display:flex;justify-content:space-between;z-index:3}
-  .nombres span{background:var(--blanco);color:var(--rojo);padding:4px 12px;border-radius:10px;font-size:18px}
+  .nombres span{background:var(--blanco);color:var(--rojo);padding:4px 12px;border-radius:10px;font-size:18px;border:3px solid var(--rojo)}
   .nombres span:last-child{background:var(--tinta);color:var(--blanco)}
 
   /* Secciones */
@@ -192,6 +193,7 @@
 
   @media (max-width:900px){
     .portada .envolver{grid-template-columns:1fr;padding-top:36px}
+    .asterisco{left:50%;top:72%;width:min(720px,150vw)}
     .duelo{height:300px}.duelo img{height:270px}.vs{font-size:64px}
     .sellos{grid-template-columns:repeat(2,1fr)}
     .sellos .dia:last-child{grid-column:span 2}
@@ -223,11 +225,21 @@
 </div>
 
 <header class="portada">
+  <div class="asterisco" aria-hidden="true">
+    <svg viewBox="-100 -100 200 200"><defs>
+      <linearGradient id="brazo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#fff"/></linearGradient>
+      <g id="aspa"><rect x="-13" y="-96" width="26" height="96" rx="13" fill="url(#brazo)"/><rect x="3" y="-92" width="10" height="72" rx="5" fill="#FFD3D7"/></g>
+    </defs>
+      <use href="#aspa"/><use href="#aspa" transform="rotate(45)"/><use href="#aspa" transform="rotate(90)"/><use href="#aspa" transform="rotate(135)"/>
+      <use href="#aspa" transform="rotate(180)"/><use href="#aspa" transform="rotate(225)"/><use href="#aspa" transform="rotate(270)"/><use href="#aspa" transform="rotate(315)"/>
+      <circle r="24" fill="#fff"/>
+    </svg>
+  </div>
   <div class="envolver">
     <div>
       <span class="etiqueta">Del lunes al viernes</span>
       <h1 class="display">SHAKE<br>WEEK</h1>
-      <p class="lead">El Alter Ego ha robado las recetas. <b>5 días, 5 juegos.</b> Gánalos seguidos y llévate un 2x1 en batidos.</p>
+      <p class="lead">No nos dejemos vencer por el Alter Ego. <b>5 días, 5 juegos.</b> Vence al Alter Ego y llévate un 25% de descuento en cualquier producto.</p>
       <div class="ctas">
         <button class="boton rojo" id="ctaJugar" type="button">🥤 Jugar el reto de hoy</button>
         <a class="boton" href="#como">Cómo funciona</a>
@@ -261,7 +273,7 @@
       <div class="pasos">
         <div class="paso"><b>1</b><h3>Regístrate</h3><p>Tu nombre y tu email. Ahí te enviamos el código cuando completes la semana.</p></div>
         <div class="paso"><b>2</b><h3>Juega cada día</h3><p>Se desbloquea un minijuego distinto cada día. Supéralo para sellar tu tarjeta.</p></div>
-        <div class="paso"><b>3</b><h3>Canjea tu 2x1</h3><p>Con los 5 sellos seguidos consigues tu código 2x1 para usar en cualquier tienda.</p></div>
+        <div class="paso"><b>3</b><h3>Canjea tu 25%</h3><p>Con los 5 sellos seguidos consigues un código del 25% de descuento en cualquier producto.</p></div>
       </div>
     </div>
   </section>
@@ -283,8 +295,8 @@
       <div>
         <div class="cupon cerrado" id="cupon">
           <span class="etiqueta">Premio final</span>
-          <div class="grande display" style="margin-top:14px">2x1</div>
-          <p style="font-weight:700;font-size:18px">en batidos, en tienda</p>
+          <div class="grande display" style="margin-top:14px">-25%</div>
+          <p style="font-weight:700;font-size:18px">en cualquier producto</p>
           <div class="codigo" id="codigo">SHAKE-XXXX</div>
           <small id="textoCupon">Se desbloquea con los 5 sellos seguidos.</small>
         </div>
@@ -460,7 +472,7 @@ function abrir(id) {
     return;
   }
   const juego = JUEGOS.find(j => j.id === id);
-  if (juego.enlace) { location.href = `${juego.enlace}?v=202611081900`; return; }
+  if (juego.enlace) { location.href = `${juego.enlace}?v=202611081945`; return; }
   actual = JUEGOS.find(j => j.id === id);
   $("#tituloJuego").textContent = `Día ${actual.id} · ${actual.dia}`;
   intro();
@@ -496,7 +508,7 @@ function terminar(r) {
   const completo = Object.keys(victorias()).length >= 5;
   const sig = JUEGOS.find(j => estado(j.id) === "abierto");
   let extra = "";
-  if (r.gana && completo) extra = `<p><b>¡Semana completada!</b> Tu código 2x1: <span class="codigo" style="font-size:20px">${codigo()}</span></p>`;
+  if (r.gana && completo) extra = `<p><b>¡Semana completada!</b> Tu código del 25%: <span class="codigo" style="font-size:20px">${codigo()}</span></p>`;
   else if (r.gana && est.modo === "campana") extra = `<p>Sello conseguido. Vuelve <b>mañana</b> para el siguiente juego.</p>`;
   tarjeta.innerHTML = `<h4>${r.gana ? "¡Sello conseguido!" : "¡Casi lo tienes!"}</h4>
     <p style="font-size:22px;font-weight:800">${r.puntos} puntos${r.detalle ? ` · ${r.detalle}` : ""}</p>${extra}
@@ -539,7 +551,7 @@ $("#form").addEventListener("submit", e => {
   $("#retos").scrollIntoView({ behavior: "smooth" });
 });
 $("#compartir").onclick = async () => {
-  const datos = { title: "Shake Week", text: "Te reto a la Shake Week: 5 días, 5 juegos y un 2x1 en batidos.", url: location.href };
+  const datos = { title: "Shake Week", text: "Te reto a la Shake Week: 5 días, 5 juegos y un 25% de descuento si vences al Alter Ego.", url: location.href };
   try { if (navigator.share) await navigator.share(datos); else { await navigator.clipboard.writeText(location.href); $("#compartir").textContent = "✅ Enlace copiado"; } } catch (e) {}
 };
 
