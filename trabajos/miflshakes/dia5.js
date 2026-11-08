@@ -366,36 +366,185 @@
   }
 
   /* ---------------- Dibujo ---------------- */
-  function dibujarEscenario() {
-    // Azotea de la fábrica Miflshakes de noche
-    const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, "#0e0a1e"); g.addColorStop(1, "#3a0f22");
-    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
-    ctx.fillStyle = PAL.crema; ctx.beginPath(); ctx.arc(320, 96, 46, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = "#e9d7b8"; ctx.fillRect(300, 80, 10, 8); ctx.fillRect(334, 108, 12, 8);
-    for (let i = 0; i < 14; i++) {
-      const x = i * 48 - 8, h = 80 + (i * 53) % 90;
-      ctx.fillStyle = "#1c0d22"; ctx.fillRect(x, SUELO - 40 - h, 44, h + 40);
-      ctx.fillStyle = (Math.floor(reloj * 1.3 + i * 3) % 5) ? "#ffcf3a2a" : "#ffcf3a0c";
-      for (let k = 0; k < 3; k++) for (let j = 0; j < 3; j++) ctx.fillRect(x + 6 + k * 13, SUELO - 30 - h + j * 18, 6, 8);
+  /* ---------------- Escenario: cima de la Montaña Roja ----------------
+     El cielo se pinta en perspectiva (techo de nubes y mar de nubes, estilo
+     «modo 7») en un búfer a media resolución. La cámara sigue a los dos
+     luchadores, así que el cielo, las cordilleras y las rocas del primer
+     plano se desplazan a distinta velocidad (paralaje) y dan sensación de 3D. */
+  const ESC = (() => {
+    const BW = 320, BH = 180, TX = 256;
+    const buf = document.createElement("canvas"); buf.width = BW; buf.height = BH;
+    const bx = buf.getContext("2d"), img = bx.createImageData(BW, BH), px = new Uint32Array(img.data.buffer);
+    // textura de nubes que se repite (ruido fractal con bordes enlazados)
+    const tex = new Float32Array(TX * TX);
+    const semilla = (x, y, f) => { let h = (x % f) * 374761393 + (y % f) * 668265263 + f * 982451653; h = (h ^ (h >>> 13)) * 1274126177; return ((h ^ (h >>> 16)) >>> 0) / 4294967295; };
+    for (let o = 0, amp = 1, f = 4, tot = 0; o < 5; o++, amp *= 0.5, f *= 2) {
+      tot += amp;
+      for (let y = 0; y < TX; y++) for (let x = 0; x < TX; x++) {
+        const gx = x / TX * f, gy = y / TX * f, x0 = Math.floor(gx), y0 = Math.floor(gy), fx = gx - x0, fy = gy - y0;
+        const sx = fx * fx * (3 - 2 * fx), sy = fy * fy * (3 - 2 * fy);
+        const a = semilla(x0, y0, f), b = semilla(x0 + 1, y0, f), c = semilla(x0, y0 + 1, f), d = semilla(x0 + 1, y0 + 1, f);
+        tex[y * TX + x] += amp * ((a + (b - a) * sx) + ((c + (d - c) * sx) - (a + (b - a) * sx)) * sy);
+      }
     }
-    // público: clones y vasos mirando, en silueta
-    for (let i = 0; i < 22; i++) {
-      const x = 10 + i * 30, bote = Math.abs(Math.sin(reloj * 6 + i)) * (estado === "ko" ? 6 : 2);
-      ctx.fillStyle = i % 3 === 0 ? "#2a1430" : "#22102a";
-      ctx.fillRect(x, SUELO - 34 - bote, 18, 24); ctx.fillRect(x + 2, SUELO - 40 - bote, 14, 6); ctx.fillRect(x + 10, SUELO - 48 - bote, 2, 8);
+    { let mn = 9, mx = -9; for (const v of tex) { mn = Math.min(mn, v); mx = Math.max(mx, v); } for (let i = 0; i < tex.length; i++) tex[i] = (tex[i] - mn) / (mx - mn); }
+    const rgb = h => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
+    const mezcla = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+    const pack = c => (255 << 24) | (Math.round(c[2]) << 16) | (Math.round(c[1]) << 8) | Math.round(c[0]);
+    // cielo de atardecer en altura: índigo arriba, violeta, oro en el horizonte
+    const CIELO = [[0, rgb("#120d38")], [0.45, rgb("#3b2a85")], [0.75, rgb("#9b4f9e")], [0.92, rgb("#ff9a6a")], [1, rgb("#ffe2a8")]];
+    const colorCielo = t => { for (let i = 1; i < CIELO.length; i++) if (t <= CIELO[i][0]) return mezcla(CIELO[i - 1][1], CIELO[i][1], (t - CIELO[i - 1][0]) / (CIELO[i][0] - CIELO[i - 1][0])); return CIELO[CIELO.length - 1][1]; };
+    const NUBE_LUZ = rgb("#ffd6c2"), NUBE_SOMBRA = rgb("#6b3f8f"), MAR_LUZ = rgb("#fff1e0"), MAR_SOMBRA = rgb("#b07ab8"), NIEBLA = rgb("#ffd9a8");
+
+    // cordilleras: tres capas, cuanto más lejos, más claras por la neblina
+    function perfil(seed, ancho, base, alto, picos) {
+      const p = []; let r = seed;
+      const rnd = () => (r = (r * 16807) % 2147483647) / 2147483647;
+      const ctrl = []; for (let i = 0; i < picos; i++) ctrl.push(base - alto * (0.35 + rnd() * 0.65));
+      for (let x = 0; x < ancho; x += 4) {
+        const t = x / ancho * picos, i = Math.floor(t), f = t - i, a = ctrl[i % picos], b = ctrl[(i + 1) % picos];
+        const tri = 1 - Math.abs(f * 2 - 1); // laderas rectas con un pico en medio
+        const sf = f * f * (3 - 2 * f); p.push(Math.round(a + (b - a) * sf - tri * alto * 0.45 + (rnd() - 0.5) * 6));
+      }
+      return p;
     }
-    // valla y cartel
-    ctx.fillStyle = "#3a1226"; ctx.fillRect(0, SUELO - 14, W, 14);
-    for (let x = 0; x < W; x += 24) { ctx.fillStyle = "#541a33"; ctx.fillRect(x, SUELO - 26, 4, 26); }
-    const on = Math.floor(reloj * 2) % 11;
-    ctx.fillStyle = "#1a0710"; ctx.fillRect(210, 160, 220, 34);
-    ctx.strokeStyle = on ? PAL.rojo : "#5a0f1c"; ctx.lineWidth = 3; ctx.strokeRect(212, 162, 216, 30);
-    texto(ctx, "MIFLSHAKES", 320, 178, 12, on ? PAL.rojo : "#5a0f1c", "center", "#1a0710");
-    // suelo
-    ctx.fillStyle = PAL.negro; ctx.fillRect(0, SUELO, W, H - SUELO);
-    for (let x = 0; x < W; x += 24) for (let y = SUELO + 6; y < H; y += 24) if ((x / 24 + (y - SUELO - 6) / 24) % 2 === 0) { ctx.fillStyle = "#5a0f1c"; ctx.fillRect(x, y, 24, 24); }
-    ctx.fillStyle = PAL.rojo; ctx.fillRect(0, SUELO, W, 5); ctx.fillStyle = PAL.crema; ctx.fillRect(0, SUELO + 5, W, 1);
-  }
+    const CAPAS = [
+      { p: perfil(11, 1280, 228, 58, 9), vel: 0.14, col: "#d98a9b", nieve: "#ffe9e4", base: 226 },
+      { p: perfil(29, 1280, 262, 74, 6), vel: 0.32, col: "#a8394f", nieve: "#ffd0cf", base: 258 },
+      { p: perfil(53, 1280, 300, 64, 5), vel: 0.6, col: "#6f1a2c", nieve: null, base: 296 }
+    ];
+    // rocas del primer plano (delante del suelo, se mueven más rápido que la cámara)
+    const ROCAS = [{ x: -40, w: 120, h: 44 }, { x: 260, w: 90, h: 30 }, { x: 560, w: 140, h: 50 }, { x: 900, w: 110, h: 38 }];
+    // viento: rayas finas que cruzan el cielo
+    const viento = Array.from({ length: 26 }, (_, i) => ({ x: Math.random() * W, y: 30 + Math.random() * 230, v: 220 + Math.random() * 260, l: 10 + Math.random() * 24 }));
+
+    let camX = 0, camY = 0, previo = 0;
+    function camara() {
+      const dt = Math.min(0.05, Math.max(0, reloj - previo)); previo = reloj;
+      let objX = 0, objY = 0;
+      if (jug && ia) {
+        objX = ((jug.x + ia.x) / 2 - W / 2) * 1.6;           // el cielo gira hacia donde va la pelea
+        objY = Math.min(40, Math.max(0, (SUELO - Math.min(jug.y, ia.y)) * 0.22)); // al saltar, la cámara sube
+      } else objX = Math.sin(reloj * 0.25) * 60;              // en el menú, un barrido suave
+      const k = 1 - Math.exp(-dt * 4);
+      camX += (objX - camX) * k; camY += (objY - camY) * k;
+      return dt;
+    }
+
+    function cieloEn3D() {
+      const hz = Math.round((104 + camY) / 2);                 // horizonte en el búfer (media resolución)
+      const giro = camX * 0.9 + reloj * 6, avance = reloj * 0.06;
+      for (let y = 0; y < BH; y++) {
+        const fila = y * BW;
+        if (y < hz) {                                          // techo de nubes en perspectiva
+          const d = hz - y, z = 46 / d, base = colorCielo(y / hz);
+          const fog = Math.min(1, 1.2 / (d * 0.22 + 0.3)) * 0.8;
+          const vy = (((z * 34 + avance * 60) | 0) % TX + TX) % TX;
+          for (let x = 0; x < BW; x++) {
+            const u = ((((x - BW / 2) * z * 0.9 + giro) | 0) % TX + TX) % TX;
+            const n = tex[vy * TX + u];
+            const dens = Math.max(0, (n - 0.46) * 3);
+            let c = dens > 0 ? mezcla(base, mezcla(NUBE_SOMBRA, NUBE_LUZ, Math.min(1, Math.max(0, (n - 0.45) * 2.4 + (1 - y / hz) * -0.3 + 0.3))), Math.min(0.95, dens) * (1 - fog)) : base;
+            px[fila + x] = pack(c);
+          }
+        } else {                                               // mar de nubes bajo la montaña
+          const d = y - hz + 1, z = 30 / d;
+          const fog = Math.min(1, 2.2 / (d * 0.25 + 0.4));
+          const vy = (((z * 40 - avance * 90) | 0) % TX + TX) % TX;
+          for (let x = 0; x < BW; x++) {
+            const u = ((((x - BW / 2) * z * 0.9 + giro * 1.4) | 0) % TX + TX) % TX;
+            const n = tex[vy * TX + u];
+            const c = mezcla(mezcla(MAR_SOMBRA, MAR_LUZ, Math.min(1, Math.max(0, (n - 0.3) * 2))), NIEBLA, fog * 0.8);
+            px[fila + x] = pack(c);
+          }
+        }
+      }
+      bx.putImageData(img, 0, 0);
+      ctx.imageSmoothingEnabled = false;
+      ctx.drawImage(buf, 0, 0, W, H);
+      // sol de altura, pegado al horizonte, con un leve paralaje
+      const sx = 470 - camX * 0.06, sy = hz * 2 - 18;
+      const halo = ctx.createRadialGradient(sx, sy, 10, sx, sy, 150);
+      halo.addColorStop(0, "rgba(255,236,190,.55)"); halo.addColorStop(1, "rgba(255,180,120,0)");
+      ctx.fillStyle = halo; ctx.fillRect(sx - 150, sy - 150, 300, 300);
+      ctx.fillStyle = "#fff4d6";
+      for (let r = 30, yy = -30; yy <= 30; yy += 2) { const w = Math.round(Math.sqrt(r * r - yy * yy)); if ((yy > 6 && (yy / 2) % 3 === 0)) continue; ctx.fillRect(Math.round(sx - w), Math.round(sy + yy), w * 2, 2); }
+      return hz * 2;
+    }
+
+    function cordilleras(horizonte) {
+      CAPAS.forEach((c, i) => {
+        const off = ((camX * c.vel) % 1280 + 1280) % 1280, dy = camY * (0.4 + i * 0.25) + (horizonte - 208) * 0.2;
+        ctx.fillStyle = c.col;
+        for (let k = 0; k < W; k += 4) {
+          const idx = Math.floor(((k + off) % 1280) / 4), top = Math.round(c.p[idx] + dy);
+          ctx.fillRect(k, top, 4, Math.max(0, c.base + dy - top + 12));
+          if (c.nieve && top < c.p.reduce((a, b) => Math.min(a, b), 999) + dy + 22) { ctx.fillStyle = c.nieve; ctx.fillRect(k, top, 4, 4); ctx.fillStyle = c.col; }
+        }
+        // la base de cada cordillera se hunde en el mar de nubes
+        const by = Math.round(c.base + dy), niebla = ctx.createLinearGradient(0, by - 26, 0, by + 12);
+        niebla.addColorStop(0, "rgba(255,226,200,0)"); niebla.addColorStop(0.7, "rgba(255,226,206,.85)"); niebla.addColorStop(1, "rgba(250,214,214,1)");
+        ctx.fillStyle = niebla; ctx.fillRect(0, by - 26, W, 38);
+        // luz del sol en las laderas de la capa cercana
+        if (i === 2) {
+          ctx.fillStyle = "#8f2238";
+          for (let k = 0; k < W; k += 4) {
+            const idx = Math.floor(((k + off) % 1280) / 4), sig = c.p[(idx + 1) % c.p.length];
+            if (sig > c.p[idx]) ctx.fillRect(k, Math.round(c.p[idx] + dy), 4, 10);
+          }
+        }
+      });
+    }
+
+    function vientoYPolvo(dt) {
+      ctx.fillStyle = "rgba(255,240,225,.35)";
+      viento.forEach(w => {
+        w.x -= (w.v + camX * 0.1) * dt; if (w.x < -w.l) { w.x = W + Math.random() * 60; w.y = 30 + Math.random() * 230; }
+        ctx.fillRect(Math.round(w.x), Math.round(w.y + camY * 0.5), Math.round(w.l), 1);
+      });
+    }
+
+    function cima() {
+      // superficie de la cima (se ve un poco desde arriba)
+      ctx.fillStyle = "#ff5a4d"; ctx.fillRect(0, SUELO - 12, W, 3);
+      ctx.fillStyle = "#e3322f"; ctx.fillRect(0, SUELO - 9, W, 9);
+      for (let x = 0; x < W; x += 16) { ctx.fillStyle = (x / 16) % 3 ? "#c92a2a" : "#f0473f"; ctx.fillRect(x + ((x * 7) % 9), SUELO - 7 + ((x * 3) % 4), 6, 2); }
+      // cara de roca: estratos en pixel art
+      const estratos = ["#b81f26", "#a3171f", "#8c121b", "#741019", "#5c0c14"];
+      for (let y = SUELO, i = 0; y < H; y += 12, i++) {
+        ctx.fillStyle = estratos[Math.min(i, estratos.length - 1)]; ctx.fillRect(0, y, W, 12);
+        ctx.fillStyle = "rgba(255,120,100,.18)";
+        for (let x = (i * 37) % 48; x < W; x += 48) ctx.fillRect(x, y, 18 + (x % 3) * 6, 2);
+      }
+      // grietas
+      ctx.fillStyle = "#3f0710";
+      [[60, 6], [178, 18], [300, 4], [420, 14], [538, 8], [610, 20]].forEach(([x, y]) => {
+        ctx.fillRect(x, SUELO + y, 2, 10); ctx.fillRect(x + 2, SUELO + y + 10, 2, 8); ctx.fillRect(x - 2, SUELO + y + 18, 2, 10);
+      });
+      // borde superior brillante
+      ctx.fillStyle = "#ffd0c4"; ctx.fillRect(0, SUELO, W, 2);
+    }
+
+    function primerPlano() {
+      ROCAS.forEach(r => {
+        const x = Math.round((((r.x - camX * 1.25) % 1100) + 1100) % 1100 - 160), base = H + 4, top = base - r.h;
+        ctx.fillStyle = "#2a050b";
+        for (let k = 0; k < r.w; k += 4) {
+          const f = k / r.w, alt = Math.round(r.h * (1 - Math.abs(f * 2 - 1) ** 1.6) * (0.8 + ((k * 13) % 7) / 30));
+          ctx.fillRect(x + k, base - alt, 4, alt);
+        }
+        ctx.fillStyle = "#4a0a14";
+        for (let k = 0; k < r.w / 2; k += 4) { const f = k / r.w, alt = Math.round(r.h * (1 - Math.abs(f * 2 - 1) ** 1.6) * 0.8); ctx.fillRect(x + k, base - alt, 4, 3); }
+      });
+    }
+
+    return {
+      fondo() { const dt = camara(); const hz = cieloEn3D(); cordilleras(hz); vientoYPolvo(dt); cima(); },
+      frente: primerPlano
+    };
+  })();
+
+  function dibujarEscenario() { ESC.fondo(); }
 
   function puño(x, y, f, grande = 1) {
     const s = Math.round(9 * grande);
@@ -543,6 +692,7 @@
       parts.forEach(q => { ctx.globalAlpha = Math.min(1, q.t * 3); ctx.fillStyle = q.c; ctx.fillRect(Math.round(q.x), Math.round(q.y), q.s, q.s); });
       ctx.globalAlpha = 1;
     }
+    ESC.frente();
     ctx.restore();
     if (jug && estado !== "titulo") dibujarHUD();
     dibujarCartel(ctx, banner, H / 2 - 30);
@@ -559,7 +709,7 @@
       menu.innerHTML = `<div class="caja">
         <p class="pre">SHAKE WEEK · DÍA 5 · COMBATE FINAL</p>
         <h1>DUELO<br><span>FINAL</span></h1>
-        <p class="hist">Se acabó esconderse. En la azotea de la fábrica, Miflshakes y el Alter Ego se enfrentan cara a cara. Gana 2 rondas y la Shake Week es tuya.</p>
+        <p class="hist">Se acabó esconderse. En la cima de la Montaña Roja, Miflshakes y el Alter Ego se enfrentan cara a cara. Gana 2 rondas y la Shake Week es tuya.</p>
         <div class="movs">
           <span><b>Z</b> puño</span><span><b>X</b> patada</span><span><b>↓ + X</b> barrida</span><span><b>X</b> en el aire: patada aérea</span>
           <span><b>C</b> Shake-ken (proyectil)</span><span><b>↑ + C</b> Pajitazo (gancho)</span><span><b>V</b> SÚPER: Batido Supremo</span><span><b>← atrás</b> bloquear</span>
