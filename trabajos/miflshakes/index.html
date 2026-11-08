@@ -37,9 +37,8 @@
 
   /* Portada */
   .portada{position:relative;overflow:hidden;background:var(--rojo);color:var(--blanco)}
-  .asterisco{position:absolute;left:73%;top:50%;width:min(860px,100vw);aspect-ratio:1;transform:translate(-50%,-50%);pointer-events:none;
-    filter:drop-shadow(10px 12px 0 var(--rojoOsc)) drop-shadow(18px 22px 0 rgba(120,4,10,.35)) drop-shadow(0 0 40px rgba(90,2,8,.35))}
-  .asterisco svg{width:100%;height:100%;display:block;animation:girar 40s linear infinite}
+  .portada::before{content:"";position:absolute;left:50%;top:62%;width:2600px;height:2600px;margin:-1300px 0 0 -1300px;
+    background:repeating-conic-gradient(var(--rojoRayo) 0 11.25deg,transparent 11.25deg 22.5deg);animation:girar 60s linear infinite}
   @keyframes girar{to{transform:rotate(360deg)}}
   .portada .envolver{display:grid;grid-template-columns:1.05fr 1fr;align-items:center;gap:24px;padding-top:56px;padding-bottom:28px}
   .portada .zigzag{height:clamp(56px,8vw,120px)}
@@ -67,8 +66,8 @@
   .duelo .h{left:-2%;animation:botar 1.6s ease-in-out infinite;filter:drop-shadow(4px 0 0 #fff) drop-shadow(-4px 0 0 #fff) drop-shadow(0 4px 0 #fff) drop-shadow(0 -4px 0 #fff) drop-shadow(6px 8px 0 rgba(120,4,10,.55))}
   .duelo .v{right:-2%;animation:botar 1.6s ease-in-out .8s infinite}
   @keyframes botar{50%{transform:translateY(-12px) rotate(-2deg)}}
-  .vs{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%) rotate(-8deg);font-size:84px;color:var(--rojo);
-    -webkit-text-stroke:4px var(--blanco);paint-order:stroke fill;text-shadow:6px 6px 0 var(--rojoOsc);z-index:2}
+  .vs{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%) rotate(-8deg);font-size:84px;color:var(--blanco);
+    -webkit-text-stroke:3px var(--rojoOsc);paint-order:stroke fill;text-shadow:5px 5px 0 var(--rojoOsc);z-index:2}
   .nombres{position:absolute;bottom:-6px;left:0;right:0;display:flex;justify-content:space-between;z-index:3}
   .nombres span{background:var(--blanco);color:var(--rojo);padding:4px 12px;border-radius:10px;font-size:18px;border:3px solid var(--rojo)}
   .nombres span:last-child{background:var(--tinta);color:var(--blanco)}
@@ -217,7 +216,6 @@
 
   @media (max-width:900px){
     .portada .envolver{grid-template-columns:1fr;padding-top:36px}
-    .asterisco{left:50%;top:72%;width:min(720px,150vw)}
     .duelo{height:300px}.duelo img{height:270px}.vs{font-size:64px}
     .sellos{grid-template-columns:repeat(2,1fr)}
     .sellos .dia:last-child{grid-column:span 2}
@@ -249,16 +247,6 @@
 </div>
 
 <header class="portada">
-  <div class="asterisco" aria-hidden="true">
-    <svg viewBox="-100 -100 200 200"><defs>
-      <linearGradient id="brazo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#fff"/></linearGradient>
-      <g id="aspa"><rect x="-13" y="-96" width="26" height="96" rx="13" fill="url(#brazo)"/><rect x="3" y="-92" width="10" height="72" rx="5" fill="#FFD3D7"/></g>
-    </defs>
-      <use href="#aspa"/><use href="#aspa" transform="rotate(45)"/><use href="#aspa" transform="rotate(90)"/><use href="#aspa" transform="rotate(135)"/>
-      <use href="#aspa" transform="rotate(180)"/><use href="#aspa" transform="rotate(225)"/><use href="#aspa" transform="rotate(270)"/><use href="#aspa" transform="rotate(315)"/>
-      <circle r="24" fill="#fff"/>
-    </svg>
-  </div>
   <div class="envolver">
     <div>
       <span class="etiqueta">Del lunes al viernes</span>
