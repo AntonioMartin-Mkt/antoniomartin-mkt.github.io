@@ -131,7 +131,8 @@
   .cupon small{display:block;margin-top:12px;opacity:.9}
 
   /* Productos (sin texto: solo producto y animación al pasar el ratón) */
-  .productos{background:var(--blanco);padding:24px 0 88px}
+  .productos{background:var(--blanco);padding:8px 0 88px}
+  .productos h2{max-width:20ch;margin-bottom:28px}
   .rejillaProd{display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(8px,2vw,24px)}
   .prod{position:relative;aspect-ratio:1;display:grid;place-items:center;perspective:700px;cursor:pointer;outline:none;
     transition:opacity .3s ease,filter .3s ease}
@@ -316,7 +317,10 @@
       </div>
     </div>
   </section>
-  <section class="productos" aria-label="Productos en los que usar el descuento">
+  <section class="productos" aria-labelledby="tituloProd">
+    <div class="envolver">
+      <h2 class="display" id="tituloProd">¿Para qué perdérselo? Usa nuestro descuento.</h2>
+    </div>
     <div class="envolver rejillaProd">
       <figure class="prod" tabindex="0"><span class="ast" aria-hidden="true"><svg viewBox="-100 -100 200 200"><g fill="none" stroke="#DD0B18" stroke-width="5" opacity=".35"><rect x="-11" y="-94" width="22" height="94" rx="11" transform="rotate(0)"/><rect x="-11" y="-94" width="22" height="94" rx="11" transform="rotate(45)"/><rect x="-11" y="-94" width="22" height="94" rx="11" transform="rotate(90)"/><rect x="-11" y="-94" width="22" height="94" rx="11" transform="rotate(135)"/><rect x="-11" y="-94" width="22" height="94" rx="11" transform="rotate(180)"/><rect x="-11" y="-94" width="22" height="94" rx="11" transform="rotate(225)"/><rect x="-11" y="-94" width="22" height="94" rx="11" transform="rotate(270)"/><rect x="-11" y="-94" width="22" height="94" rx="11" transform="rotate(315)"/></g></svg></span><img src="productos/vaqueros.webp" alt="Vaqueros de corte ancho" loading="lazy" width="600" height="600"></figure>
       <figure class="prod" tabindex="0"><span class="ast" aria-hidden="true"><svg viewBox="-100 -100 200 200"><g fill="none" stroke="#DD0B18" stroke-width="5" opacity=".35"><rect x="-11" y="-94" width="22" height="94" rx="11" transform="rotate(0)"/><rect x="-11" y="-94" width="22" height="94" rx="11" transform="rotate(45)"/><rect x="-11" y="-94" width="22" height="94" rx="11" transform="rotate(90)"/><rect x="-11" y="-94" width="22" height="94" rx="11" transform="rotate(135)"/><rect x="-11" y="-94" width="22" height="94" rx="11" transform="rotate(180)"/><rect x="-11" y="-94" width="22" height="94" rx="11" transform="rotate(225)"/><rect x="-11" y="-94" width="22" height="94" rx="11" transform="rotate(270)"/><rect x="-11" y="-94" width="22" height="94" rx="11" transform="rotate(315)"/></g></svg></span><img src="productos/sudadera.webp" alt="Sudadera crema con asterisco" loading="lazy" width="600" height="600"></figure>
